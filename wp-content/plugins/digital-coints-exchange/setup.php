@@ -6,69 +6,7 @@
  * @since 1.0
  */
 
-add_action( 'admin_init', 'dce_admin_init' );
-/*
- * WP-Admin initialization
- */
-function dce_admin_init()
-{
-	// action actions ( setups )
-	if ( current_user_can( 'manage_options' ) && isset( $_GET['dce_setup'] ) )
-	{
-		switch ( $_GET['dce_setup'] )
-		{
-			// setup pages
-			case 'pages':
-				// page attrs
-				$page_attrs = array ( 
-						'post_status' => 'publish',  
-						'post_type' => 'page',
-						'$comment_status' => 'closed',
-				);
-
-				$pages = dce_pages();
-				foreach ( $pages as $page_name => &$page_info )
-				{
-					// check page existence 
-					$page_id = dce_get_page_by_slug( $page_name, 'id' );
-					if ( !$page_id )
-					{
-						// fill the attrs
-						$page_attrs['post_name'] = $page_name;
-						$page_attrs['post_title'] = $page_info['title'];
-						$page_attrs['post_content'] = $page_info['content'];
-
-						// insert the page
-						$page_id = wp_insert_post( $page_attrs );
-						if ( $page_id )
-						{
-							$page_info['id'] = $page_id;
-							$page_info['url'] = get_permalink( $page_id );
-						}
-					}
-				}
-
-				// save changes
-				update_option( 'dce_pages', $pages );
-
-				break;
-		}
-	}
-}
-
-add_action( 'admin_notices', 'dce_admin_notices' );
-/**
- * WP-Admin Notification messages
- */
-function dce_admin_notices()
-{
-	// check pages
-	$login_page = dce_pages( 'login' );
-	if ( !$login_page['url'] )
-		echo '<div class="error"><p>', sprintf( __( 'In order to <strong>Digital Coins Exchanging Store</strong> plugin to work it needs to setup the needed pages, <a class="button button-primary" href="%s">Click here to run setup</a>', 'dce' ), add_query_arg( 'dce_setup', 'pages' ) ) ,'</p></div>';
-}
-
-function dce_pages( $page_name = '' )
+function dce_get_pages( $page_name = '' )
 {
 	// get pages from db
 	$pages = get_option( 'dce_pages', 'none' );
@@ -135,11 +73,11 @@ function dce_pages( $page_name = '' )
 	return $pages;
 }
 
-register_activation_hook( DCE_PLUGIN_FILE, 'dec_plugin_activation' );
+register_activation_hook( DCE_PLUGIN_FILE, 'dce_plugin_activation' );
 /**
  * Plugin Activation Hook
  */
-function dec_plugin_activation()
+function dce_plugin_activation()
 {
 	// register client role
 	$client_role = get_role( DCE_CLIENT_ROLE );
