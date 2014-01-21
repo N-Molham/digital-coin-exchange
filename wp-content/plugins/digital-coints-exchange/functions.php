@@ -1,7 +1,7 @@
 <?php
 /**
  * Utils functions
-*/
+ */
 
 function dce_get_value( $key, $query_var = '', $session = false, $encoded = false, $html = false, $allowed = null )
 {
@@ -20,7 +20,7 @@ function dce_redirect( $target = '', $status = 302 )
 
 function dce_get_page_by_slug( $page_slug, $output = OBJECT, $post_type = 'page' )
 {
-	DCE_Utiles::get_page_by_slug( $page_slug, $output, $post_type );
+	return DCE_Utiles::get_page_by_slug( $page_slug, $output, $post_type );
 }
 
 class DCE_Utiles
@@ -1222,7 +1222,7 @@ class DCE_Utiles
 		$page = $wpdb->get_var( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE post_name = %s AND post_type= %s", $page_slug, $post_type ) );
 		if ( $page )
 		{
-			if ( $output == 'id' )
+			if ( 'id' == $output )
 				return $page;
 
 			return get_post( $page, $output );
