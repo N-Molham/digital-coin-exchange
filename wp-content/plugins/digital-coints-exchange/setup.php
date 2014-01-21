@@ -6,6 +6,22 @@
  * @since 1.0
  */
 
+add_action( 'init', 'dce_setup_init' );
+/**
+ * WP Initialize
+ */
+function dce_setup_init()
+{
+	/**
+	 * Register Styles & Scripts
+	 */
+	wp_register_style( 'dce-shared-style', DCE_URL .'/css/shared.css' );
+
+	// restrict access to wp register form
+	if ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false && isset( $_REQUEST['action'] ) && 'register' == $_REQUEST['action'] )
+		dce_redirect( home_url() );
+}
+
 function dce_get_pages( $page_name = '' )
 {
 	// get pages from db

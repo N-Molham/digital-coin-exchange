@@ -5,7 +5,7 @@
 
 function dce_get_value( $key, $query_var = '', $session = false, $encoded = false, $html = false, $allowed = null )
 {
-	return DCE_Utiles::get_value( $key, $query_var = '', $session = false, $encoded = false, $html = false, $allowed = null );
+	return DCE_Utiles::get_value( $key, $query_var, $session, $encoded, $html, $allowed );
 }
 
 function dce_sanitize_digit( $target, $negative = false )
@@ -25,6 +25,8 @@ function dce_get_page_by_slug( $page_slug, $output = OBJECT, $post_type = 'page'
 
 class DCE_Utiles
 {
+	static $text_domain = 'dce';
+
 	public static function array2csv( array &$array )
 	{
 		if ( count( $array) == 0  )
@@ -50,7 +52,7 @@ class DCE_Utiles
 		// disable caching
 		$now = gmdate( 'D, d M Y H:i:s' );
 		header( 'Expires: Tue, 03 Jul 2001 06:00:00 GMT' );
-		header( 'Cache-Control: max-age=0, no-cache, must-revalidate, proxy-revalidate' );
+		header( 'Cache-Control: max_age=0, no-cache, must-revalidate, proxy-revalidate' );
 		header( 'Last-Modified: '. $now .' GMT' );
 
 		// force download
@@ -108,15 +110,15 @@ class DCE_Utiles
 		return "https://maps.google.com/maps?q={$lat},{$lng}";
 	}
 
-	public static function parse_input( $field, $args = array( ), $query_var = false, $session = false, $encoded = false, $html = false, $allowed = null  )
+	public static function parse_input( $field, $args = array(), $query_var = false, $session = false, $encoded = false, $html = false, $allowed = null  )
 	{
-		$value = DCE_Utiles::get_value( $field, $query_var, $session, $encoded, $html, $allowed );
+		$value = self::get_value( $field, $query_var, $session, $encoded, $html, $allowed );
 
 		$defaults = array (
 				'data_type' => 'text',
 				'required' => false,
-				'min-length' => false,
-				'max-length' => false,
+				'min_length' => false,
+				'max_length' => false,
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -128,16 +130,16 @@ class DCE_Utiles
 			case 'password':
 				if ( isset($args['match-base']) )
 				{
-					$match = DCE_Utiles::get_value( $args['match-base'] );
+					$match = self::get_value( $args['match-base'] );
 					if( $match != $value )
-						DCE_Utiles::form_error( $field, __('Passwords does not match') );
+						self::form_error( $field, __( 'Passwords does not match', self::$text_domain ) );
 				}
 				break;
 			case 'email':
 				$value = is_email( $value );
 				if( !$value )
 				{
-					DCE_Utiles::form_error( $field, __('Invalid email address') );
+					self::form_error( $field, __( 'Invalid email address', self::$text_domain ) );
 					$value = '';
 				}
 				break;
@@ -149,30 +151,33 @@ class DCE_Utiles
 					{
 						if( in_array($file['type'], $args['file_types']) )
 						{
-							$value = DCE_Utiles::process_file_upload( $field );
+							$value = self::process_file_upload( $field );
 							if( is_wp_error($value) )
-								DCE_Utiles::form_error( $field, __('Error saving uploaded file, please try again later') );
+								self::form_error( $field, __( 'Error saving uploaded file, please try again later', self::$text_domain ) );
 						}
 						else
-							DCE_Utiles::form_error( $field, __('Invalid file type') );
+							self::form_error( $field, __( 'Invalid file type', self::$text_domain ) );
 					}
 					else
-						DCE_Utiles::form_error( $field, sprintf(__('%s size is too big'), $args['label']) );
+						self::form_error( $field, sprintf(__( '%s size is too big', self::$text_domain ), $args['label']) );
 				}
 				else
 					$value = '';
 				break;
 		}
 
-		if( $args['required'] && ('' == $value || empty($value)) )
-			DCE_Utiles::form_error( $field, sprintf( __('%s required'), $args['label'])  );
+		if( $args['required'] && ('' == $value || empty($value) ) )
+			self::form_error( $field, sprintf( __( '%s required', self::$text_domain ), $args['label']) );
 
-		if( $args['min-length'] && $args['max-length'] && !DCE_Utiles::is_str_length_between($value, $args['min-length'], $args['max-length']) )
-			DCE_Utiles::form_error( $field, sprintf(__('%s character length must be between %d and %d'), $args['label'], $args['min-length'], $args['max-length']) );
-		elseif( $args['min-length'] && !$args['max-length'] && strlen($value) < $args['min-length'] )
-		DCE_Utiles::form_error( $field, sprintf(__('%s character length must be at least %d'), $args['label'], $args['min-length']) );
-		elseif( !$args['min-length'] && $args['max-length'] && strlen($value) > $args['max-length'] )
-		DCE_Utiles::form_error( $field, sprintf(__('%s character length must be less than %d'), $args['label'], $args['max-length']) );
+		if ( '' != $value || !empty($value) )
+		{
+			if( $args['min_length'] && $args['max_length'] && !self::is_str_length_between( $value, $args['min_length'], $args['max_length'] ) )
+				self::form_error( $field, sprintf( __( '%s character length must be between %d and %d', self::$text_domain ), $args['label'], $args['min_length'], $args['max_length'] ) );
+			elseif( $args['min_length'] && !$args['max_length'] && strlen( $value ) < $args['min_length'] )
+				self::form_error( $field, sprintf( __( '%s character length must be at least %d', self::$text_domain ), $args['label'], $args['min_length'] ) );
+			elseif( !$args['min_length'] && $args['max_length'] && strlen( $value ) > $args['max_length'] )
+				self::form_error( $field, sprintf( __( '%s character length must be less than %d', self::$text_domain ), $args['label'], $args['max_length'] ) );
+		}
 
 		$_SESSION['request_data'][$field] = $value;
 		return $value;
@@ -227,7 +232,7 @@ class DCE_Utiles
 				'placeholder' => '',
 				'show_label' => true,
 		);
-		$args = apply_filters( 'form_input_args', wp_parse_args($args, $defaults) );
+		$args = apply_filters( 'form_input_args', wp_parse_args( $args, $defaults ) );
 
 		if( $args['show_label'] )
 			$out .= '<label for="'. $field .'">'. $args['label'] .' :</label>';
@@ -367,7 +372,7 @@ class DCE_Utiles
 
 		foreach( $chars as $char )
 		{
-			$pos = DCE_Utiles::uniord( $char );
+			$pos = self::uniord( $char );
 
 			if( $pos >= 1536 && $pos <= 1791 )
 				$arabic_count++;
@@ -489,7 +494,7 @@ class DCE_Utiles
 	public static function array_insert( $array, $pos, $vals )
 	{
 		$array2 = array_splice( $array, $pos );
-		if( DCE_Utiles::is_array_assoc($vals) )
+		if( self::is_array_assoc($vals) )
 		{
 			foreach ( $vals as $key => $value )
 			{
@@ -513,7 +518,7 @@ class DCE_Utiles
 		$date = substr( $datetime, 0, 10 );
 		$time = substr( $datetime, 11 );
 		// convert
-		$time = DCE_Utiles::change_time_hours( $time );
+		$time = self::change_time_hours( $time );
 		return $date . ' ' . $time;
 	}
 
@@ -602,11 +607,11 @@ class DCE_Utiles
 
 	public static function get_ip_country()
 	{
-		$ip = DCE_Utiles::user_ip();
+		$ip = self::user_ip();
 		$get_country = wp_remote_get( 'http://www.webservicex.net/geoipservice.asmx/GetGeoIP?IPAddress=' . $ip );
 		if( !is_wp_error($get_country) && $get_country['response']['code'] == 200 )
 		{
-			$response = DCE_Utiles::parse_xml_json( $get_country['body'] );
+			$response = self::parse_xml_json( $get_country['body'] );
 			if( is_object($response) && isset($response->ReturnCode) && $response->ReturnCode == '1' && isset($response->CountryCode) )
 				return $response->CountryCode == 'ZZZ' ? false : strtolower( $response->CountryCode );
 		}
@@ -712,7 +717,7 @@ class DCE_Utiles
 			else
 				$xml .= '<' . $index . '>';
 
-			$xml .= DCE_Utiles::parse_xml_node( $node );
+			$xml .= self::parse_xml_node( $node );
 
 			if( $custom_node )
 				$xml .= '</' . $node_name . '>';
@@ -733,7 +738,7 @@ class DCE_Utiles
 			{
 				if( is_object($value) || is_array($value) )
 				{
-					$value = DCE_Utiles::parse_xml_node( $value );
+					$value = self::parse_xml_node( $value );
 					$key = 'item';
 				}
 					
@@ -842,7 +847,7 @@ class DCE_Utiles
 	{
 		$chars = explode( '  ', 'A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  R  S  T  V  W  X  Y  Z' );
 		$char = $chars[array_rand( $chars )];
-		return $char . $user_id . strtoupper( DCE_Utiles::rand_string(2) );
+		return $char . $user_id . strtoupper( self::rand_string(2) );
 	}
 
 	public static function time_diff( $first, $second )
@@ -935,7 +940,7 @@ class DCE_Utiles
 
 		$size = @getimagesize( $file );
 		if ( !$size )
-			return new WP_Error( 'invalid_image', __('Could not read image size'), $file );
+			return new WP_Error( 'invalid_image', __( 'Could not read image size', self::$text_domain ), $file );
 		list( $orig_w, $orig_h, $orig_type ) = $size;
 
 		$dims = image_resize_dimensions( $orig_w, $orig_h, $max_w, $max_h, $crop );
@@ -1006,7 +1011,7 @@ class DCE_Utiles
 				if ( !is_dir($dirname . "/" . $file) )
 					@unlink( $dirname . "/" . $file );
 				else
-					DCE_Utiles::clear_left_overs( $dirname . '/' . $file, true );
+					self::clear_left_overs( $dirname . '/' . $file, true );
 			}
 		}
 
@@ -1075,7 +1080,7 @@ class DCE_Utiles
 
 	public static function form_error( $field, $message, &$holder = NULL )
 	{
-		if( !isset($_SESSION['form_errors']) )
+		if( !isset( $_SESSION['form_errors'] ) )
 			$_SESSION['form_errors'] = array();
 
 		$_SESSION['form_errors'][$field] = $message;
@@ -1091,7 +1096,7 @@ class DCE_Utiles
 
 	public static function has_form_errors()
 	{
-		if( isset($_SESSION['form_errors']) && count($_SESSION['form_errors']) > 0 )
+		if( isset( $_SESSION['form_errors'] ) && count( $_SESSION['form_errors'] ) > 0 )
 			return true;
 
 		return false;
@@ -1099,7 +1104,7 @@ class DCE_Utiles
 
 	public static function show_form_errors( $raw = false, $as_array = false )
 	{
-		if( isset($_SESSION['form_errors']) && count($_SESSION['form_errors']) > 0 )
+		if( isset( $_SESSION['form_errors'] ) && count( $_SESSION['form_errors'] ) > 0 )
 		{
 			if( $as_array )
 				return $_SESSION['form_errors'];
@@ -1110,7 +1115,7 @@ class DCE_Utiles
 				if( $raw )
 					$out .= $message . "\n\r";
 				else
-					$out .= DCE_Utiles::show_message( $message, 'error' );
+					$out .= self::show_message( $message, 'error' );
 
 				unset( $_SESSION['form_errors'][$field] );
 			}
@@ -1136,9 +1141,9 @@ class DCE_Utiles
 		return false;
 	}
 
-	public static function show_message( $message, $type = 'info' )
+	public static function show_message( $message, $type = 'general' )
 	{
-		return '<div class="alert'. ( '' != $type ? ' alert-'. $type : '' ) .'"><strong>'. $message .'</strong></div>';
+		return '<div class="alert '. $type .'"><div class="msg">'. $message .'</div></div>';
 	}
 
 	public static function catch_request_data()
@@ -1175,7 +1180,7 @@ class DCE_Utiles
 		if( '' == $value || empty($value) )
 			return '';
 
-		return DCE_Utiles::clean_string( $value, $encoded, $html, $allowed );
+		return self::clean_string( $value, $encoded, $html, $allowed );
 	}
 
 	public static function clean_string( $value, $encoded = false, $html = false, $allowed = null )
@@ -1187,7 +1192,7 @@ class DCE_Utiles
 		if( $html )
 		{
 			$value = nl2br( $value );
-			$value = DCE_Utiles::remove_extra_space( $value );
+			$value = self::remove_extra_space( $value );
 			$value = force_balance_tags( $value );
 			if( is_array($allowed) )
 				$value = wp_kses( $value, $allowed );
@@ -1233,13 +1238,13 @@ class DCE_Utiles
 
 	public static function get_permalink_by_slug( $slug )
 	{
-		return get_permalink( DCE_Utiles::get_page_by_slug( $slug, 'id' ) );
+		return get_permalink( self::get_page_by_slug( $slug, 'id' ) );
 	}
 
 	public static function substr_words( $paragraph, $num_words, $wrapper = 'font', $rest = ' ...' )
 	{
 		$org_string = $paragraph;
-		$paragraph = explode( ' ', DCE_Utiles::remove_extra_space($paragraph) );
+		$paragraph = explode( ' ', self::remove_extra_space($paragraph) );
 
 		if( count($paragraph) <= $num_words )
 			return $org_string;

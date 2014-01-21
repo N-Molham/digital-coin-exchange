@@ -10,6 +10,9 @@
  * Text Domain: dce
 */
 
+if( '' == session_id() )
+	session_start();
+
 /**
  * Plugin Base Constants
  */
@@ -27,6 +30,9 @@ define( 'DCE_CLIENT_ROLE', 'dce_client' );
  */
 require DCE_PATH . 'functions.php';
 require DCE_PATH . 'setup.php';
+require DCE_PATH . 'admin/init.php';
+require DCE_PATH . 'users.php';
+require DCE_PATH . 'users-shortcode.php';
 
 add_action( 'plugins_loaded', 'dce_plugins_loaded' );
 /**

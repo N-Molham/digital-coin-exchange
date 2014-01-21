@@ -12,6 +12,10 @@ add_action( 'admin_init', 'dce_admin_init' );
 */
 function dce_admin_init()
 {
+	// restrict access to clients
+	if ( !defined( 'DOING_AJAX' ) && in_array( DCE_CLIENT_ROLE, wp_get_current_user()->roles ) )
+		dce_redirect( home_url() );
+
 	// action actions ( setups )
 	if ( current_user_can( 'manage_options' ) && isset( $_GET['dce_setup'] ) )
 	{
@@ -23,7 +27,8 @@ function dce_admin_init()
 				$page_attrs = array (
 						'post_status' => 'publish',
 						'post_type' => 'page',
-						'$comment_status' => 'closed',
+						'comment_status' => 'closed',
+						'ping_status' => 'closed',
 				);
 
 				$pages = dce_get_pages();
@@ -86,7 +91,7 @@ function dce_admin_enqueue_scripts( $current_page )
 	/**
 	 * Styles
 	 */
-	wp_enqueue_style( 'dce-shared-style', DCE_URL .'/css/shared.css' );
+	wp_enqueue_style( 'dce-shared-style' );
 }
 
 
