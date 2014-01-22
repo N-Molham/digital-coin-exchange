@@ -6,6 +6,45 @@
  * @since 1.0
  */
 
+add_shortcode( 'dce-login-form', 'dce_user_login_form' );
+/**
+ * User's login form layout
+ *
+ * @return string
+ */
+function dce_user_login_form()
+{
+	// logged-in user
+	if ( is_user_logged_in() )
+		return '<div class="alert error"><div class="msg">'. __( 'Your already logged-in.', 'dce' ) .'</div></div>';
+
+	// style
+	wp_enqueue_style( 'dce-shared-style' );
+
+	// before form start
+	$out = apply_filters( 'dce_before_login_form', '' );
+
+	// error messages
+	if ( DCE_Utiles::has_form_errors() )
+		$out .= DCE_Utiles::show_form_errors();
+
+	// login form
+	$out .= wp_login_form( array (
+			'echo' => true,
+			'redirect' => home_url(),
+			'form_id' => 'login-form',
+			'label_username' => __( 'E-mail', 'dce' ),
+			'label_password' => __( 'Password', 'dce' ),
+			'label_remember' => __( 'Remember Me', 'dce' ),
+			'label_log_in' => __( 'Log In', 'dce' ),
+	) );
+
+	// before form start
+	$out .= apply_filters( 'dce_after_login_form', '' );
+
+	return apply_filters( 'dce_login_form', $out );
+}
+
 add_shortcode( 'dce-register-form', 'dce_user_register_form' );
 /**
  * User's register form layout
