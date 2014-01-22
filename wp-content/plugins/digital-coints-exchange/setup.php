@@ -15,11 +15,51 @@ function dce_setup_init()
 	/**
 	 * Register Styles & Scripts
 	 */
+	// styles
 	wp_register_style( 'dce-shared-style', DCE_URL .'/css/shared.css' );
+
+	// js
+	wp_register_script( 'dce-shared-script', DCE_URL .'/js/shared.js', array( 'jquery' ), false, true );
 
 	// restrict access to wp register form
 	if ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false && isset( $_REQUEST['action'] ) && 'register' == $_REQUEST['action'] )
 		dce_redirect( home_url() );
+
+	/**
+	 * Register post types
+	 */
+
+	// offers
+	$args = array (
+			'labels' => array (
+					'name' => _x( 'Offers', 'dce_offer', 'dce' ),
+					'singular_name' => _x( 'Offer', 'dce_offer', 'dce' ),
+					'add_new' => _x( 'Add New Offer', 'dce_offer', 'dce' ),
+					'add_new_item' => _x( 'Add New Offer', 'dce_offer', 'dce' ),
+					'edit_item' => _x( 'Edit Offer', 'dce_offer', 'dce' ),
+					'new_item' => _x( 'New Offer', 'dce_offer', 'dce' ),
+					'view_item' => _x( 'View Offer', 'dce_offer', 'dce' ),
+					'search_items' => _x( 'Search Offers', 'dce_offer', 'dce' ),
+					'not_found' => _x( 'No offers found', 'dce_offer', 'dce' ),
+					'not_found_in_trash' => _x( 'No offers found in Trash', 'dce_offer', 'dce' ),
+					'parent_item_colon' => _x( 'Parent Offer:', 'dce_offer', 'dce' ),
+					'menu_name' => _x( 'Offers', 'dce_offer', 'dce' ),
+			),
+			'hierarchical' => false,
+			'description' => __( 'Clients coins exchange offer', 'dce' ),
+			'supports' => array( 'author' ),
+			'public' => true,
+			'show_ui' => true,
+			'show_in_menu' => true,
+			'show_in_nav_menus' => false,
+			'publicly_queryable' => true,
+			'exclude_from_search' => true,
+			'has_archive' => false,
+			'query_var' => 'offer',
+			'can_export' => true,
+			'rewrite' => true,
+	);
+	register_post_type( DCE_POST_TYPE_OFFER, $args );
 }
 
 add_filter( 'show_admin_bar', 'dce_admin_bar_visibility' );
@@ -164,6 +204,9 @@ function dce_plugin_activation()
 	// update registration options
 	update_option( 'users_can_register', 1 );
 	update_option( 'default_role', DCE_CLIENT_ROLE );
+
+	// rewrite flush for custom post types
+	flush_rewrite_rules();
 }
 
 

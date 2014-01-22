@@ -24,13 +24,16 @@ define( 'DCE_PATH', plugin_dir_path( DCE_PLUGIN_FILE ) );
  * Logical Constants
  */
 define( 'DCE_CLIENT_ROLE', 'dce_client' );
+define( 'DCE_POST_TYPE_OFFER', 'dce_offer' );
 
 /**
  * Includes
  */
 require DCE_PATH . 'functions.php';
 require DCE_PATH . 'setup.php';
-require DCE_PATH . 'admin/init.php';
+require DCE_PATH . 'template_tags.php';
+require DCE_PATH . 'ajax.php';
+require DCE_PATH . 'admin/admin_init.php';
 require DCE_PATH . 'users.php';
 require DCE_PATH . 'users-shortcode.php';
 

@@ -50,3 +50,16 @@ pre code {
 	background-color: transparent;
 	border: 0;
 }
+
+#ajax-loading {
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: #fff;
+	opacity: 0;
+	cursor: wait;
+}
+

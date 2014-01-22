@@ -88,6 +88,9 @@ function dce_is_user_admin( &$user_id = null )
 
 /**
  * Exchange User Class
+ * 
+ * @package Digital Coins Exchanging Store
+ * @since 1.0
  */
 class DCE_User extends WP_User
 {
@@ -97,6 +100,30 @@ class DCE_User extends WP_User
 	 * @var string
 	 */
 	static $role = DCE_CLIENT_ROLE;
+
+	/**
+	 * Constructor
+	 * 
+	 * @param number $id
+	 * @param string $name
+	 * @param string $blog_id
+	 */
+	public function __construct( $id = 0, $name = '', $blog_id = '' )
+	{
+		parent::__construct( $id, $name, $blog_id );
+	}
+
+	/**
+	 * Determine whether the user exists in the database and a client.
+	 * 
+	 * (non-PHPdoc)
+	 * @see WP_User::exists()
+	 * @return boolean
+	 */
+	public function exists()
+	{
+		return parent::exists() && in_array( self::$role, $this->roles );
+	}
 
 	/**
 	 * User data fields 

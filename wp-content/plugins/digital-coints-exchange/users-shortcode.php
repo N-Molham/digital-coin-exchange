@@ -6,6 +6,42 @@
  * @since 1.0
  */
 
+add_shortcode( 'dce-user-offers', 'dce_user_page_loader' );
+add_shortcode( 'dce-offers', 'dce_user_page_loader' );
+add_shortcode( 'dce-contact-form', 'dce_user_page_loader' );
+add_shortcode( 'dce-user-dashboard', 'dce_user_page_loader' );
+add_shortcode( 'dce-escrow-manager', 'dce_user_page_loader' );
+add_shortcode( 'dce-user-profile', 'dce_user_page_loader' );
+add_shortcode( 'dce-user-messages', 'dce_user_page_loader' );
+/**
+ * User's page loader
+ * 
+ * @param array $attrs
+ * @param string $content
+ * @param string $shortcode
+ * @return string
+ */
+function dce_user_page_loader( $attrs, $content, $shortcode )
+{
+	// check current user
+	$dce_user = DCE_User::get_current_user();
+	if ( !$dce_user->exists() )
+		return '<div class="alert error"><div class="msg">'. __( 'This is a client access only.', 'dce' ) .'</div></div>';
+
+	// determine page path
+	$user_page = DCE_PATH .'user-pages'. DIRECTORY_SEPARATOR . str_replace( 'dce-', '', $shortcode ) .'.php';
+
+	// load file if exists
+	if( file_exists( $user_page ) )
+	{
+		// found
+		return include $user_page;
+	}
+
+	// not found
+	return '<div class="alert error"><div class="msg">'. __( 'Page not found.', 'dce' ) .'</div></div>';
+}
+
 add_shortcode( 'dce-login-form', 'dce_user_login_form' );
 /**
  * User's login form layout
