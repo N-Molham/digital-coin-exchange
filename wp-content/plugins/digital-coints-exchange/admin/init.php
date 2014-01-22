@@ -78,7 +78,7 @@ function dce_admin_notices()
 {
 	// check pages
 	$login_page = dce_get_pages( 'login' );
-	if ( !get_permalink( $login_page['id'] ) )
+	if ( !get_permalink( $login_page->id ) )
 		echo '<div class="error"><p>', sprintf( __( 'In order to <strong>Digital Coins Exchanging Store</strong> plugin to work it needs to setup the needed pages, <a class="button button-primary" href="%s">Click here to run setup</a>', 'dce' ), add_query_arg( 'dce_setup', 'pages' ) ) ,'</p></div>';
 }
 

@@ -63,6 +63,30 @@ function dce_users_init()
 }
 
 /**
+ * Check if the user is admin or not
+ * 
+ * @param number|WP_User $user_id
+ * @return boolean
+ */
+function dce_is_user_admin( &$user_id = null )
+{
+	// check if no user data passed
+	if ( !$user_id )
+		return current_user_can( 'manage_options' );
+
+	// check if id is passed
+	if ( !is_object( $user_id ) || is_numeric( $user_id ) )
+		$user_id = get_user_by( 'id' , (string) $user_id );
+
+	// check permission
+	if ( $user_id && is_object( $user_id ) && $user_id->has_cap( 'manage_options' ) )
+		return true;
+
+	// return false
+	return false;
+}
+
+/**
  * Exchange User Class
  */
 class DCE_User extends WP_User
@@ -125,6 +149,16 @@ class DCE_User extends WP_User
 					'max_length' => 200,
 			),
 		) );
+	}
+
+	/**
+	 * Retrieve the current user object.
+	 *
+	 * @return DCE_User
+	 */
+	public static function get_current_user()
+	{
+		return new DCE_User( wp_get_current_user() );
 	}
 }
 

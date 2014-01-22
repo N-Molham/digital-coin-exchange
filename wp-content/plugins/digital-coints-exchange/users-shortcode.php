@@ -31,7 +31,7 @@ function dce_user_login_form()
 	// login form
 	$out .= wp_login_form( array (
 			'echo' => true,
-			'redirect' => home_url(),
+			'redirect' => dce_get_pages( 'dashboard' )->url,
 			'form_id' => 'login-form',
 			'label_username' => __( 'E-mail', 'dce' ),
 			'label_password' => __( 'Password', 'dce' ),
