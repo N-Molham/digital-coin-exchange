@@ -18,6 +18,26 @@ function dce_section_title( $title )
 }
 
 /**
+ * Table Start
+ * 
+ * @return string
+ */
+function dce_table_start()
+{
+	return '<div class="table-1"><table width="100%">';
+}
+
+/**
+ * Table end
+ * 
+ * @return string
+ */
+function dce_table_end()
+{
+	return '</table></div>';
+}
+
+/**
  * Alert messages layout
  * 
  * @param string $message

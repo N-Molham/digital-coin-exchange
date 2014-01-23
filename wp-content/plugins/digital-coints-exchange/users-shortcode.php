@@ -6,6 +6,8 @@
  * @since 1.0
  */
 
+global $dce_user;
+
 add_shortcode( 'dce-user-offers', 'dce_user_page_loader' );
 add_shortcode( 'dce-offers', 'dce_user_page_loader' );
 add_shortcode( 'dce-contact-form', 'dce_user_page_loader' );
@@ -23,6 +25,8 @@ add_shortcode( 'dce-user-messages', 'dce_user_page_loader' );
  */
 function dce_user_page_loader( $attrs, $content, $shortcode )
 {
+	global $dce_user;
+
 	// check current user
 	$dce_user = DCE_User::get_current_user();
 	if ( !$dce_user->exists() )
@@ -122,7 +126,7 @@ function dce_user_register_form()
 	{
 		// form input layout
 		$field_args['value'] = dce_get_value( $field_name, '', true );
-		$register_fields .= DCE_Utiles::form_input( $field_name, $field_args );
+		$register_fields .= dce_form_input( $field_name, $field_args );
 	}
 
 	// hidden fields

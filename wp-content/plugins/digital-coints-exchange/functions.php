@@ -23,6 +23,11 @@ function dce_get_page_by_slug( $page_slug, $output = OBJECT, $post_type = 'page'
 	return DCE_Utiles::get_page_by_slug( $page_slug, $output, $post_type );
 }
 
+function dce_form_input( $field, $args, $echo = false )
+{
+	return DCE_Utiles::form_input( $field, $args, $echo );
+}
+
 class DCE_Utiles
 {
 	static $text_domain = 'dce';
@@ -244,14 +249,16 @@ class DCE_Utiles
 		switch( $args['input'] )
 		{
 			case 'select':
-				$out .= '<select id="'. $field .'" name="'. $field .'"><option value="0"></option>';
+				$out .= '<select id="'. $field .'" name="'. $field .'">';
+				$out .= '<option value="-1">'. ( isset( $args['default'] ) ? $args['default'] : '' ) .'</option>';
 				if( isset($args['source']) )
 				{
 					foreach ( $args['source'] as $option_value => $option_label )
 					{
 						$out .= '<option value="'. $option_value .'"';
-						$out .= $option_value == $args['value'] ? ' selected' : '';
-						$out .= '>'. $option_label . '</option>';
+						$out .= ( $option_value == $args['value'] ? ' selected' : '' ) .'>';
+						$out .= ( is_array( $option_label ) && isset( $option_label['label'] ) ? $option_label['label'] : $option_label );
+						$out .= '</option>';
 					}
 				}
 				$out .= '</select>';
@@ -1172,10 +1179,9 @@ class DCE_Utiles
 		if( '' != $query_var )
 			$value = get_query_var( $query_var );
 		elseif( isset($_REQUEST[$key]) )
-		$value = $_REQUEST[$key];
+			$value = $_REQUEST[$key];
 		elseif( $session && isset($_SESSION['request_data']) && isset($_SESSION['request_data'][$key]) )
-		$value = $_SESSION['request_data'][$key];
-		//unset( $_SESSION['request_data'][$key] );
+			$value = $_SESSION['request_data'][$key];
 
 		if( '' == $value || empty($value) )
 			return '';
