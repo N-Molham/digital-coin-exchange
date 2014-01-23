@@ -16,10 +16,15 @@ function dce_setup_init()
 	 * Register Styles & Scripts
 	 */
 	// styles
-	wp_register_style( 'dce-shared-style', DCE_URL .'/css/shared.css' );
+	wp_register_style( 'dce-shared-style', DCE_URL .'css/shared.css' );
+	wp_enqueue_style( 'dce-shared-style' );
 
 	// js
-	wp_register_script( 'dce-shared-script', DCE_URL .'/js/shared.js', array( 'jquery' ), false, true );
+	wp_register_script( 'dce-shared-script', DCE_URL .'js/shared.js', array( 'jquery' ), false, true );
+	// localized data
+	wp_localize_script( 'dce-shared-script', 'dce', array (
+			'ajax_url' => admin_url( 'admin-ajax.php', is_ssl() ? 'https' : 'http' ),
+	) );
 
 	// restrict access to wp register form
 	if ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false && isset( $_REQUEST['action'] ) && 'register' == $_REQUEST['action'] )
@@ -48,34 +53,55 @@ function dce_setup_init()
 			'hierarchical' => false,
 			'description' => __( 'Clients coins exchange offer', 'dce' ),
 			'supports' => array( 'author' ),
+			'show_in_menu' => true,
 			'public' => true,
 			'show_ui' => true,
-			'show_in_menu' => true,
-			'show_in_nav_menus' => false,
-			'publicly_queryable' => true,
-			'exclude_from_search' => true,
-			'has_archive' => false,
 			'query_var' => 'offer',
+			'rewrite' => array (
+					'slug' => 'offer',
+					'with_front' => false,
+			),
 			'can_export' => true,
-			'rewrite' => true,
 	);
 	register_post_type( DCE_POST_TYPE_OFFER, $args );
 }
 
-add_filter( 'show_admin_bar', 'dce_admin_bar_visibility' );
 /**
- * Hide Admin bar from clients
+ * Registered digital coin types
  * 
- * @param boolean $show
- * @return boolean
+ * @param string $type ( Optional )
+ * @return array|object|boolean
  */
-function dce_admin_bar_visibility( $show )
+function dce_get_coin_types( $type = null )
 {
-	// if not admin hide bar
-	if ( !dce_is_user_admin() )
-		return false;
+	// list of coin types
+	$coin_types = array ( 
+			'bitcoin' => array ( 
+					'label' => __( 'Bitcoin', 'dce' ),
+					'single' => '%d bitcoin',
+					'plural' => '%d bitcoins',
+					'command' => 'bitcoind',
+			),
+			'litecoin' => array ( 
+					'label' => __( 'Litecoin', 'dce' ),
+					'single' => '%d litecoin',
+					'plural' => '%d litecoins',
+					'command' => 'litecoind',
+			),
+			'dogecoin' => array ( 
+					'label' => __( 'Dogecoin', 'dce' ),
+					'single' => '%d dogecoin',
+					'plural' => '%d dogecoins',
+					'command' => 'dogecoind',
+			),
+	);
 
-	return $show;
+	// get specific coin type
+	if ( $type )
+		return isset( $coin_types[$type] ) ? apply_filters( 'dce_coin_type', (object) $coin_types[$type], $type ) : false;
+
+	// return all coin types
+	return apply_filters( 'dce_coin_types', $coin_types );
 }
 
 /**
@@ -209,7 +235,21 @@ function dce_plugin_activation()
 	flush_rewrite_rules();
 }
 
+add_filter( 'show_admin_bar', 'dce_admin_bar_visibility' );
+/**
+ * Hide Admin bar from clients
+ *
+ * @param boolean $show
+ * @return boolean
+*/
+function dce_admin_bar_visibility( $show )
+{
+	// if not admin hide bar
+	if ( !dce_is_user_admin() )
+		return false;
 
+	return $show;
+}
 
 
 
