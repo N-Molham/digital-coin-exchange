@@ -6,6 +6,34 @@
  * @since 1.0
  */
 
+add_action( 'wp_ajax_dce_confirm_offer', 'dce_ajax_admin_offer_actions' );
+add_action( 'wp_ajax_dce_deny_offer', 'dce_ajax_admin_offer_actions' );
+/**
+ * Confirm/Deny user's offer
+ */
+function dce_ajax_admin_offer_actions()
+{
+	if ( !current_user_can( 'manage_options' ) )
+		dce_ajax_error( 'permission', __( 'You do not have permission to access here.', 'dce' ) );
+
+	// offer ID
+	$offer_id = (int) dce_get_value( 'offer' );
+	if ( !$offer_id )
+		dce_ajax_error( 'offer', __( 'Invalid offer ID', 'dce' ) );
+
+	// target action/status
+	$status = str_replace( array( 'dce_', '_offer' ), '', dce_get_value( 'action' ) );
+	$status = 'confirm' == $status ? 'publish' : 'denied';
+
+	// update post
+	$offer_id = wp_update_post( array( 'ID' => $offer_id, 'post_status' => $status ), true );
+	if ( is_wp_error( $offer_id ) )
+		dce_ajax_error( $offer_id->get_error_code(), $offer_id->get_error_message() );
+
+	// success
+	dce_ajax_response( $status );
+}
+
 add_action( 'wp_ajax_create_offer', 'dce_ajax_create_offer' );
 /**
  * Create new offer

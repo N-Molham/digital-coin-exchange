@@ -175,6 +175,7 @@ class DCE_User extends WP_User
 	{
 		// default args
 		$args = wp_parse_args( $args, array (
+				'ID' => '',
 				'post_type' => DCE_POST_TYPE_OFFER,
 				'author' => $this->ID,
 				'nopaging' => true,
@@ -182,7 +183,17 @@ class DCE_User extends WP_User
 		) );
 
 		// query offers
-		$offers = get_posts( $args );
+		$single = !empty( $args['ID'] );
+		if ( $single )
+		{
+			// single offer
+			$offers = array( get_post( $args['ID'] ) );
+		}
+		else
+		{
+			// all offers
+			$offers = get_posts( $args );
+		}
 
 		// holders
 		$offer = null;
@@ -198,24 +209,42 @@ class DCE_User extends WP_User
 			{
 				/* @var $offer WP_Post */
 				$offer =& $offers[$i];
-	
-				$return[] = array (
-						'ID' => $offer->ID,
-						'from_amount' => $offer->from_amount,
-						'from_coin' => $offer->from_coin,
-						'from_display' => _n( sprintf( $coin_types[$offer->from_coin]['single'], $offer->from_amount ), sprintf( $coin_types[$offer->from_coin]['plural'], $offer->from_amount ), $offer->from_amount ),
-						'to_amount' => $offer->to_amount,
-						'to_coin' => $offer->to_coin,
-						'to_display' => _n( sprintf( $coin_types[$offer->to_coin]['single'], $offer->to_amount ), sprintf( $coin_types[$offer->to_coin]['plural'], $offer->to_amount ), $offer->to_amount ),
-						'details' => $offer->post_content,
-						'datetime' => $offer->post_date,
-						'status' => $offer->post_status,
-						'url' => get_permalink( $offer->ID ),
-				);
+
+				// wrap offer data
+				$return[] = self::wrap_offer( $offer, $coin_types );
 			}
 		}
 
-		return apply_filters( 'dce_user_offers', $return, $this->ID );
+		return apply_filters( 'dce_user_offers', $single ? $return[0] : $return, $this->ID );
+	}
+
+	/**
+	 * Wrap offer data 
+	 * 
+	 * meta data, offer details, etc...
+	 * 
+	 * @param WP_Post $offer
+	 * @param array $coin_types
+	 * @return array|boolean
+	 */
+	public static function wrap_offer( $offer, &$coin_types )
+	{
+		if ( !$offer )
+			return false;
+
+		return array (
+				'ID' => $offer->ID,
+				'from_amount' => $offer->from_amount,
+				'from_coin' => $offer->from_coin,
+				'from_display' => _n( sprintf( $coin_types[$offer->from_coin]['single'], $offer->from_amount ), sprintf( $coin_types[$offer->from_coin]['plural'], $offer->from_amount ), $offer->from_amount ),
+				'to_amount' => $offer->to_amount,
+				'to_coin' => $offer->to_coin,
+				'to_display' => _n( sprintf( $coin_types[$offer->to_coin]['single'], $offer->to_amount ), sprintf( $coin_types[$offer->to_coin]['plural'], $offer->to_amount ), $offer->to_amount ),
+				'details' => $offer->post_content,
+				'datetime' => $offer->post_date,
+				'status' => $offer->post_status,
+				'url' => get_permalink( $offer->ID ),
+		);
 	}
 
 	/**

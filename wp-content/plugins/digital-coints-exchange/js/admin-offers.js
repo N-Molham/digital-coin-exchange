@@ -5,15 +5,14 @@
 	jQuery( function( $ ) {
 
 		// new offer submit
-		$( '#new-offer-form' ).on( 'submit', function( e ) {
+		$( '.offer-actions .button' ).on( 'click', function( e ) {
 			e.preventDefault();
-			var $form = $( this );
 
 			// post data
-			$.post( dce.ajax_url, $form.serialize(), function( response ) {
+			$.post( ajaxurl, $(this).data(), function( response ) {
 				if ( response.status ) {
 					// success
-					location.href = update_query_value( location.href, 'view', 'view_offers' );
+					location.href = location.href;
 				} else {
 					// error
 					alert( response.error.message );
