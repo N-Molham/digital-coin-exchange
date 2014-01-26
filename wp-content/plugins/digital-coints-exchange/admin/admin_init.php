@@ -92,6 +92,20 @@ function dce_admin_enqueue_scripts( $current_page )
 	 * Styles
 	 */
 	wp_enqueue_style( 'dce-shared-style' );
+	wp_enqueue_style( 'dce-admin-style', DCE_URL .'css/admin.css' );
+
+	// specific pages enqueues
+	switch ( $current_page )
+	{
+		case 'edit.php':
+			if ( DCE_POST_TYPE_OFFER == $_GET['post_type'] )
+			{
+				// lightbox / thickbox
+				add_thickbox();
+				wp_enqueue_script( 'dce-admin-offers', DCE_URL .'/js/admin-offers.js', array( 'dce-shared-script' ), false, true );
+			}
+			break;
+	}
 }
 
 

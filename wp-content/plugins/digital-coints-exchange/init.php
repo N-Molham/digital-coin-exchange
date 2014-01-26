@@ -33,6 +33,7 @@ require DCE_PATH . 'functions.php';
 require DCE_PATH . 'setup.php';
 require DCE_PATH . 'template_tags.php'; // template tags for easy theming
 require DCE_PATH . 'admin/admin_init.php';
+require DCE_PATH . 'admin/offers.php';
 require DCE_PATH . 'users.php';
 require DCE_PATH . 'ajax.php';
 require DCE_PATH . 'ajax-offers.php';

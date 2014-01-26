@@ -30,6 +30,17 @@ function dce_setup_init()
 	if ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false && isset( $_REQUEST['action'] ) && 'register' == $_REQUEST['action'] )
 		dce_redirect( home_url() );
 
+	// register post status
+	register_post_status( 'denied', array (
+			'label' => _x( 'Denied', 'post', 'dce' ),
+			'public' => true,
+			'internal' => true,
+			'exclude_from_search' => false,
+			'show_in_admin_all_list' => true,
+			'show_in_admin_status_list' => true,
+			'label_count' => _n_noop( 'Denied <span class="count">(%s)</span>', 'Denied <span class="count">(%s)</span>', 'dce' ),
+	) );
+
 	/**
 	 * Register post types
 	 */
