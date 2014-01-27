@@ -34,6 +34,29 @@ function dce_ajax_admin_offer_actions()
 	dce_ajax_response( $status );
 }
 
+add_action( 'wp_ajax_cancel_offer', 'dce_ajax_cancel_offer' );
+/**
+ * Cancel offer
+ */
+function dce_ajax_cancel_offer()
+{
+	// offer ID
+	$offer_id = (int) dce_get_value( 'offer' );
+	if ( !$offer_id || !check_ajax_referer( 'dce_cancel_nonce_'. $offer_id, 'nonce', false ) )
+		dce_ajax_error( 'offer', __( 'Unknown offer!!!', 'dce' ) );
+
+	// check owner
+	$post = get_post( $offer_id );
+	if ( !$post || wp_get_current_user()->ID != $post->post_author )
+		dce_ajax_error( 'permission', __( 'Unknown offer!!!', 'dce' ) );
+
+	// cancel/delete offer
+	wp_delete_post( $offer_id, true );
+
+	// success
+	dce_ajax_response( 'done' );
+}
+
 add_action( 'wp_ajax_create_offer', 'dce_ajax_create_offer' );
 /**
  * Create new offer

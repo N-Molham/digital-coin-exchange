@@ -179,7 +179,7 @@ class DCE_User extends WP_User
 				'post_type' => DCE_POST_TYPE_OFFER,
 				'author' => $this->ID,
 				'nopaging' => true,
-				'post_status' => 'any',
+				'post_status' => array( 'publish', 'pending' ),
 		) );
 
 		// query offers
