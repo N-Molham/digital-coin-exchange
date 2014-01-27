@@ -27,9 +27,11 @@ function dce_user_page_loader( $attrs, $content, $shortcode )
 {
 	global $dce_user;
 
+	$public_tags = array( 'dce-offers', 'dce-contact-form', 'dce-user-profile' );
+
 	// check current user
 	$dce_user = DCE_User::get_current_user();
-	if ( !$dce_user->exists() )
+	if ( !$dce_user->exists() && !in_array( $shortcode, $public_tags ) )
 		return '<div class="alert error"><div class="msg">'. __( 'This is a client access only.', 'dce' ) .'</div></div>';
 
 	// determine page path

@@ -30,7 +30,7 @@ switch ( $current_view )
 		$offers = $dce_user->get_offers();
 
 		// offers table start
-		$output .= dce_table_start() .'<thead><tr>';
+		$output .= dce_table_start( 'user-offers' ) .'<thead><tr>';
 		$output .= '<th>'. __( 'Original', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Target', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Date &amp; Time', 'dce' ) .'</th>';
@@ -46,7 +46,9 @@ switch ( $current_view )
 			$output .= '<td>'. $offer['to_display'] .'</td>';
 			$output .= '<td>'. $offer['datetime'] .'</td>';
 			$output .= '<td>'. $offer['status'] .'</td>';
-			$output .= '<td>-</td></tr>';
+			$output .= '<td><a href="#" class="button small red cancel-offer" ';
+			$output .= 'data-action="cancel_offer" data-offer="'. $offer['ID'] .'" data-nonce="'. wp_create_nonce( 'dce_cancel_nonce_'. $offer['ID'] ) .'">';
+			$output .= __( 'Cancel', 'offer' ) .'</a></td></tr>';
 
 			// offer details
 			if ( !empty( $offer['details'] ) )
@@ -55,9 +57,10 @@ switch ( $current_view )
 
 		// table end
 		$output .= '</tbody>'. dce_table_end();
+		$output .= dce_divider();
 
 		// new offer link
-		$output .= '<a href="'. add_query_arg( 'view', 'create_offer' ) .'">'. __( 'Create New Offer', 'dce' ) .'</a>';
+		$output .= '<a href="'. add_query_arg( 'view', 'create_offer' ) .'" class="button small green">'. __( 'Create New Offer', 'dce' ) .'</a>';
 		break;
 
 	case 'create_offer':
