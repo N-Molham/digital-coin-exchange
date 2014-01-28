@@ -12,3 +12,7 @@
 #open-offers .offer-details .content {
 	display: none;
 }
+
+#offer-search .search-holder {
+	margin-bottom: 10px;
+}
