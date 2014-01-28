@@ -17,6 +17,7 @@ function dce_setup_init()
 	 */
 	// styles
 	wp_register_style( 'dce-shared-style', DCE_URL .'css/shared.css' );
+	wp_register_style( 'dce-public-style', DCE_URL .'css/public.css' );
 	wp_enqueue_style( 'dce-shared-style' );
 
 	// js

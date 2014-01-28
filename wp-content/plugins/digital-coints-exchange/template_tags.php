@@ -94,7 +94,7 @@ function dce_table_start( $id = '' )
  */
 function dce_table_end()
 {
-	return '</table></div>';
+	return '</table></div>'. dce_divider();
 }
 
 /**

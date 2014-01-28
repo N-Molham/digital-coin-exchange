@@ -57,7 +57,6 @@ switch ( $current_view )
 
 		// table end
 		$output .= '</tbody>'. dce_table_end();
-		$output .= dce_divider();
 
 		// new offer link
 		$output .= '<a href="'. add_query_arg( 'view', 'create_offer' ) .'" class="button small green">'. __( 'Create New Offer', 'dce' ) .'</a>';

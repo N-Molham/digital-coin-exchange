@@ -32,7 +32,7 @@ function dce_user_page_loader( $attrs, $content, $shortcode )
 	// check current user
 	$dce_user = DCE_User::get_current_user();
 	if ( !$dce_user->exists() && !in_array( $shortcode, $public_tags ) )
-		return '<div class="alert error"><div class="msg">'. __( 'This is a client access only.', 'dce' ) .'</div></div>';
+		return dce_alert_message( __( 'This is a client access only.', 'dce' ), 'error' );
 
 	// determine page path
 	$user_page = DCE_PATH .'user-pages'. DIRECTORY_SEPARATOR . str_replace( 'dce-', '', $shortcode ) .'.php';
@@ -45,7 +45,7 @@ function dce_user_page_loader( $attrs, $content, $shortcode )
 	}
 
 	// not found
-	return '<div class="alert error"><div class="msg">'. __( 'Page not found.', 'dce' ) .'</div></div>';
+	return dce_alert_message( __( 'Page not found.', 'dce' ), 'error' );
 }
 
 add_shortcode( 'dce-login-form', 'dce_user_login_form' );
@@ -58,7 +58,7 @@ function dce_user_login_form()
 {
 	// logged-in user
 	if ( is_user_logged_in() )
-		return '<div class="alert error"><div class="msg">'. __( 'Your already logged-in.', 'dce' ) .'</div></div>';
+		return dce_alert_message( __( 'Your already logged-in.', 'dce' ), 'error' );
 
 	// style
 	wp_enqueue_style( 'dce-shared-style' );
@@ -97,16 +97,16 @@ function dce_user_register_form()
 {
 	// whether registration is open or not
 	if ( '0' == get_option( 'users_can_register' ) )
-		return '<div class="alert error"><div class="msg">'. __( 'Registration is closed right now, try again later.', 'dce' ) .'</div></div>';
+		return dce_alert_message( __( 'Registration is closed right now, try again later.', 'dce' ), 'error' );
 
 	// logged-in user
 	if ( is_user_logged_in() )
 	{
 		// success message
 		if ( isset( $_GET['register'] ) && 'success' == $_GET['register'] )
-			return '<div class="alert success"><div class="msg">'. __( 'Registration successful', 'dce' ) .'</div></div>';
+			return dce_alert_message( __( 'Registration successful', 'dce' ), 'success' );
 
-		return '<div class="alert error"><div class="msg">'. __( 'Your already registered.', 'dce' ) .'</div></div>';
+		return dce_alert_message( __( 'Your already registered.', 'dce' ), 'error' );
 	}
 
 	// style
