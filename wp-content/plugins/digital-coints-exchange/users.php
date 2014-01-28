@@ -126,6 +126,30 @@ class DCE_User extends WP_User
 	}
 
 	/**
+	 * Get user's display name
+	 * 
+	 * @return string
+	 */
+	public function display_name()
+	{
+		return $this->display_name;
+	}
+
+	/**
+	 * Get user profile page
+	 * 
+	 * @return string
+	 */
+	public function profile_url()
+	{
+		$profile_page = dce_get_pages( 'profile' )->url;
+		if( !preg_match( '/\/$/', $profile_page ) )
+			$profile_page .= '/';
+
+		return dce_get_pages( 'profile' )->url . $this->ID;
+	}
+
+	/**
 	 * Insert/Update user offer 
 	 * 
 	 * @param int $from_amount
@@ -175,9 +199,21 @@ class DCE_User extends WP_User
 	{
 		// default args
 		$args = wp_parse_args( $args, array (
+				'author' => $this->ID,
+		) );
+
+		$results = self::query_offers( $args );
+
+		return apply_filters( 'dce_user_offers', $results, $this->ID );
+	}
+
+	public static function query_offers( $args )
+	{
+		// default args
+		$args = wp_parse_args( $args, array (
 				'ID' => '',
 				'post_type' => DCE_POST_TYPE_OFFER,
-				'author' => $this->ID,
+				'author' => '',
 				'nopaging' => true,
 				'post_status' => array( 'publish', 'pending' ),
 		) );
@@ -203,21 +239,21 @@ class DCE_User extends WP_User
 		if ( $len )
 		{
 			$coin_types = dce_get_coin_types();
-
+		
 			// wrapper loop
 			for ( $i = 0; $i < $len; $i++ )
 			{
 				/* @var $offer WP_Post */
 				$offer =& $offers[$i];
-
+		
 				// wrap offer data
 				$return[] = self::wrap_offer( $offer, $coin_types );
 			}
 		}
 
-		return apply_filters( 'dce_user_offers', $single ? $return[0] : $return, $this->ID );
+		return apply_filters( 'dce_query_offers', $single ? $return[0] : $return );
 	}
-
+	
 	/**
 	 * Wrap offer data 
 	 * 
@@ -232,8 +268,10 @@ class DCE_User extends WP_User
 		if ( !$offer )
 			return false;
 
+		// data wrapper
 		return array (
 				'ID' => $offer->ID,
+				'user' => isset( $this ) ? $this : new DCE_User( $offer->post_author ),
 				'from_amount' => $offer->from_amount,
 				'from_coin' => $offer->from_coin,
 				'from_display' => _n( sprintf( $coin_types[$offer->from_coin]['single'], $offer->from_amount ), sprintf( $coin_types[$offer->from_coin]['plural'], $offer->from_amount ), $offer->from_amount ),

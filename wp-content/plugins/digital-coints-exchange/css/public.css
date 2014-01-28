@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+
+.disabled {
+	pointer-events: none;
+}
+
+.button.disabled {
+	opacity: 0.5;
+}
+
+#open-offers .offer-details,
+#open-offers .offer-details .content {
+	display: none;
+}
