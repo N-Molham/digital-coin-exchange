@@ -209,6 +209,8 @@ class DCE_User extends WP_User
 
 	public static function query_offers( $args )
 	{
+		global $wpdb;
+
 		// default args
 		$args = wp_parse_args( $args, array (
 				'ID' => '',
