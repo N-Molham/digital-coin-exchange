@@ -12,6 +12,9 @@ wp-content/themes/twentythirteen/
 wp-content/themes/twentyfourteen/
 wp-content/themes/headway/
 wp-content/plugins/akismet/
+wp-content/plugins/hello.php
+wp-config-sample.php
+wp-content/themes/Avada/0 - READ ME FIRST.rtf
 digcoin.zip
 index.php
 jsonRPCClient.php
@@ -36,3 +39,6 @@ wp-settings.php
 wp-signup.php
 wp-trackback.php
 xmlrpc.php
+
+syntax: regexp
+^\.
