@@ -167,11 +167,15 @@ function dce_user_home_register_form()
 	// logged-in user
 	if ( is_user_logged_in() )
 	{
-		// success message
-		if ( isset( $_GET['register'] ) && 'success' == $_GET['register'] )
-			return dce_alert_message( __( 'Registration successful', 'dce' ), 'success' );
-
-		return dce_alert_message( __( 'Your already registered.', 'dce' ), 'error' );
+		$user = DCE_User::get_current_user();
+		$out = "<br><br><h1> Welcome ".$user->first_name."</h1>";
+		$out .= "<ul style='text-align: left;font-size: 3.2em;'>";
+		$out .="<li><a href='#'>Manage Profile</a></li>";
+		$out .="<li><a href='#'>Messages</a></li>";
+		$out .="<li><a href='#'>Offers</a></li>";
+		$out .="<li><a href='#'>New Escrow</a></li>";
+		$out .="<li><a href='#'>Search Offers</a></li></ul>";
+		return $out ;
 	}
 
 
