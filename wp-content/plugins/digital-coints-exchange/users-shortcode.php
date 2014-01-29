@@ -58,7 +58,7 @@ function dce_user_login_form()
 {
 	// logged-in user
 	if ( is_user_logged_in() )
-		return dce_alert_message( __( 'You are already logged-in.', 'dce' ), 'info' );
+		return dce_alert_message( __( 'You are already logged-in.', 'dce' ), 'general' );
 
 	// style
 	wp_enqueue_style( 'dce-shared-style' );
@@ -71,15 +71,27 @@ function dce_user_login_form()
 		$out .= DCE_Utiles::show_form_errors();
 
 	// login form
-	$out .= wp_login_form( array (
-			'echo' => true,
-			'redirect' => dce_get_pages( 'user-offers' )->url,
-			'form_id' => 'login-form',
-			'label_username' => __( 'E-mail', 'dce' ),
-			'label_password' => __( 'Password', 'dce' ),
-			'label_remember' => __( 'Remember Me', 'dce' ),
-			'label_log_in' => __( 'Log In', 'dce' ),
-	) );
+	$out .= '<div id="customer_login"><div id="customer_login_box">';
+	$out .= '<h2>'. __( 'Login', 'dce' ) .'</h2><div class="sep-double"></div>';
+	$out .= '<form action="'. wp_login_url() .'" method="post" name="login-form" id="login-form" class="login">';
+
+	// Username/email
+	$out .= '<p class="form-row form-row-first"><input type="text" class="input-text" name="log" id="user_login" placeholder="'. __( 'E-mail', 'dce' ) .'"></p>';
+
+	// password
+	$out .= '<p class="form-row form-row-last"><input class="input-text" type="password" name="pwd" id="user_pass" placeholder="'. __( 'Password', 'dce' ) .'"></p>';
+	$out .= '<div class="clear"></div>';
+
+	// hidden fields
+	$out .= '<p class="form-row"><input type="submit" class="button comment-submit small" name="wp-submit" value="'. __( 'Log In', 'dce' ) .'">';
+	$out .= '<input type="hidden" name="redirect_to" value="'. dce_get_pages( 'user-offers' )->url .'">';
+
+	// rememeber login
+	$out .= '<span class="remember-box">';
+	$out .= '<label for="rememberme"><input name="rememberme" type="checkbox" id="rememberme" value="forever">'. __( 'Remember Me', 'dce' ) .'</label></span></p>';
+
+	// form end
+	$out .= '</form></div></div>';
 
 	// before form start
 	$out .= apply_filters( 'dce_after_login_form', '' );

@@ -104,9 +104,9 @@ function dce_table_end()
  * @param string $type
  * @return string
  */
-function dce_alert_message( $message, $type = 'general' )
+function dce_alert_message( $message, $type = 'general', $close_link = false )
 {
-	return '<div class="alert '. $type .'"><div class="msg">'. $message .'</div></div>';
+	return '<div class="alert '. $type .'"><div class="msg">'. $message .'</div>'. ( $close_link ? '<a href="#" class="toggle-alert">'. __( 'Toggle', 'dce' ) .'</a>' : '' ) .'</div>';
 }
 
 
