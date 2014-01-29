@@ -16,8 +16,9 @@ function dce_users_init()
 	DCE_Utiles::catch_request_data();
 
 	// register handler
-	if ( isset( $_POST['register_user'], $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'], 'dce_user_register' ) )
+	if ( isset( $_POST['register_user'], $_POST['nonce'] ) && wp_verify_nonce( $_POST['nonce'] ,  'dce_user_register' ) )
 	{
+		//var_dump($_POST);exit();
 		$register_fields = DCE_User::data_fields();
 		foreach ( $register_fields as $field_name => &$field_args )
 		{
@@ -307,7 +308,7 @@ class DCE_User extends WP_User
 					'input' => 'text',
 					'label' => __( 'Last Name', 'dce' ),
 					'data_type' => 'text',
-					'required' => true,
+					'required' => false,
 					'min_length' => 3,
 					'max_length' => 32,
 			),

@@ -58,7 +58,7 @@ function dce_user_login_form()
 {
 	// logged-in user
 	if ( is_user_logged_in() )
-		return dce_alert_message( __( 'Your already logged-in.', 'dce' ), 'error' );
+		return dce_alert_message( __( 'You are already logged-in.', 'dce' ), 'info' );
 
 	// style
 	wp_enqueue_style( 'dce-shared-style' );
@@ -73,7 +73,7 @@ function dce_user_login_form()
 	// login form
 	$out .= wp_login_form( array (
 			'echo' => true,
-			'redirect' => dce_get_pages( 'dashboard' )->url,
+			'redirect' => dce_get_pages( 'user-offers' )->url,
 			'form_id' => 'login-form',
 			'label_username' => __( 'E-mail', 'dce' ),
 			'label_password' => __( 'Password', 'dce' ),
@@ -86,6 +86,7 @@ function dce_user_login_form()
 
 	return apply_filters( 'dce_login_form', $out );
 }
+
 
 add_shortcode( 'dce-register-form', 'dce_user_register_form' );
 /**
@@ -151,5 +152,58 @@ function dce_user_register_form()
 
 
 
+add_shortcode( 'dce-home-register-form', 'dce_user_home_register_form' );
+/**
+ * User's register form layout
+ * 
+ * @return string
+ */
+function dce_user_home_register_form()
+{
+	// whether registration is open or not
+	if ( '0' == get_option( 'users_can_register' ) )
+		return dce_alert_message( __( 'Registration is closed right now, try again later.', 'dce' ), 'error' );
+
+	// logged-in user
+	if ( is_user_logged_in() )
+	{
+		// success message
+		if ( isset( $_GET['register'] ) && 'success' == $_GET['register'] )
+			return dce_alert_message( __( 'Registration successful', 'dce' ), 'success' );
+
+		return dce_alert_message( __( 'Your already registered.', 'dce' ), 'error' );
+	}
+
+
+	// before form start
+	$out = apply_filters( 'dce_before_home_register_form', '' );
+
+ 	if ( DCE_Utiles::has_form_errors() )
+	{
+		//var_dump(DCE_Utiles::show_form_errors());exit();
+		DCE_Utiles::clear_values();
+		if(strpos( DCE_Utiles::show_form_errors(), 'username already exists') !== false)	
+			$out .= "<h4 style='color:red !important; margin-bottom:0'>This email already Exists!</h4>";
+		else
+			$out .= "<h4 style='color:red !important; margin-bottom:0'>Please enter all fields</h4>";
+
+	}
+	$out .= '<form method="post" action="" id="home_reg" >';
+	$out .= '<h2>Create Escrow - Free !</h2>';
+
+	$out .= '<p class="form-row form-row-first validate-required" id="name"><input type="text" class="input-text" name="first_name" d="billing_first_name" placeholder="Name" value=""></p>';
+
+	$out .='<p class="form-row form-row-first validate-required validate-email" id="email_field"><input type="text" class="input-text" name="email" id="email" placeholder="Email" value=""></p>';
+
+	$out .='<p class="form-row form-row-first validate-required validate-password" id="password_field"><input type="password" class="input-text" name="password" id="password" placeholder="Select a password" value=""></p>';
+	$out .='<p><a class="button small default" title="" href="Javascript:document.forms[0].submit()" id="home_reg_start" target="_self">Start Escrow</a></p>';
+	$out .= wp_nonce_field( 'dce_user_register', 'nonce', true, false );
+	$out .= '<input type="hidden" name="register_user" value="Register">';
+$out .='</form>';
+	
+	$out .= apply_filters( 'dce_after_home_register_form', '' );
+
+	return apply_filters( 'dce_home_register_form', $out );
+}
 
 

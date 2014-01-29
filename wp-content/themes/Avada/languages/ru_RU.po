@@ -1,0 +1,1108 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: For Avada theme v3.0\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2013-12-16 09:15+0500\n"
+"Last-Translator: Haris <info@theme-fusion.com>\n"
+"Language-Team: mixer <mixer@clarionlife.net>\n"
+"Language: Russian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: /Users/muhammadharis/Documents/Avada\n"
+
+msgid "Hello, %s:"
+msgstr ""
+
+# <i class="fontawesome-icon medium circle-yes icon-envelope-alt"></i>
+# <span><?php echo __('Mail This', 'Avada'); ?></span><?php echo __('Product', 'Avada'); ?>
+# </a>
+msgid "Mail This"
+msgstr ""
+
+# <i class="fontawesome-icon medium circle-yes icon-pinterest"></i>
+# <span><?php echo __('Pin This', 'Avada'); ?></span><?php echo __('Product', 'Avada'); ?>
+# </a>
+msgid "Pin This"
+msgstr ""
+
+msgid "Product"
+msgstr ""
+
+# <i class="fontawesome-icon medium circle-yes icon-twitter"></i>
+# <span><?php echo __('Tweet This', 'Avada'); ?></span><?php echo __('Product', 'Avada'); ?>
+# </a>
+msgid "Tweet This"
+msgstr ""
+
+# <i class="fontawesome-icon medium circle-yes icon-facebook"></i>
+# <span><?php echo __('Share On', 'Avada'); ?></span>Facebook
+# </a>
+msgid "Share On"
+msgstr ""
+
+msgid "Change Address"
+msgstr ""
+
+#, fuzzy
+msgid "View Orders"
+msgstr "Просмотр проекта"
+
+msgid "Re-enter password"
+msgstr ""
+
+#, fuzzy
+msgid "Email"
+msgstr "E-mail:"
+
+msgid "Register An Account"
+msgstr ""
+
+msgid "Lost Password?"
+msgstr ""
+
+msgid "Login"
+msgstr ""
+
+msgid "Username or Email Address"
+msgstr ""
+
+msgid "I'm a Returning Customer"
+msgstr ""
+
+msgid "Enter the following fields to change the password on your account"
+msgstr ""
+
+msgid "Change Password"
+msgstr ""
+
+#, fuzzy
+msgid "Show details"
+msgstr "Показать детали"
+
+msgid "Review &amp Payment"
+msgstr ""
+
+msgid "Continue"
+msgstr ""
+
+msgid "Review &amp; Payment"
+msgstr ""
+
+msgid "Shipping Address"
+msgstr ""
+
+msgid "Billing Address"
+msgstr ""
+
+#
+# <input name="coupon_code" class="input-text" id="coupon_code" value="" /> <input type="submit" class="button comment-submit small" name="apply_coupon" value="<?php _e( 'Apply', 'Avada' ); ?>" />
+#
+msgid "Apply"
+msgstr ""
+
+msgid "Have A Promotional Code?"
+msgstr ""
+
+msgid "Item"
+msgstr ""
+
+msgid "You Have %d items In Your Cart"
+msgstr ""
+
+msgid "says"
+msgstr ""
+
+msgid "Recent"
+msgstr "Последние"
+
+msgid "Popular"
+msgstr "Популярные"
+
+msgid "Web:"
+msgstr "Сайт:"
+
+msgid "Fax:"
+msgstr "Факс:"
+
+# <?php if($instance['mobile']): ?>
+# <p class="mobile"><?php _e('Mobile:', 'Avada'); ?> <?php echo $instance['mobile']; ?></p>
+# <?php endif; ?>
+msgid "Mobile:"
+msgstr ""
+
+msgid "Phone:"
+msgstr "Телефон:"
+
+msgid "Related Posts"
+msgstr "Похожие записи"
+
+msgid "About the Author:"
+msgstr "Об авторе:"
+
+msgid "Share This Story, Choose Your Platform!"
+msgstr "Поделиться ссылкой, Выберите способ!"
+
+msgid "Related Projects"
+msgstr "Похожие проекты"
+
+msgid "Copyright"
+msgstr "Авторское право"
+
+msgid "Project URL"
+msgstr "Ссылка на проект"
+
+msgid "Tags"
+msgstr ""
+
+msgid "Categories"
+msgstr "Категории"
+
+msgid "Skills Needed"
+msgstr "Требуемый уровень"
+
+msgid "Project Details"
+msgstr "Детали проекта"
+
+msgid "Project Description"
+msgstr "Описание проекта"
+
+# <?php if(is_page($post_parent)): ?><?php endif; ?>
+# <li <?php if(is_page($post_parent)): ?>class="current_page_item"<?php endif; ?>><a href="<?php echo get_permalink($post_parent); ?>" title="<?php echo __('Back to Parent Page', 'Avada'); ?>"><?php echo get_the_title($post_parent); ?></a></li>
+# <?php
+# wpml-name: 13a1c246a6d1a5ae1a40f5260a99ac1e
+msgid "Back to Parent Page"
+msgstr ""
+
+msgid "If you want to rephrase your query, here is your chance:"
+msgstr "Если вы хотите изменить формулировку запроса, это ваш шанс:"
+
+msgid "Try again!"
+msgstr "Попробуйте еще раз!"
+
+msgid "Oops!"
+msgstr "Упс!"
+
+msgid "Couldn't find what you're looking for!"
+msgstr "Не удалось найти то, что вы ищете!"
+
+msgid "View Project"
+msgstr "Просмотр проекта"
+
+msgid "Learn More"
+msgstr "Узнать больше"
+
+# <?php elseif ( is_year() ) : ?>
+# <?php printf( __( 'Yearly Archives: %s', 'Avada' ), '<span>' . get_the_date( _x( 'Y', 'yearly archives date format', 'Avada' ) ) . '</span>' ); ?>
+# <?php elseif ( is_author() ) : ?>
+msgid "Y"
+msgstr ""
+
+# <?php elseif ( is_month() ) : ?>
+# <?php printf( __( 'Monthly Archives: %s', 'Avada' ), '<span>' . get_the_date( _x( 'F Y', 'monthly archives date format', 'Avada' ) ) . '</span>' ); ?>
+# <?php elseif ( is_year() ) : ?>
+msgid "F Y"
+msgstr ""
+
+msgid "Yearly Archives: %s"
+msgstr "Годовой архив: %s"
+
+msgid "Monthly Archives: %s"
+msgstr "Месячные архивы: %s"
+
+msgid "Daily Archives: %s"
+msgstr "Дневные архивы: %s"
+
+msgid "Error 404 Page"
+msgstr "Ошибка 404"
+
+msgid "Search results for:"
+msgstr "Результат поиска для:"
+
+#, fuzzy
+msgid "Products"
+msgstr "Просмотр проекта"
+
+#, fuzzy
+msgid " Products"
+msgstr "Просмотр проекта"
+
+# $html .= '<li>';
+# $html .= '<span class="current-li"><a>'.__('Show', 'Avada').' <strong>'.$per_page.' '.__(' Products', 'Avada').'</strong></a></span>';
+# $html .= '<ul>';
+msgid "Show"
+msgstr ""
+
+# $html .= '<li class="'.(($pob == 'date') ? 'current': '').'"><a href="'.tf_addURLParameter($query_string, 'product_orderby', 'date').'">'.__('Sort by', 'Avada').' <strong>'.__('Date', 'Avada').'</strong></a></li>';
+# $html .= '<li class="'.(($pob == 'rating') ? 'current': '').'"><a href="'.tf_addURLParameter($query_string, 'product_orderby', 'rating').'">'.__('Sort by', 'Avada').' <strong>'.__('Rating', 'Avada').'</strong></a></li>';
+# $html .= '</ul>';
+msgid "Rating"
+msgstr ""
+
+# $html .= '<li class="'.(($pob == 'price') ? 'current': '').'"><a href="'.tf_addURLParameter($query_string, 'product_orderby', 'price').'">'.__('Sort by', 'Avada').' <strong>'.__('Price', 'Avada').'</strong></a></li>';
+# $html .= '<li class="'.(($pob == 'date') ? 'current': '').'"><a href="'.tf_addURLParameter($query_string, 'product_orderby', 'date').'">'.__('Sort by', 'Avada').' <strong>'.__('Date', 'Avada').'</strong></a></li>';
+# $html .= '<li class="'.(($pob == 'rating') ? 'current': '').'"><a href="'.tf_addURLParameter($query_string, 'product_orderby', 'rating').'">'.__('Sort by', 'Avada').' <strong>'.__('Rating', 'Avada').'</strong></a></li>';
+msgid "Date"
+msgstr ""
+
+# $html .= '<li class="'.(($pob == 'name') ? 'current': '').'"><a href="'.tf_addURLParameter($query_string, 'product_orderby', 'name').'">'.__('Sort by', 'Avada').' <strong>'.__('Name', 'Avada').'</strong></a></li>';
+# $html .= '<li class="'.(($pob == 'price') ? 'current': '').'"><a href="'.tf_addURLParameter($query_string, 'product_orderby', 'price').'">'.__('Sort by', 'Avada').' <strong>'.__('Price', 'Avada').'</strong></a></li>';
+# $html .= '<li class="'.(($pob == 'date') ? 'current': '').'"><a href="'.tf_addURLParameter($query_string, 'product_orderby', 'date').'">'.__('Sort by', 'Avada').' <strong>'.__('Date', 'Avada').'</strong></a></li>';
+msgid "Price"
+msgstr ""
+
+# $html .= '<li class="'.(($pob == 'default') ? 'current': '').'"><a href="'.tf_addURLParameter($query_string, 'product_orderby', 'default').'">'.__('Sort by', 'Avada').' <strong>'.__('Default Order', 'Avada').'</strong></a></li>';
+# $html .= '<li class="'.(($pob == 'name') ? 'current': '').'"><a href="'.tf_addURLParameter($query_string, 'product_orderby', 'name').'">'.__('Sort by', 'Avada').' <strong>'.__('Name', 'Avada').'</strong></a></li>';
+# $html .= '<li class="'.(($pob == 'price') ? 'current': '').'"><a href="'.tf_addURLParameter($query_string, 'product_orderby', 'price').'">'.__('Sort by', 'Avada').' <strong>'.__('Price', 'Avada').'</strong></a></li>';
+msgid "Name"
+msgstr ""
+
+#, fuzzy
+msgid "Default Order"
+msgstr "Последние"
+
+# $html .= '<li>';
+# $html .= '<span class="current-li"><a>'.__('Sort by', 'Avada').' <strong>'.__('Default Order', 'Avada').'</strong></a></span>';
+# $html .= '<ul>';
+msgid "Sort by"
+msgstr ""
+
+# 'dropdown_goto' => __('Go to...', 'Avada'),
+# 'mobile_nav_cart' => __('Shopping Cart', 'Avada'),
+# 'page_smoothHeight' => $smoothHeight,
+# wpml-name: b75443a19207ed3a3552edda86536857
+msgid "Shopping Cart"
+msgstr ""
+
+# wp_localize_script('avada', 'js_local_vars', array(
+# 'dropdown_goto' => __('Go to...', 'Avada')
+# )
+msgid "Go to..."
+msgstr ""
+
+msgid "Theme Options"
+msgstr "Настройки темы"
+
+msgid "Your comment is awaiting moderation."
+msgstr "Ваш комментарий ожидает одобрения."
+
+msgid " - Reply"
+msgstr "- Ответить"
+
+msgid " - Edit"
+msgstr "- Изменить"
+
+msgid "%1$s at %2$s"
+msgstr "%1$s в %2$s"
+
+msgid "Item(s)"
+msgstr ""
+
+msgid "Cart"
+msgstr ""
+
+msgid "Checkout"
+msgstr ""
+
+#, fuzzy
+msgid "View Cart"
+msgstr "Просмотр проекта"
+
+msgid "Logout"
+msgstr ""
+
+# <p class="submit">
+# <input type="submit" name="wp-submit" id="wp-submit" class="button small default comment-submit" value="<?php _e('Log In', 'Avada'); ?>">
+# <input type="hidden" name="redirect_to" value="<?php echo $_SERVER['HTTP_REFERER']; ?>">
+msgid "Log In"
+msgstr ""
+
+msgid "Remember Me"
+msgstr ""
+
+msgid "My Account"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Search"
+msgstr "Поиск"
+
+msgid "404 - Page not Found"
+msgstr "404 - Страница не найдена"
+
+msgid "Home"
+msgstr "Главная"
+
+msgid "Next"
+msgstr "Следующая"
+
+msgid "Previous"
+msgstr "Предыдущая"
+
+msgid "Installing Plugin %1$s (%2$d/%3$d)"
+msgstr "Установка плагина %1$s (%2$d/%3$d)"
+
+msgid "All installations have been completed."
+msgstr "Все установки завершены."
+
+msgid "%1$s installed successfully."
+msgstr "%1$s установлен."
+
+msgid "The installation of %1$s failed."
+msgstr "Установка %1$s завершилась с ошибкой."
+
+msgid "An error occurred while installing %1$s: <strong>%2$s</strong>."
+msgstr "Произошла ошибка во время установки %1$s: <strong>%2$s</strong>."
+
+msgid ""
+"The installation process is starting. This process may take a while on some "
+"hosts, so please be patient."
+msgstr ""
+"Начался процесс установки. Этот может занять много времени на некоторых "
+"хостах, поэтому, пожалуйста, будьте терпеливы."
+
+msgid "Installing and Activating Plugin %1$s (%2$d/%3$d)"
+msgstr "Установка и активация плагина %1$s (%2$d/%3$d)"
+
+msgid "All installations and activations have been completed."
+msgstr "Все установки и активации были выполнены."
+
+msgid "Hide Details"
+msgstr "Скрыть детали"
+
+msgid "Show Details"
+msgstr "Показать детали"
+
+msgid "%1$s installed and activated successfully."
+msgstr "%1$s установлени и активирован."
+
+msgid ""
+"The installation and activation process is starting. This process may take a "
+"while on some hosts, so please be patient."
+msgstr ""
+"Начался процесс установки и активации. Этот может занять много времени на "
+"некоторых хостах, поэтому, пожалуйста, будьте терпеливы."
+
+msgid "Plugin activation failed."
+msgstr "Активация плагина завершилась с ошибкой."
+
+msgid "Plugin installed successfully."
+msgstr "Установка плагина выполнена."
+
+msgid "Plugin install failed."
+msgstr "Установка плагина завершилась с ошибкой."
+
+msgid "Installing the plugin&#8230;"
+msgstr "Установка плагина&#8230;"
+
+msgid "Unpacking the package&#8230;"
+msgstr "Распаковка пакета&#8230;"
+
+msgid "Downloading install package from <span class=\"code\">%s</span>&#8230;"
+msgstr "Скачивание пакет с <span class=\"code\">%s</span>&#8230;"
+
+msgid "Install package not available."
+msgstr "Установочный пакет недоступен."
+
+msgid "Activate"
+msgstr "Активировать"
+
+msgid "Install"
+msgstr "Установка"
+
+msgid "Status"
+msgstr "Состояние"
+
+msgid "Type"
+msgstr "Тип"
+
+msgid "Source"
+msgstr "Исходный код"
+
+msgid "Plugin"
+msgstr "Плагин"
+
+msgid ""
+"No plugins to install or activate. <a href=\"%1$s\" title=\"Return to the "
+"Dashboard\">Return to the Dashboard</a>"
+msgstr ""
+"Нет плагина для добавления или активации. <a href=\"%1$s\" title=\"Вернуться "
+"в Консоль\">Вернуться в Консоль</a>"
+
+#, fuzzy
+msgid "Active"
+msgstr "Активировать"
+
+# elseif ( version_compare( $installed_plugins[$plugin['file_path']]['Version'], $plugin['version'], '<' ) )
+# $table_data[$i]['status'] = sprintf( '%1$s', __( 'Not Updated', THEMENAME ) );
+# else
+msgid "Not Updated"
+msgstr ""
+
+msgid "Installed But Not Activated"
+msgstr "Установлен но не активирован"
+
+msgid "Not Installed"
+msgstr "Не установлен"
+
+msgid "Recommended"
+msgstr "Рекомендованные"
+
+msgid "Required"
+msgstr "Требуется"
+
+msgid "WordPress Repository"
+msgstr "Репозиторий WordPress"
+
+msgid "Pre-Packaged"
+msgstr "Готовый пакет"
+
+msgid "Private Repository"
+msgstr "Личный репозиторий"
+
+msgid "External Link"
+msgstr "Внешняя ссылка"
+
+msgid "Dismiss this notice"
+msgstr "Игнорировать это уведомление"
+
+msgid "The following plugin was activated successfully: %s."
+msgstr "Этот плагин был успешно активирован: %s."
+
+msgid "Return to the Dashboard"
+msgstr "Вернуться в Консоль"
+
+msgid "All plugins installed and activated successfully. %1$s"
+msgstr "Все плагины установлены и активированы. %1$s"
+
+msgid "Plugin activated successfully."
+msgstr "Плагин активирован."
+
+msgid "Return to Required Plugins Installer"
+msgstr "Вернуться к установке требуемого плагина"
+
+msgid "Something went wrong."
+msgstr "Что-то пошло не так"
+
+msgid "Installing Plugin: %s"
+msgstr "Установка плагина: %s"
+
+msgid "Install Plugins"
+msgstr "Установка плагинов"
+
+msgid "Install Required Plugins"
+msgstr "Установка требуемого плагина"
+
+msgid "All"
+msgstr "Все"
+
+msgid "Submit Form"
+msgstr "Отправить форму"
+
+msgid "Message"
+msgstr "Сообщение"
+
+msgid "Subject"
+msgstr "Тема"
+
+msgid "for using my contact form! Your email was successfully sent!"
+msgstr ""
+"для использования моей формы обратной связи! Ваш e-mail был успешно "
+"отправлен!"
+
+msgid "Thank you"
+msgstr "Спасибо Вам"
+
+msgid ""
+"Please check if you've filled all the fields with valid information. Thank "
+"you."
+msgstr ""
+"Пожалуйста проверьте что Вы заполнили все поля достоверной информации. "
+"Спасибо."
+
+#, fuzzy
+msgid "Comments:"
+msgstr "Комментариев"
+
+#, fuzzy
+msgid "Subject:"
+msgstr "Тема"
+
+msgid "Email:"
+msgstr "E-mail:"
+
+# $emailTo = $data['email_address']; //Put your own email address here
+# $body = __('Name:', 'Avada')." $name \n\n";
+# $body .= __('Email:', 'Avada')." $email \n\n";
+# wpml-name: 4e140ba723a03baa6948340bf90e2ef6
+msgid "Name:"
+msgstr ""
+
+msgid "Post Comment"
+msgstr "Отправить комментарий"
+
+msgid "Comment..."
+msgstr "Комментарий..."
+
+msgid "Log out &raquo;"
+msgstr "Выйти &raquo;"
+
+msgid "Log out of this account"
+msgstr "Выйти с текущего аккаунта"
+
+msgid "Logged in as"
+msgstr "Вы вошли как"
+
+msgid "You must be %slogged in%s to post a comment."
+msgstr "Вы должны %sвойти на сайт%s для отправки комментария."
+
+msgid "Leave A Comment"
+msgstr "Оставьте комментарий"
+
+msgid "Website"
+msgstr "Сайт"
+
+msgid "Email (required)"
+msgstr "E-mail (обязательно для ввода)"
+
+msgid "Name (required)"
+msgstr "Имя (обязательно для ввода)"
+
+msgid "Comments are closed."
+msgstr "Комментирование запрещено."
+
+msgid "One Comment"
+msgstr "Один комментарий"
+
+msgid "No Comments"
+msgstr "Нет комментариев"
+
+msgid "This post is password protected. Enter the password to view comments."
+msgstr ""
+"Это сообщение защищено паролем. Введите пароль для просмотра комментариев."
+
+# <p class="bbp-user-topic-count"><span class="bold"><?php printf( __( 'Topics Started:',  'Avada' )); ?> </span><?php printf(bbp_get_user_topic_count_raw() ); ?></p>
+# <p class="bbp-user-reply-count"><span class="bold"><?php printf( __( 'Replies Created:', 'Avada' )); ?> </span><?php printf(bbp_get_user_reply_count_raw() ); ?></p>
+# </div>
+msgid "Replies Created:"
+msgstr ""
+
+# <p class="bbp-user-forum-role"><span class="bold"><?php  printf( __( 'Forum Role:',      'Avada' )); ?> </span><?php printf(bbp_get_user_display_role() ); ?></p>
+# <p class="bbp-user-topic-count"><span class="bold"><?php printf( __( 'Topics Started:',  'Avada' )); ?> </span><?php printf(bbp_get_user_topic_count_raw() ); ?></p>
+# <p class="bbp-user-reply-count"><span class="bold"><?php printf( __( 'Replies Created:', 'Avada' )); ?> </span><?php printf(bbp_get_user_reply_count_raw() ); ?></p>
+msgid "Topics Started:"
+msgstr ""
+
+#
+# <p class="bbp-user-forum-role"><span class="bold"><?php  printf( __( 'Forum Role:',      'Avada' )); ?> </span><?php printf(bbp_get_user_display_role() ); ?></p>
+# <p class="bbp-user-topic-count"><span class="bold"><?php printf( __( 'Topics Started:',  'Avada' )); ?> </span><?php printf(bbp_get_user_topic_count_raw() ); ?></p>
+msgid "Forum Role:"
+msgstr ""
+
+#, fuzzy
+msgid "Post count: %s"
+msgstr "Отправить комментарий"
+
+#
+# <?php bbp_topic_tag_list( bbp_get_topic_id(), array( 'before' => '<div class="bbp-topic-tags"><p>' . esc_html__( 'Tags:', 'Avada' ) . '&nbsp;', 'sep'    => ', ', 'after'  => '</p></div>' ) ); ?>
+#
+msgid "Tags:"
+msgstr ""
+
+#, fuzzy
+msgid "Search the Forum..."
+msgstr "Поиск ..."
+
+#, fuzzy
+msgid "If you didn't find what you were looking for, try a new search!"
+msgstr "Не удалось найти то, что вы ищете!"
+
+#, fuzzy
+msgid "Need a new search?"
+msgstr "Поиск"
+
+# <div class="author_description">
+# <h3 class='author_title'><?php echo __("About",'Avada').' '.$name; ?>
+# <?php if(current_user_can('edit_users') || get_current_user_id() == $author_id): ?>
+msgid "About"
+msgstr ""
+
+# if(empty($description)) {
+# $description  = __("This author has not yet filled in any details.",'Avada');
+# $description .= '</br>'.sprintf( __( 'So far %s has created %s entries.' ), $name, count_user_posts( $author_id ) );
+msgid "This author has not yet filled in any details."
+msgstr ""
+
+msgid "1"
+msgstr "1"
+
+msgid "Read More"
+msgstr "Читать дальше"
+
+msgid "Comments"
+msgstr "Комментариев"
+
+msgid "1 Comment"
+msgstr "Один комментарий"
+
+msgid "0 Comments"
+msgstr "Нет комментариев"
+
+msgid "By"
+msgstr "от"
+
+msgid "Search ..."
+msgstr "Поиск ..."
+
+msgid "Can't find what you need? Take a moment and do a search below!"
+msgstr ""
+"Не можете найти то, что вам нужно? Потратьте немного времени и поищите еще!"
+
+msgid "Search Our Website"
+msgstr "Поиск на нашем сайте"
+
+msgid "Here are some useful links:"
+msgstr "Вот некоторые полезные ссылки:"
+
+msgid "Oops, This Page Could Not Be Found!"
+msgstr "К сожалению, эта страница не найдена!"
+
+#~ msgid "0"
+#~ msgstr "0"
+
+#, fuzzy
+#~ msgid "Something went wrong with the plugin API."
+#~ msgstr "Что-то пошло не так"
+
+#, fuzzy
+#~ msgid "All plugins installed and activated successfully. %s"
+#~ msgstr "Все плагины установлены и активированы. %1$s"
+
+#~ msgid "Last Backup : "
+#~ msgstr "Последний архив:"
+
+#~ msgid "Upload"
+#~ msgstr "Загрузить"
+
+#~ msgid "Save All Changes"
+#~ msgstr "Записать все изменения"
+
+#~ msgid "Options Reset"
+#~ msgstr "Сбросить настройки"
+
+#~ msgid "Options"
+#~ msgstr "Настройки"
+
+#~ msgid "Gallery"
+#~ msgstr "Галерея"
+
+#~ msgid "Previously Uploaded"
+#~ msgstr "Предыдущие загрузки"
+
+#, fuzzy
+#~ msgid "Return to the dashboard"
+#~ msgstr "Вернуться в Консоль"
+
+#, fuzzy
+#~ msgid "The following plugin was activated successfully:"
+#~ msgstr "Этот плагин был успешно активирован: %s."
+
+#, fuzzy
+#~ msgid "Previous Post"
+#~ msgstr "Предыдущая"
+
+#, fuzzy
+#~ msgid "Next Post"
+#~ msgstr "Похожие записи"
+
+#, fuzzy
+#~ msgid "Downloading upgrade package from the Envato API&#8230;"
+#~ msgstr "Скачивание пакет с <span class=\"code\">%s</span>&#8230;"
+
+#, fuzzy
+#~ msgid "Downloading install package from the Envato API&#8230;"
+#~ msgstr "Скачивание пакет с <span class=\"code\">%s</span>&#8230;"
+
+#, fuzzy
+#~ msgid "Slide Options"
+#~ msgstr "Настройки"
+
+#, fuzzy
+#~ msgid "Slide options"
+#~ msgstr "Настройки темы"
+
+#, fuzzy
+#~ msgid "right"
+#~ msgstr "Авторское право"
+
+#, fuzzy
+#~ msgid "Preview"
+#~ msgstr "Предыдущая"
+
+#, fuzzy
+#~ msgid "H1"
+#~ msgstr "1"
+
+#, fuzzy
+#~ msgid "Other options"
+#~ msgstr "Настройки"
+
+#, fuzzy
+#~ msgid "Show until"
+#~ msgstr "Показать детали"
+
+#, fuzzy
+#~ msgid ""
+#~ "If you want rounded corners, you can set here its radius. Example: 5px"
+#~ msgstr "Если вы хотите изменить формулировку запроса, это ваш шанс:"
+
+#, fuzzy
+#~ msgid "Alt"
+#~ msgstr "Все"
+
+#, fuzzy
+#~ msgid "Save changes"
+#~ msgstr "Записать все изменения"
+
+#, fuzzy
+#~ msgid "Top right"
+#~ msgstr "Авторское право"
+
+#, fuzzy
+#~ msgid "Actions"
+#~ msgstr "Настройки"
+
+#, fuzzy
+#~ msgid "Edit"
+#~ msgstr "- Изменить"
+
+#, fuzzy
+#~ msgid "Read more"
+#~ msgstr "Читать дальше"
+
+#, fuzzy
+#~ msgid "Editor"
+#~ msgstr "- Изменить"
+
+#, fuzzy
+#~ msgid "Show Examples"
+#~ msgstr "Показать детали"
+
+#, fuzzy
+#~ msgid "Search %s"
+#~ msgstr "Поиск"
+
+#, fuzzy
+#~ msgid "Description"
+#~ msgstr "Описание проекта"
+
+#, fuzzy
+#~ msgid "Slideshow Settings"
+#~ msgstr "Показать детали"
+
+#, fuzzy
+#~ msgid "You must be logged in to checkout."
+#~ msgstr "Вы должны %sвойти на сайт%s для отправки комментария."
+
+#, fuzzy
+#~ msgid "Select options"
+#~ msgstr "Настройки темы"
+
+#, fuzzy
+#~ msgid "View options"
+#~ msgstr "Настройки темы"
+
+#, fuzzy
+#~ msgid "Details"
+#~ msgstr "Показать детали"
+
+#, fuzzy
+#~ msgid "Order Details"
+#~ msgstr "Скрыть детали"
+
+#, fuzzy
+#~ msgid "Telephone:"
+#~ msgstr "Телефон:"
+
+#, fuzzy
+#~ msgid "Search results for &ldquo;"
+#~ msgstr "Результат поиска для:"
+
+#, fuzzy
+#~ msgid "Error 404"
+#~ msgstr "Ошибка 404"
+
+#, fuzzy
+#~ msgid "Related Products"
+#~ msgstr "Похожие проекты"
+
+#, fuzzy
+#~ msgid "Your comment is awaiting approval"
+#~ msgstr "Ваш комментарий ожидает одобрения."
+
+#, fuzzy
+#~ msgid "Product Description"
+#~ msgstr "Описание проекта"
+
+#, fuzzy
+#~ msgid "Error 404 - page not found"
+#~ msgstr "404 - Страница не найдена"
+
+#, fuzzy
+#~ msgid "Blog Posts"
+#~ msgstr "Похожие записи"
+
+#, fuzzy
+#~ msgid "Post Number"
+#~ msgstr "Отправить комментарий"
+
+#, fuzzy
+#~ msgid "Clone Column"
+#~ msgstr "Один комментарий"
+
+#, fuzzy
+#~ msgid "Form Element Options"
+#~ msgstr "Настройки темы"
+
+#, fuzzy
+#~ msgid "Submit"
+#~ msgstr "Отправить форму"
+
+#, fuzzy
+#~ msgid "Edit Gallery"
+#~ msgstr "Галерея"
+
+#, fuzzy
+#~ msgid "Add/Edit Gallery"
+#~ msgstr "Галерея"
+
+#, fuzzy
+#~ msgid "Gallery Style"
+#~ msgstr "Галерея"
+
+#, fuzzy
+#~ msgid "Gallery Columns"
+#~ msgstr "Галерея"
+
+#, fuzzy
+#~ msgid "Message Colors"
+#~ msgstr "Сообщение"
+
+#, fuzzy
+#~ msgid "Page Content"
+#~ msgstr "Один комментарий"
+
+#, fuzzy
+#~ msgid "1 Columns"
+#~ msgstr "Один комментарий"
+
+#, fuzzy
+#~ msgid "Comment"
+#~ msgstr "Комментариев"
+
+#, fuzzy
+#~ msgid "Sorting Options"
+#~ msgstr "Настройки"
+
+#, fuzzy
+#~ msgid "Top Right"
+#~ msgstr "Авторское право"
+
+#, fuzzy
+#~ msgid "Caption Text"
+#~ msgstr "Сбросить настройки"
+
+#, fuzzy
+#~ msgid "Table Caption"
+#~ msgstr "Настройки темы"
+
+#, fuzzy
+#~ msgid "Team Member Description"
+#~ msgstr "Описание проекта"
+
+#, fuzzy
+#~ msgid "Website Link"
+#~ msgstr "Сайт"
+
+#, fuzzy
+#~ msgid "Website Name"
+#~ msgstr "Сайт"
+
+#, fuzzy
+#~ msgid "Custom Elements"
+#~ msgstr "Комментариев"
+
+#, fuzzy
+#~ msgid "All Product Categories"
+#~ msgstr "Категории"
+
+#, fuzzy
+#~ msgid "View Product"
+#~ msgstr "Просмотр проекта"
+
+#, fuzzy
+#~ msgid "Search Products"
+#~ msgstr "Результат поиска для:"
+
+#, fuzzy
+#~ msgid "Parent Variation"
+#~ msgstr "Описание проекта"
+
+#, fuzzy
+#~ msgid "View Order"
+#~ msgstr "Просмотр проекта"
+
+#, fuzzy
+#~ msgid "Search Orders"
+#~ msgstr "Поиск на нашем сайте"
+
+#, fuzzy
+#~ msgid "Search Order statuses"
+#~ msgstr "Поиск на нашем сайте"
+
+#, fuzzy
+#~ msgid "Search Coupons"
+#~ msgstr "Поиск"
+
+#, fuzzy
+#~ msgid "Popularity"
+#~ msgstr "Популярные"
+
+#, fuzzy
+#~ msgid "Search results for &quot;%1$s&quot;"
+#~ msgstr "Результат поиска для:"
+
+#, fuzzy
+#~ msgid "404 Not Found"
+#~ msgstr "404 - Страница не найдена"
+
+#, fuzzy
+#~ msgid "New Message"
+#~ msgstr "Сообщение"
+
+#, fuzzy
+#~ msgid "Your Message:"
+#~ msgstr "Сообщение"
+
+#, fuzzy
+#~ msgid "State:"
+#~ msgstr "Состояние"
+
+#, fuzzy
+#~ msgid "Map Type:"
+#~ msgstr "Тип"
+
+#, fuzzy
+#~ msgid "Add to Gallery"
+#~ msgstr "Галерея"
+
+#, fuzzy
+#~ msgid "search results for:"
+#~ msgstr "Результат поиска для:"
+
+#, fuzzy
+#~ msgid "search result for:"
+#~ msgstr "Результат поиска для:"
+
+#, fuzzy
+#~ msgid "Archives"
+#~ msgstr "Дневные архивы: %s"
+
+#, fuzzy
+#~ msgid ""
+#~ "This post is password protected. Enter the password to view any comments."
+#~ msgstr ""
+#~ "Это сообщение защищено паролем. Введите пароль для просмотра комментариев."
+
+#, fuzzy
+#~ msgid "reply"
+#~ msgstr "- Ответить"
+
+#, fuzzy
+#~ msgid "&laquo; Older Comments"
+#~ msgstr "Нет комментариев"
+
+#, fuzzy
+#~ msgid "Newer Comments &raquo;"
+#~ msgstr "Нет комментариев"
+
+#, fuzzy
+#~ msgid "Leave a Reply"
+#~ msgstr "- Ответить"
+
+#, fuzzy
+#~ msgid "Comments<br/>Off"
+#~ msgstr "Комментариев"
+
+#, fuzzy
+#~ msgid "Categories:"
+#~ msgstr "Категории"
+
+#, fuzzy
+#~ msgid "Comments Disabled"
+#~ msgstr "Комментирование запрещено."
+
+#, fuzzy
+#~ msgid "(Edit)"
+#~ msgstr "- Изменить"
+
+#, fuzzy
+#~ msgid "Interesting links"
+#~ msgstr "Установка плагина: %s"
+
+#, fuzzy
+#~ msgid "Category Archives: %s"
+#~ msgstr "Годовой архив: %s"
+
+#, fuzzy
+#~ msgid "&larr; Older Comments"
+#~ msgstr "Один комментарий"
+
+#, fuzzy
+#~ msgid "Newer Comments &rarr;"
+#~ msgstr "Нет комментариев"
+
+#, fuzzy
+#~ msgid "Leave a comment"
+#~ msgstr "Оставьте комментарий"
+
+#, fuzzy
+#~ msgid "One comment so far"
+#~ msgstr "Один комментарий"
+
+#, fuzzy
+#~ msgid "Search Results for: %s"
+#~ msgstr "Результат поиска для:"
+
+#, fuzzy
+#~ msgid "Tag Archives: %s"
+#~ msgstr "Дневные архивы: %s"
+
+#, fuzzy
+#~ msgid "%s Archives"
+#~ msgstr "Дневные архивы: %s"
+
+#, fuzzy
+#~ msgid "Author Archives: %s"
+#~ msgstr "Месячные архивы: %s"
+
+#, fuzzy
+#~ msgid "1 Reply"
+#~ msgstr "- Ответить"
+
+#, fuzzy
+#~ msgid "Reply"
+#~ msgstr "- Ответить"
+
+#, fuzzy
+#~ msgid "&larr; Previous"
+#~ msgstr "Предыдущая"
