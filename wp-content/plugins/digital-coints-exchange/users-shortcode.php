@@ -76,7 +76,7 @@ function dce_user_login_form()
 	$out .= '<form action="'. wp_login_url() .'" method="post" name="login-form" id="login-form" class="login">';
 
 	// Username/email
-	$out .= '<p class="form-row form-row-first"><input type="text" class="input-text" name="log" id="user_login" placeholder="'. __( 'E-mail', 'dce' ) .'"></p>';
+	$out .= '<p class="form-row form-row-first"><input style="width:85% !important" type="text" class="input-text" name="log" id="user_login" placeholder="'. __( 'E-mail', 'dce' ) .'"></p>';
 
 	// password
 	$out .= '<p class="form-row form-row-last"><input class="input-text" type="password" name="pwd" id="user_pass" placeholder="'. __( 'Password', 'dce' ) .'"></p>';
@@ -213,6 +213,7 @@ function dce_user_home_register_form()
 
 	$out .='<p class="form-row form-row-first validate-required validate-password" id="password_field"><input type="password" class="input-text" name="password" id="password" placeholder="Select a password" value=""></p>';
 	$out .='<p><a class="button small default" title="" href="Javascript:document.forms[0].submit()" id="home_reg_start" target="_self">Start Escrow</a></p>';
+	$out .= '<input type="hidden" name="redirect_to" value="http://skilluse.com/digcoin/escrow-manager/">';
 	$out .= wp_nonce_field( 'dce_user_register', 'nonce', true, false );
 	$out .= '<input type="hidden" name="register_user" value="Register">';
 $out .='</form>';

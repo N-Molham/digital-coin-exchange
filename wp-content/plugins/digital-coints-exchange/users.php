@@ -59,7 +59,10 @@ function dce_users_init()
 		wp_signon( array( 'user_login' => $register_fields['email']['value'], 'user_password' => $register_fields['password']['value'] ) );
 
 		// redirect
-		dce_redirect( add_query_arg( 'register', 'success' ) );
+		if(isset($_POST['redirect_to']))
+			dce_redirect($_POST['redirect_to']);
+		else		
+			dce_redirect( add_query_arg( 'register', 'success' ) );
 	}
 }
 
