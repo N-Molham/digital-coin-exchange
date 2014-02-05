@@ -78,7 +78,7 @@ function dce_offers_admin_columns_content( $column, $post_id )
 	$coin_types = dce_get_coin_types();
 
 	// get offer data
-	$offer = DCE_User::wrap_offer( get_post( $post_id ), $coin_types );
+	$offer = DCE_Offer::wrap_offer( get_post( $post_id ), $coin_types );
 	if ( !$offer )
 		return;
 

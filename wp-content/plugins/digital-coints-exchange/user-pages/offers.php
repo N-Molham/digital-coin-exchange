@@ -68,7 +68,7 @@ foreach ( $search_params as $search_key => $search_value )
 }
 
 // get confirmed offers
-$offers = DCE_User::query_offers( $query_args );
+$offers = DCE_Offer::query_offers( $query_args );
 
 // offers search/filters
 $output .= dce_section_title( __( 'Offers Search', 'dce' ) );
