@@ -25,6 +25,7 @@ define( 'DCE_PATH', plugin_dir_path( DCE_PLUGIN_FILE ) );
  */
 define( 'DCE_CLIENT_ROLE', 'dce_client' );
 define( 'DCE_POST_TYPE_OFFER', 'dce_offer' );
+define( 'DCE_POST_TYPE_ESCROW', 'dce_escrow' );
 
 /**
  * Includes

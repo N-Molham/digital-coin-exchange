@@ -1,5 +1,5 @@
 /**
- * Offers
+ * Users' Offers
  */
 ( function ( window ) {
 	jQuery( function( $ ) {

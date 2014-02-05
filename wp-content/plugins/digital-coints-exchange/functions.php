@@ -231,7 +231,7 @@ class DCE_Utiles
 				'class' => 'input-text',
 				'holder_class' => 'form-row form-row-first validate-required',
 				'dir' => 'ltr',
-				'label_next' => false,
+				'label_next' => null,
 				'desc' => '',
 				'value' => '',
 				'placeholder' => '',
@@ -239,30 +239,40 @@ class DCE_Utiles
 		);
 		$args = apply_filters( 'form_input_args', wp_parse_args( $args, $defaults ) );
 
+		// field label
 		if( $args['show_label'] )
 			$out .= '<label for="'. $field .'">'. $args['label'] .' :</label>';
 
 		if( $args['label_next'] )
 			$out .= ' <span class="description" style="vertical-align:middle;">'. $args['label_next'] .'</span>';
 
+		// field description
 		$out .= '<p class="form-input form-input-'. $field .' '. $args['holder_class'] .'">';
+
+		// field input element
 		switch( $args['input'] )
 		{
 			case 'select':
+				$args = wp_parse_args( $args, array ( 
+						'source' => array(),
+						'default_label' => '',
+						'default_value' => '-1',
+				) );
+
 				$out .= '<select id="'. $field .'" name="'. $field .'">';
-				$out .= '<option value="-1">'. ( isset( $args['default'] ) ? $args['default'] : '' ) .'</option>';
-				if( isset($args['source']) )
+				$out .= '<option value="'. $args['default_value'] .'">'. $args['default_label'] .'</option>';
+
+				foreach ( $args['source'] as $option_value => $option_label )
 				{
-					foreach ( $args['source'] as $option_value => $option_label )
-					{
-						$out .= '<option value="'. $option_value .'"';
-						$out .= ( $option_value == $args['value'] ? ' selected' : '' ) .'>';
-						$out .= ( is_array( $option_label ) && isset( $option_label['label'] ) ? $option_label['label'] : $option_label );
-						$out .= '</option>';
-					}
+					$out .= '<option value="'. $option_value .'"';
+					$out .= ( $option_value == $args['value'] ? ' selected' : '' ) .'>';
+					$out .= ( is_array( $option_label ) && isset( $option_label['label'] ) ? $option_label['label'] : $option_label );
+					$out .= '</option>';
 				}
+
 				$out .= '</select>';
 				break;
+
 			case 'checkbox':
 				if( $args['is_singular'] )
 				{
@@ -282,6 +292,7 @@ class DCE_Utiles
 					}
 				}
 				break;
+
 			case 'radio':
 				foreach( $args['values'] as $radio_value => $radio_label )
 				{
@@ -291,38 +302,43 @@ class DCE_Utiles
 					$out .= '/> '. $radio_label .'</label>&nbsp;&nbsp;&nbsp;&nbsp;';
 				}
 				break;
+
 			case 'text':
 				$out .= '<input type="text" placeholder="'. $args['placeholder'] .'" name="'. $field .'" id="'. $field .'" value="'. $args['value'] .'" class="'. $args['class'] .'" dir="'. $args['dir'] .'" /> ';
 				break;
+
 			case 'password':
 				$out .= '<input type="password" placeholder="'. $args['placeholder'] .'" name="'. $field .'" id="'. $field .'" value="'. $args['value'] .'" class="'. $args['class'] .'" dir="'. $args['dir'] .'" /> ';
 				break;
-			case 'textarea':
-				if( !isset($args['cols']) )
-					$args['cols'] = '';
 
-				if( !isset($args['rows']) )
-					$args['rows'] = '';
+			case 'textarea':
+				$args = wp_parse_args( $args, array (
+						'rows' => '',
+						'cols' => '-1',
+				) );
 
 				$out .= '<textarea placeholder="'. $args['placeholder'] .'" name="'. $field .'" id="'. $field .'" rows="'. $args['rows'] .'" cols="'. $args['cols'] .'" class="'. $args['class'] .'" dir="'. $args['dir'] .'">'. esc_attr( $args['value'] ) .'</textarea>';
 				break;
+
 			case 'button':
 				$out .= '<input type="'. $args['data_type'] .'" name="'. $field .'" id="'. $field .'" value="'. $args['label'] .'" class="'. $args['class'] .'" /> ';
 				break;
+
 			case 'file':
 				$out .= '<input type="file" name="'. $field .'" id="'. $field .'" /> ';
 				break;
+
 			case 'html':
 				$out .= $args['html'];
 				break;
+
 			case 'image':
 				if( $args['media_library'] )
 				{
-					if( !isset($args['value']['id']) )
-						$args['value']['id'] = '';
-
-					if( !isset($args['value']['url']) )
-						$args['value']['url'] = '';
+					$args = wp_parse_args( $args, array (
+							'value' => array( 'id' => '', 'url' => '' ),
+							'cols' => '-1',
+					) );
 
 					$not_empty = '' != $args['value']['url'];
 					$out .= '<span style="display:block;" class="image-holder">';
