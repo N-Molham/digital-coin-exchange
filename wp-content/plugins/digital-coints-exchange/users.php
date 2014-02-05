@@ -165,32 +165,8 @@ class DCE_User extends WP_User
 	 */
 	public function save_offer( $from_amount, $from_coin, $to_amount, $to_coin, $offer_args = '' )
 	{
-		$offer_args = wp_parse_args( $offer_args, array (
-				'details' => '',
-				'id' => '',
-		) );
-
-		// post args
-		$post_args = array (
-				'ID' => is_numeric( $offer_args['id'] ) ? $offer_args['id'] : '',
-				'post_status' => 'pending',
-				'post_type' => DCE_POST_TYPE_OFFER,
-				'post_author' => $this->ID,
-				'post_content' => $offer_args['details'],
-		);
-
-		// save post
-		$offer_id = wp_insert_post( $post_args, true );
-		if ( is_wp_error( $offer_id ) )
-			return $offer_id;
-
-		// save offer data/meta
-		update_post_meta( $offer_id, 'to_amount', $to_amount );
-		update_post_meta( $offer_id, 'to_coin', $to_coin );
-		update_post_meta( $offer_id, 'from_amount', $from_amount );
-		update_post_meta( $offer_id, 'from_coin', $from_coin );
-
-		return apply_filters( 'dce_save_user_offer', $offer_id );
+		// pass data to offers handler
+		return DCE_Offer::save_offer( $this->ID, $from_amount, $from_coin, $to_amount, $to_coin, $offer_args );
 	}
 
 	/**
@@ -201,94 +177,7 @@ class DCE_User extends WP_User
 	 */
 	public function get_offers( $args = '' )
 	{
-		// default args
-		$args = wp_parse_args( $args, array (
-				'author' => $this->ID,
-		) );
-
-		$results = self::query_offers( $args );
-
-		return apply_filters( 'dce_user_offers', $results, $this->ID );
-	}
-
-	public static function query_offers( $args )
-	{
-		global $wpdb;
-
-		// default args
-		$args = wp_parse_args( $args, array (
-				'ID' => '',
-				'post_type' => DCE_POST_TYPE_OFFER,
-				'author' => '',
-				'nopaging' => true,
-				'post_status' => array( 'publish', 'pending' ),
-		) );
-
-		// query offers
-		$single = !empty( $args['ID'] );
-		if ( $single )
-		{
-			// single offer
-			$offers = array( get_post( $args['ID'] ) );
-		}
-		else
-		{
-			// all offers
-			$offers = get_posts( $args );
-		}
-
-		// holders
-		$offer = null;
-		$return = array();
-		$len = count( $offers );
-
-		if ( $len )
-		{
-			$coin_types = dce_get_coin_types();
-		
-			// wrapper loop
-			for ( $i = 0; $i < $len; $i++ )
-			{
-				/* @var $offer WP_Post */
-				$offer =& $offers[$i];
-		
-				// wrap offer data
-				$return[] = self::wrap_offer( $offer, $coin_types );
-			}
-		}
-
-		return apply_filters( 'dce_query_offers', $single ? $return[0] : $return );
-	}
-	
-	/**
-	 * Wrap offer data 
-	 * 
-	 * meta data, offer details, etc...
-	 * 
-	 * @param WP_Post $offer
-	 * @param array $coin_types
-	 * @return array|boolean
-	 */
-	public static function wrap_offer( $offer, &$coin_types )
-	{
-		if ( !$offer )
-			return false;
-
-		// data wrapper
-		return array (
-				'ID' => $offer->ID,
-				'user' => isset( $this ) ? $this : new DCE_User( $offer->post_author ),
-				'from_amount' => $offer->from_amount,
-				'from_coin' => $offer->from_coin,
-				'from_display' => _n( sprintf( $coin_types[$offer->from_coin]['single'], $offer->from_amount ), sprintf( $coin_types[$offer->from_coin]['plural'], $offer->from_amount ), $offer->from_amount ),
-				'to_amount' => $offer->to_amount,
-				'to_coin' => $offer->to_coin,
-				'to_display' => _n( sprintf( $coin_types[$offer->to_coin]['single'], $offer->to_amount ), sprintf( $coin_types[$offer->to_coin]['plural'], $offer->to_amount ), $offer->to_amount ),
-				'details' => $offer->post_content,
-				'datetime' => $offer->post_date,
-				'status' => $offer->post_status,
-				'url' => get_permalink( $offer->ID ),
-		);
+		return apply_filters( 'dce_user_offers', DCE_Offer::query_offers( array( 'author' => $this->ID ) ), $this->ID );
 	}
 
 	/**
