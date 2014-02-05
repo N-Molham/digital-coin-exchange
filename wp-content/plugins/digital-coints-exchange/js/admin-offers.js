@@ -1,5 +1,5 @@
 /**
- * Offers
+ * WP-Admin Offers
  */
 ( function ( window ) {
 	jQuery( function( $ ) {

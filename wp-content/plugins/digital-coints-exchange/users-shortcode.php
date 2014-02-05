@@ -216,7 +216,7 @@ function dce_user_home_register_form()
 	$out .= '<input type="hidden" name="redirect_to" value="http://skilluse.com/digcoin/escrow-manager/">';
 	$out .= wp_nonce_field( 'dce_user_register', 'nonce', true, false );
 	$out .= '<input type="hidden" name="register_user" value="Register">';
-$out .='</form>';
+	$out .='</form>';
 	
 	$out .= apply_filters( 'dce_after_home_register_form', '' );
 

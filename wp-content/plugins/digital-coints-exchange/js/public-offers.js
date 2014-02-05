@@ -5,7 +5,7 @@
 	jQuery( function( $ ) {
 
 		// toggle offer details
-		$( '#open-offers .button' ).on( 'click', function( e ){
+		$( '#open-offers .button' ).on( 'click', function( e ) {
 			e.preventDefault();
 
 			var $details = $( e.currentTarget.hash );

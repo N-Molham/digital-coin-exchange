@@ -59,7 +59,6 @@ function dce_setup_init()
 					'search_items' => _x( 'Search Offers', 'dce_offer', 'dce' ),
 					'not_found' => _x( 'No offers found', 'dce_offer', 'dce' ),
 					'not_found_in_trash' => _x( 'No offers found in Trash', 'dce_offer', 'dce' ),
-					'parent_item_colon' => _x( 'Parent Offer:', 'dce_offer', 'dce' ),
 					'menu_name' => _x( 'Offers', 'dce_offer', 'dce' ),
 			),
 			'hierarchical' => false,
@@ -76,6 +75,31 @@ function dce_setup_init()
 			'can_export' => true,
 	);
 	register_post_type( DCE_POST_TYPE_OFFER, $args );
+
+	// escrows
+	$args = array (
+			'labels' => array (
+					'name' => _x( 'Escrows', 'dce_offer', 'dce' ),
+					'singular_name' => _x( 'Escrow', 'dce_offer', 'dce' ),
+					'add_new' => _x( 'Add New Escrow', 'dce_offer', 'dce' ),
+					'add_new_item' => _x( 'Add New Escrow', 'dce_offer', 'dce' ),
+					'edit_item' => _x( 'Edit Escrow', 'dce_offer', 'dce' ),
+					'new_item' => _x( 'New Escrow', 'dce_offer', 'dce' ),
+					'view_item' => _x( 'View Escrow', 'dce_offer', 'dce' ),
+					'search_items' => _x( 'Search Escrows', 'dce_offer', 'dce' ),
+					'not_found' => _x( 'No Escrows found', 'dce_offer', 'dce' ),
+					'not_found_in_trash' => _x( 'No Escrows found in Trash', 'dce_offer', 'dce' ),
+					'menu_name' => _x( 'Escrows', 'dce_offer', 'dce' ),
+			),
+			'hierarchical' => false,
+			'description' => __( 'Clients escrows', 'dce' ),
+			'supports' => array( 'author' ),
+			'show_in_menu' => true,
+			'public' => false,
+			'show_ui' => true,
+			'can_export' => true,
+	);
+	register_post_type( DCE_POST_TYPE_ESCROW, $args );
 }
 
 /**
