@@ -69,22 +69,14 @@ switch ( $current_view )
 		$output .= dce_section_title( __( 'Create new offer', 'dce' ) );
 
 		// form start
-		$output .= '<form action="" method="post" id="new-offer-form" class="ajax-form">';
+		$output .= '<form action="" method="post" id="new-offer-form" class="ajax-form" data-callback="new_offer_callback">';
 
-		// exchange from amount
-		$output .= dce_form_input( 'from_amount', array( 'label' => __( 'From Amount', 'dce' ), 'input' => 'text' ) );
-
-		// exchange from coin type
-		$output .= dce_form_input( 'from_coin', array( 'label' => __( 'From Coin', 'dce' ), 'input' => 'select', 'source' => $coin_types ) );
-
-		// exchange to amount
-		$output .= dce_form_input( 'to_amount', array( 'label' => __( 'To Amount', 'dce' ), 'input' => 'text' ) );
-
-		// exchange to coin type
-		$output .= dce_form_input( 'to_coin', array( 'label' => __( 'To Coin', 'dce' ), 'input' => 'select', 'source' => $coin_types ) );
-
-		// exchange deal details
-		$output .= dce_form_input( 'details', array( 'label' => __( 'Offer Details', 'dce' ), 'input' => 'textarea', 'cols' => 42, 'rows' => 8 ) );
+		// input fields
+		$form_fields = DCE_Offer::form_fields( $coin_types );
+		foreach ( $form_fields as $field_name => $field_args )
+		{
+			$output .= dce_form_input( $field_name, $field_args );
+		}
 
 		// hidden inputs
 		$output .= '<input type="hidden" name="action" value="create_offer" />';

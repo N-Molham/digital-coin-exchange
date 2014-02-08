@@ -21,21 +21,12 @@
 		} );
 
 		// new offer submit
-		$( '#new-offer-form' ).on( 'submit', function( e ) {
-			e.preventDefault();
-			var $form = $( this );
-
-			// post data
-			$.post( dce.ajax_url, $form.serialize(), function( response ) {
-				if ( response.status ) {
-					// success
-					location.href = update_query_value( location.href, 'view', 'view_offers' );
-				} else {
-					// error
-					alert( response.error.message );
-				}
-			}, 'json' );
-		} );
+		window.new_offer_callback = function( response ) {
+			if ( response.status ) {
+				// success
+				location.href = update_query_value( location.href, 'view', 'view_offers' );
+			}
+		};
 
 	});
 } )( window );

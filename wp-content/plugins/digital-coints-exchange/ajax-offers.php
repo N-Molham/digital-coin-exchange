@@ -65,6 +65,33 @@ function dce_ajax_create_offer()
 {
 	check_ajax_referer( 'dce_save_offer', 'nonce' );
 
+	// init data
+	$coin_types = dce_get_coin_types();
+	$form_fields = DCE_Offer::form_fields( $coin_types );
+
+	// clear old errors
+	DCE_Utiles::clear_form_errors();
+
+	// validate form data
+	foreach ( $form_fields as $field_name => &$field_args )
+	{
+		$field_args['value'] = dce_parse_input( $field_name, $field_args );
+	}
+
+	// error messages
+	if ( DCE_Utiles::has_form_errors() )
+	{
+		$error_messages = '';
+		$errors = DCE_Utiles::show_form_errors( false, true );
+
+		foreach ( $errors as $error_message )
+		{
+			$error_messages .= dce_alert_message( $error_message, 'error' );
+		}
+
+		dce_ajax_error( 'form-errors', $error_messages );
+	}
+
 	// from value
 	$from_amount = (int) dce_get_value( 'from_amount' );
 	if ( !$from_amount )
@@ -74,8 +101,6 @@ function dce_ajax_create_offer()
 	$to_amount = (int) dce_get_value( 'to_amount' );
 	if ( !$to_amount )
 		dce_ajax_error( 'to_amount', __( 'To Amount Invalid value', 'dce' ) );
-
-	$coin_types = dce_get_coin_types();
 
 	// from coin type
 	$from_coin = dce_get_value( 'from_coin' );
@@ -94,7 +119,13 @@ function dce_ajax_create_offer()
 	$user = DCE_User::get_current_user();
 
 	// save offer
-	$offer_id = $user->save_offer( $from_amount, $from_coin, $to_amount, $to_coin, array( 'details' => $deal_details ) );
+	$offer_id = $user->save_offer( $form_fields['from_amount']['value'], 
+									$form_fields['from_coin']['value'], 
+									$form_fields['to_amount']['value'], 
+									$form_fields['to_coin']['value'], 
+									array ( 
+											'details' => $form_fields['details']['value'] 
+									) );
 	if ( is_wp_error( $offer_id ) )
 		dce_ajax_error( 'save', __( 'Error saving offer, please try again later', 'dce' ) );
 

@@ -28,6 +28,11 @@ function dce_form_input( $field, $args, $echo = false )
 	return DCE_Utiles::form_input( $field, $args, $echo );
 }
 
+function dce_parse_input( $field, $args = array(), $query_var = false, $session = false, $encoded = false, $html = false, $allowed = null )
+{
+	return DCE_Utiles::parse_input( $field, $args, $query_var, $session, $encoded, $html, $allowed );
+}
+
 class DCE_Utiles
 {
 	static $text_domain = 'dce';
@@ -129,27 +134,46 @@ class DCE_Utiles
 
 		switch( $args['data_type'] )
 		{
+			case 'int':
+			case 'float':
+			case 'number':
+				$value = self::sanitize_digit( $value );
+				if ( is_numeric( $value ) )
+				{
+					if ( 'int' == $args['data_type'] )
+						$value = (int) $value;
+					elseif ( 'float' == $args['data_type'] )
+						$value = (float) $value;
+				}
+				else 
+					$value = false;
+
+				if ( !$value )
+						self::form_error( $field, sprintf( __( '%s is not valid numeric value', self::$text_domain ), $args['label'] ) );
+
+				break;
+
 			case 'plain-text-aplha':
 				$value = preg_replace( '/\d/', '', $value );
 				break;
+
 			case 'password':
-				if ( isset($args['match-base']) )
+				if ( isset( $args['match-base'] ) )
 				{
 					$match = self::get_value( $args['match-base'] );
 					if( $match != $value )
 						self::form_error( $field, __( 'Passwords does not match', self::$text_domain ) );
 				}
 				break;
+
 			case 'email':
 				$value = is_email( $value );
 				if( !$value )
-				{
 					self::form_error( $field, __( 'Invalid email address', self::$text_domain ) );
-					$value = '';
-				}
 				break;
+
 			case 'file':
-				if( isset($_FILES[$field]) )
+				if( isset( $_FILES[$field] ) )
 				{
 					$file = $_FILES[$field];
 					if( $file['size'] <= $args['file_size'] )
@@ -157,8 +181,11 @@ class DCE_Utiles
 						if( in_array($file['type'], $args['file_types']) )
 						{
 							$value = self::process_file_upload( $field );
-							if( is_wp_error($value) )
+							if( is_wp_error( $value ) )
+							{
 								self::form_error( $field, __( 'Error saving uploaded file, please try again later', self::$text_domain ) );
+								$value = false;
+							}
 						}
 						else
 							self::form_error( $field, __( 'Invalid file type', self::$text_domain ) );
@@ -167,14 +194,24 @@ class DCE_Utiles
 						self::form_error( $field, sprintf(__( '%s size is too big', self::$text_domain ), $args['label']) );
 				}
 				else
-					$value = '';
+					$value = false;
 				break;
 		}
 
-		if( $args['required'] && ('' == $value || empty($value) ) )
+		if ( 'select' == $args['input'] )
+		{
+			// check source
+			if ( !isset( $args['source'][$value] ) )
+			{
+				self::form_error( $field, sprintf( __( '%s is not a valid selection', self::$text_domain ), $args['label'] ) );
+				$value = false;
+			}
+		}
+
+		if ( $value && $args['required'] && ( '' == $value || empty( $value ) ) )
 			self::form_error( $field, sprintf( __( '%s required', self::$text_domain ), $args['label']) );
 
-		if ( '' != $value || !empty($value) )
+		if ( '' != $value || !empty( $value ) )
 		{
 			if( $args['min_length'] && $args['max_length'] && !self::is_str_length_between( $value, $args['min_length'], $args['max_length'] ) )
 				self::form_error( $field, sprintf( __( '%s character length must be between %d and %d', self::$text_domain ), $args['label'], $args['min_length'], $args['max_length'] ) );
@@ -1123,6 +1160,11 @@ class DCE_Utiles
 			return true;
 
 		return false;
+	}
+
+	public static function clear_form_errors()
+	{
+		$_SESSION['form_errors'] = array();
 	}
 
 	public static function show_form_errors( $raw = false, $as_array = false )

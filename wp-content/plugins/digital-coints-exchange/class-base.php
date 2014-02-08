@@ -79,6 +79,7 @@ class DCE_Component
 		// other properties
 		$this->datetime = $this->post_date;
 		$this->status = $this->post_status;
+		$this->fields = array();
 	}
 
 	/**
