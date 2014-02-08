@@ -12,6 +12,13 @@
 class DCE_Escrow extends DCE_Offer
 {
 	/**
+	 * Targeted user to deal with
+	 * 
+	 * @var string
+	 */
+	var $target_email;
+
+	/**
 	 * Constructor ( override )
 	 *
 	 * @param number|WP_Post|object $post_id
@@ -19,6 +26,97 @@ class DCE_Escrow extends DCE_Offer
 	public function __construct( $post_id )
 	{
 		parent::__construct( $post_id );
+
+		$this->target_email = $this->post_object->target_email;
+	}
+
+	/**
+	 * Insert/Update user escrow
+	 *
+	 * @param int $user_id
+	 * @param int $from_amount
+	 * @param string $from_coin
+	 * @param int $to_amount
+	 * @param string $to_coin
+	 * @param array $escrow_args
+	 *
+	 * @return int|WP_Error
+	 */
+	static public function save_escrow( $user_id, $from_amount, $from_coin, $to_amount, $to_coin, $escrow_args = '' )
+	{
+		$escrow_args = wp_parse_args( $escrow_args, array (
+				'target_email' => '',
+				'details' => '',
+				'comm_method' => '',
+				'id' => '',
+		) );
+
+		// post args
+		$post_args = array (
+				'ID' => is_numeric( $escrow_args['id'] ) ? $escrow_args['id'] : '',
+				'post_status' => 'pending',
+				'post_type' => DCE_POST_TYPE_ESCROW,
+				'post_author' => $user_id,
+				'post_content' => $escrow_args['details'],
+		);
+
+		// save post
+		$escrow_id = wp_insert_post( $post_args, true );
+		if ( is_wp_error( $escrow_id ) )
+			return $escrow_id;
+
+		// save escrow data/meta
+		update_post_meta( $escrow_id, 'to_amount', $to_amount );
+		update_post_meta( $escrow_id, 'to_coin', $to_coin );
+		update_post_meta( $escrow_id, 'from_amount', $from_amount );
+		update_post_meta( $escrow_id, 'from_coin', $from_coin );
+		update_post_meta( $escrow_id, 'comm_method', $escrow_args['comm_method'] );
+		update_post_meta( $escrow_id, 'target_email', $escrow_args['target_email'] );
+
+		// wp action
+		do_action( 'dce_save_user_escrow', $escrow_id );
+
+		return $escrow_id;
+	}
+
+	/**
+	 * Query users' escrows
+	 *
+	 * @param array $args
+	 * @return mixed
+	 */
+	public static function query_escrows( $args = '' )
+	{
+		global $wpdb;
+	
+		// default args
+		$args = wp_parse_args( $args, array (
+				'ID' => '',
+				'post_type' => DCE_POST_TYPE_ESCROW,
+				'author' => '',
+				'nopaging' => true,
+				'post_status' => array( 'publish', 'pending' ),
+		) );
+
+		// query escrow
+		$single = !empty( $args['ID'] );
+		if ( $single )
+		{
+			// single escrow
+			$escrows = array( get_post( $args['ID'] ) );
+		}
+		else
+		{
+			// all escrows
+			$escrows = get_posts( $args );
+		}
+
+		// class wrap
+		$escrows = array_map( function ( $escow ) {
+			return new DCE_Escrow( $escow );
+		}, $escrows );
+
+		return apply_filters( 'dce_query_escrows', $single ? $escrows[0] : $escrows );
 	}
 
 	/**

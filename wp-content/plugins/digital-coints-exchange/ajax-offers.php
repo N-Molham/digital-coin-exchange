@@ -124,6 +124,7 @@ function dce_ajax_create_offer()
 									$form_fields['to_amount']['value'], 
 									$form_fields['to_coin']['value'], 
 									array ( 
+											'comm_method' => $form_fields['comm_method']['value'], 
 											'details' => $form_fields['details']['value'] 
 									) );
 	if ( is_wp_error( $offer_id ) )

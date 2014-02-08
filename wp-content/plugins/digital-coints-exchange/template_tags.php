@@ -9,13 +9,13 @@
 /**
  * Divider
  *  
- * @param string $type
+ * @param string $type ( shadow | double | single | dashed | dotted )
  * @param string $tag
  * @return string
  */
 function dce_divider( $type = 'shadow', $tag = 'div' )
 {
-	return '<'. $tag .' class="sep-'. $type .'"></'. $tag .'>';
+	return '<'. $tag .' class="sep-'. $type .'" style="margin-bottom:20px;"></'. $tag .'>';
 }
 
 /**

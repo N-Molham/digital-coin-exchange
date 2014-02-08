@@ -29,10 +29,14 @@ switch ( $current_view )
 		// get user offers
 		$offers = $dce_user->get_offers();
 
+		// convert base url
+		$convert_url = add_query_arg( 'view', 'create_escrow', dce_get_pages( 'escrow-manager' )->url );
+
 		// offers table start
 		$output .= dce_table_start( 'user-offers' ) .'<thead><tr>';
 		$output .= '<th>'. __( 'Original', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Target', 'dce' ) .'</th>';
+		$output .= '<th>'. __( 'Commission Agreement', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Date &amp; Time', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Status', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Actions', 'dce' ) .'</th>';
@@ -44,15 +48,28 @@ switch ( $current_view )
 			// data display
 			$output .= '<tr><td>'. $offer['from_display'] .'</td>';
 			$output .= '<td>'. $offer['to_display'] .'</td>';
+			$output .= '<td>'. $offer['comm_method'] .'</td>';
 			$output .= '<td>'. $offer['datetime'] .'</td>';
 			$output .= '<td>'. $offer['status'] .'</td>';
-			$output .= '<td><a href="#" class="button small red cancel-offer" ';
-			$output .= 'data-action="cancel_offer" data-offer="'. $offer['ID'] .'" data-nonce="'. wp_create_nonce( 'dce_cancel_nonce_'. $offer['ID'] ) .'">';
-			$output .= __( 'Cancel', 'offer' ) .'</a></td></tr>';
+
+			// actions
+			$output .= '<td align="center" width="280">';
+
+			// cancel offer
+			$output .= '<a href="#" class="button small red cancel-offer" data-action="cancel_offer" ';
+			$output .= 'data-offer="'. $offer['ID'] .'" data-nonce="'. wp_create_nonce( 'dce_cancel_nonce_'. $offer['ID'] ) .'">';
+			$output .= __( 'Cancel', 'offer' ) .'</a>&nbsp;';
+
+			// convert offer
+			if ( 'publish' == $offer['status'] )
+				$output .= '<a href="'. add_query_arg( 'convert', $offer['ID'], $convert_url ) .'" class="button small green">'. __( 'Convert To Escrow', 'dce' ) .'</a>';
+
+			// actions end
+			$output .= '</td></tr>';
 
 			// offer details
 			if ( !empty( $offer['details'] ) )
-				$output .= '<tr><td colspan="5"><strong>'. __( 'Offer Details', 'dce' ).':</strong> '. $offer['details'] .'</td></tr>';
+				$output .= '<tr><td colspan="6"><strong>'. __( 'Offer Details', 'dce' ).':</strong> '. $offer['details'] .'</td></tr>';
 		}
 
 		// table end
