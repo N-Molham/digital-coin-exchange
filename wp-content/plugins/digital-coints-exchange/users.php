@@ -181,6 +181,33 @@ class DCE_User extends WP_User
 	}
 
 	/**
+	 * Insert/Update user escrow 
+	 * 
+	 * @param int $from_amount
+	 * @param string $from_coin
+	 * @param int $to_amount
+	 * @param string $to_coin
+	 * @param array $escrow_args
+	 * @return int|WP_Error
+	 */
+	public function save_escrow( $from_amount, $from_coin, $to_amount, $to_coin, $escrow_args = '' )
+	{
+		// pass data to escrow handler
+		return DCE_Escrow::save_escrow( $this->ID, $from_amount, $from_coin, $to_amount, $to_coin, $escrow_args );
+	}
+
+	/**
+	 * Get user's escrows
+	 * 
+	 * @param array $args
+	 * @return array
+	 */
+	public function get_escrows( $args = '' )
+	{
+		return apply_filters( 'dce_user_escrows', DCE_Escrow::query_escrows( array( 'author' => $this->ID ) ), $this->ID );
+	}
+
+	/**
 	 * User data fields 
 	 * 
 	 * @return array

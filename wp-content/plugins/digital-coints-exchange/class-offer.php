@@ -47,6 +47,13 @@ class DCE_Offer extends DCE_Component
 	var $to_coin;
 
 	/**
+	 * Commission payment method
+	 * 
+	 * @var string
+	 */
+	var $comm_method;
+
+	/**
 	 * Offer deal details
 	 * 
 	 * @var string
@@ -64,11 +71,31 @@ class DCE_Offer extends DCE_Component
 
 		// initialize properties
 		$this->user = new DCE_User( $this->post_author );
-		$this->from_amount = $this->post_object->from_amount;
-		$this->from_coin = $this->post_object->from_coin;
-		$this->to_amount = $this->post_object->to_amount;
-		$this->to_coin = $this->post_object->to_coin;
-		$this->details = $this->post_object->details;
+
+		$fields = array_keys( self::form_fields() );
+		foreach ( $fields as $field_name )
+		{
+			switch ( $field_name )
+			{
+				case 'details':
+					$this->$field_name = $this->post_content;
+					break;
+
+				default:
+					$this->$field_name = $this->post_object->$field_name;
+			}
+		}
+	}
+
+	/**
+	 * Commission payment method display label
+	 * 
+	 * @return string
+	 */
+	public function commission_method_display()
+	{
+		$display = @self::form_fields()['comm_method']['source'][$this->comm_method];
+		return empty( $display ) ? __( 'Not Set', 'dce' ) : $display;
 	}
 
 	/**
@@ -115,6 +142,7 @@ class DCE_Offer extends DCE_Component
 	{
 		$offer_args = wp_parse_args( $offer_args, array (
 				'details' => '',
+				'comm_method' => '',
 				'id' => '',
 		) );
 
@@ -137,8 +165,12 @@ class DCE_Offer extends DCE_Component
 		update_post_meta( $offer_id, 'to_coin', $to_coin );
 		update_post_meta( $offer_id, 'from_amount', $from_amount );
 		update_post_meta( $offer_id, 'from_coin', $from_coin );
+		update_post_meta( $offer_id, 'comm_method', $offer_args['comm_method'] );
 
-		return apply_filters( 'dce_save_user_offer', $offer_id );
+		// wp action
+		do_action( 'dce_save_user_offer', $offer_id );
+
+		return $offer_id;
 	}
 
 	/**
@@ -234,7 +266,8 @@ class DCE_Offer extends DCE_Component
 				'to_amount' => $offer->to_amount,
 				'to_coin' => $offer->to_coin,
 				'to_display' => $offer->convert_to_display( $coin_types ),
-				'details' => $offer->details,
+				'comm_method' => $offer->commission_method_display(),
+				'details' => $offer->post_content,
 				'datetime' => $offer->datetime,
 				'status' => $offer->status,
 				'url' => $offer->url(),
