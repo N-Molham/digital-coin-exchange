@@ -240,5 +240,84 @@ class DCE_Offer extends DCE_Component
 				'url' => $offer->url(),
 		);
 	}
+
+	/**
+	 * Form data fields
+	 * 
+	 * @param array $coin_types
+	 * @return array
+	 */
+	public static function form_fields( &$coin_types = '' )
+	{
+		if ( empty( $coin_types ) )
+			$coin_types = dce_get_coin_types();
+
+		return array (
+				'from_amount' => array ( 
+						'label' => __( 'From Amount', 'dce' ), 
+						'input' => 'text',
+						'data_type' => 'int',
+						'required' => true,
+				),
+				'from_coin' => array ( 
+						'label' => __( 'From Coin', 'dce' ), 
+						'input' => 'select', 
+						'required' => true,
+						'source' => $coin_types, 
+				),
+				'to_amount' => array ( 
+						'label' => __( 'To Amount', 'dce' ), 
+						'input' => 'text', 
+						'data_type' => 'int',
+						'required' => true,
+				),
+				'to_coin' => array ( 
+						'label' => __( 'To Coin', 'dce' ), 
+						'input' => 'select', 
+						'required' => true,
+						'source' => $coin_types, 
+				),
+				'comm_method' => array ( 
+						'label' => __( 'Commission Agreement', 'dce' ), 
+						'input' => 'select', 
+						'default_value' => 'none',
+						'required' => true,
+						'source' => array ( 
+								'by_user' => __( 'I Will pay 100% of the commission', 'dce' ), 
+								'by_target' => __( 'The other party will pay 100% of the commission', 'dce' ), 
+								'50_50' => __( 'Both parties will split commission fees by 50% 50%', 'dce' ),
+						),
+				),
+				'details' => array ( 
+						'label' => __( 'Deal Details', 'dce' ), 
+						'input' => 'textarea', 
+						'cols' => 42, 
+						'rows' => 8,
+						'data_type' => 'text',
+						'required' => false,
+						'max_length' => 500,
+				),
+		);
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

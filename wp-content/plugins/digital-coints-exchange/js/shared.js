@@ -23,13 +23,21 @@
 		}
 
 		// ajax form
+		var $viewport = $( 'body, html' );
 		$( 'form.ajax-form' ).on( 'submit', function( e ) {
 			e.preventDefault();
 			var $form = $( this ),
+				$errors_holder = $form.find( '.ajax-form' ),
 				callback = $form.data( 'callback' );
 
 			if ( typeof callback == 'undefined' )
 				return false;
+
+			// empty old errors
+			if ( !$errors_holder.length ) {
+				$errors_holder = $( '<div class="ajax-form"></div>' ).prependTo( $form );
+			}
+			$errors_holder.empty();
 
 			// post data
 			$.post( dce.ajax_url, $form.serialize(), function( response ) {
@@ -37,12 +45,21 @@
 				if ( callback.length && typeof window[callback] == 'function' ) {
 					// call user defined function and pass response
 					window[callback]( response );
+					// errors
+					if ( typeof response == 'object' && !response.status ) {
+						// show errors
+						$errors_holder.html( response.error.message );
+						// scroll
+						$viewport.animate( {
+							scrollTop: $errors_holder.offset().top - 100
+						}, 500 );
+					}
 				} else {
 					// display messages
 					if ( typeof response == 'object' ) {
 						if ( response.status ) {
 							// success
-							location.href = update_query_value( location.href, 'view', 'view_escrows' );
+							alert( response.data );
 						} else {
 							// error
 							alert( response.error.message );

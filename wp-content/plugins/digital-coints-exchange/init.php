@@ -35,6 +35,7 @@ require DCE_PATH . 'setup.php';
 require DCE_PATH . 'template_tags.php'; // template tags for easy theming
 require DCE_PATH . 'class-base.php';
 require DCE_PATH . 'class-offer.php';
+require DCE_PATH . 'class-escrow.php';
 require DCE_PATH . 'ajax.php';
 require DCE_PATH . 'ajax-offers.php';
 require DCE_PATH . 'ajax-escrows.php';
