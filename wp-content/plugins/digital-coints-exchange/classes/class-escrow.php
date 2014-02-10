@@ -26,6 +26,20 @@ class DCE_Escrow extends DCE_Offer
 	var $target_email;
 
 	/**
+	 * Escrow owner receive address
+	 * 
+	 * @var string
+	 */
+	var $owner_address;
+
+	/**
+	 * Escrow target receive address
+	 * 
+	 * @var string
+	 */
+	var $target_address;
+
+	/**
 	 * Constructor ( override )
 	 *
 	 * @param number|WP_Post|object $post_id
@@ -40,6 +54,10 @@ class DCE_Escrow extends DCE_Offer
 
 		// additional fields
 		$this->target_email = $this->post_object->target_email;
+
+		// receive addresses
+		$this->owner_address = $this->post_object->owner_address;
+		$this->target_address = $this->post_object->target_address;
 	}
 
 	/**
@@ -52,7 +70,7 @@ class DCE_Escrow extends DCE_Offer
 	 * @param string $to_coin
 	 * @param array $escrow_args
 	 *
-	 * @return int|WP_Error
+	 * @return DCE_Escrow|WP_Error
 	 */
 	static public function save_escrow( $user_id, $from_amount, $from_coin, $to_amount, $to_coin, $escrow_args = '' )
 	{
@@ -66,8 +84,8 @@ class DCE_Escrow extends DCE_Offer
 		// post args
 		$post_args = array (
 				'ID' => is_numeric( $escrow_args['id'] ) ? $escrow_args['id'] : '',
-				'post_status' => 'pending',
-				'post_type' => DCE_POST_TYPE_ESCROW,
+				'post_status' => 'publish',
+				'post_type' => self::$post_type,
 				'post_author' => $user_id,
 				'post_content' => $escrow_args['details'],
 		);
@@ -85,8 +103,12 @@ class DCE_Escrow extends DCE_Offer
 		update_post_meta( $escrow_id, 'comm_method', $escrow_args['comm_method'] );
 		update_post_meta( $escrow_id, 'target_email', $escrow_args['target_email'] );
 
+		// receive addresses
+		update_post_meta( $escrow_id, 'owner_address', DCE_Escrow::generate_address() );
+		update_post_meta( $escrow_id, 'target_address', DCE_Escrow::generate_address() );
+
 		// wp action
-		do_action( 'dce_save_user_escrow', $escrow_id );
+		do_action( 'dce_save_user_escrow', new DCE_Escrow( $escrow_id ) );
 
 		return $escrow_id;
 	}
@@ -104,7 +126,7 @@ class DCE_Escrow extends DCE_Offer
 		// default args
 		$args = wp_parse_args( $args, array (
 				'ID' => '',
-				'post_type' => DCE_POST_TYPE_ESCROW,
+				'post_type' => self::$post_type,
 				'author' => '',
 				'nopaging' => true,
 				'post_status' => array( 'publish', 'pending' ),
@@ -157,6 +179,16 @@ class DCE_Escrow extends DCE_Offer
 		);
 
 		return $fields;
+	}
+
+	/**
+	 * Generate receive address
+	 * 
+	 * @return string
+	 */
+	public static function generate_address()
+	{
+		return wp_generate_password( 64, false );
 	}
 }
 
