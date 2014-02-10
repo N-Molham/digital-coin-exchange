@@ -12,6 +12,13 @@
 class DCE_Offer extends DCE_Component
 {
 	/**
+	 * Post type
+	 *
+	 * @var string
+	 */
+	static $post_type = DCE_POST_TYPE_OFFER;
+
+	/**
 	 * Offer's owner
 	 * 
 	 * @var DCE_User
@@ -69,9 +76,14 @@ class DCE_Offer extends DCE_Component
 	{
 		parent::__construct( $post_id );
 
+		// check existence
+		if ( !$this->exists() )
+			return false;
+
 		// initialize properties
 		$this->user = new DCE_User( $this->post_author );
 
+		// fill in fields 
 		$fields = array_keys( self::form_fields() );
 		foreach ( $fields as $field_name )
 		{

@@ -12,6 +12,13 @@
 class DCE_Escrow extends DCE_Offer
 {
 	/**
+	 * Post type
+	 *
+	 * @var string
+	 */
+	static $post_type = DCE_POST_TYPE_ESCROW;
+
+	/**
 	 * Targeted user to deal with
 	 * 
 	 * @var string
@@ -27,6 +34,11 @@ class DCE_Escrow extends DCE_Offer
 	{
 		parent::__construct( $post_id );
 
+		// check existence
+		if ( !$this->exists() )
+			return false;
+
+		// additional fields
 		$this->target_email = $this->post_object->target_email;
 	}
 
