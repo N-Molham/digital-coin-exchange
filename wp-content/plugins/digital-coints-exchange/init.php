@@ -30,19 +30,31 @@ define( 'DCE_POST_TYPE_ESCROW', 'dce_escrow' );
 /**
  * Includes
  */
+// utils and setups
 require DCE_PATH . 'functions.php';
 require DCE_PATH . 'setup.php';
-require DCE_PATH . 'template_tags.php'; // template tags for easy theming
-require DCE_PATH . 'class-base.php';
-require DCE_PATH . 'class-offer.php';
-require DCE_PATH . 'class-escrow.php';
-require DCE_PATH . 'ajax.php';
-require DCE_PATH . 'ajax-offers.php';
-require DCE_PATH . 'ajax-escrows.php';
+
+// template tags for easy theming
+require DCE_PATH . 'template_tags.php';
+
+// classes
+require DCE_PATH . 'classes/class-base.php';
+require DCE_PATH . 'classes/class-offer.php';
+require DCE_PATH . 'classes/class-escrow.php';
+
+// ajax
+require DCE_PATH . 'ajax/ajax.php';
+require DCE_PATH . 'ajax/ajax-offers.php';
+require DCE_PATH . 'ajax/ajax-escrows.php';
+
+// Admin pages
 require DCE_PATH . 'admin/admin_init.php';
 require DCE_PATH . 'admin/offers.php';
+
+// Users pages
 require DCE_PATH . 'users.php';
 require DCE_PATH . 'users-shortcode.php';
+
 
 add_action( 'plugins_loaded', 'dce_plugins_loaded' );
 /**

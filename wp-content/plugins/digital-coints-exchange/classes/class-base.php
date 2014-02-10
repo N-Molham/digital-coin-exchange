@@ -11,6 +11,14 @@
  */
 class DCE_Component
 {
+
+	/**
+	 * Post type
+	 *
+	 * @var string
+	 */
+	static $post_type = '';
+
 	/**
 	* Component ID
 	*
@@ -54,7 +62,7 @@ class DCE_Component
 	public function __construct( $post_id )
 	{
 		// check if construce with id or object
-		if ( is_object($post_id) && isset($post_id->ID) )
+		if ( is_object( $post_id ) && isset( $post_id->ID ) )
 		{
 			// post object
 			if( !is_a( $post_id, 'WP_Post' ) )
@@ -70,6 +78,10 @@ class DCE_Component
 			$this->post_object = get_post( $this->ID );
 		}
 
+		// check existence
+		if ( !$this->post_object )
+			return false;
+
 		// raw data filter
 		$this->post_object->filter = 'raw';
 
@@ -79,7 +91,6 @@ class DCE_Component
 		// other properties
 		$this->datetime = $this->post_date;
 		$this->status = $this->post_status;
-		$this->fields = array();
 	}
 
 	/**
@@ -99,7 +110,7 @@ class DCE_Component
 	 */
 	public function exists()
 	{
-		return $this->post_object ? true : false;
+		return $this->post_object && static::$post_type == $this->post_object->post_type;
 	}
 
 	/**
