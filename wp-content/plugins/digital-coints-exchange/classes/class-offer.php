@@ -90,7 +90,7 @@ class DCE_Offer extends DCE_Component
 			switch ( $field_name )
 			{
 				case 'details':
-					$this->$field_name = $this->post_content;
+					$this->$field_name =& $this->post_content;
 					break;
 
 				default:

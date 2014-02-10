@@ -94,6 +94,38 @@ class DCE_Component
 	}
 
 	/**
+	 * Change/update item status
+	 * 
+	 * @param string $new_status
+	 * @return boolean|WP_Error
+	 */
+	public function change_status( $new_status )
+	{
+		// parse status
+		$new_status = 'confirm' == $new_status ? 'publish' : 'denied';
+
+		// update status
+		$update = wp_update_post( array( 'ID' => $this->ID, 'post_status' => $new_status ), true );
+		if ( is_wp_error( $update ) )
+			return $update;
+
+		// set new status
+		$this->status = $new_status;
+		return true;
+	}
+
+	/**
+	 * Delete/cancel component item
+	 * 
+	 * @param boolean $force_delete
+	 * @return boolean
+	 */
+	public function delete( $force_delete = true )
+	{
+		return wp_delete_post( $this->ID, $force_delete );
+	}
+
+	/**
 	 * Get Object Permalink URL
 	 *
 	 * @return string

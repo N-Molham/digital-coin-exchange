@@ -16,19 +16,17 @@ function dce_ajax_admin_offer_actions()
 	if ( !current_user_can( 'manage_options' ) )
 		dce_ajax_error( 'permission', __( 'You do not have permission to access here.', 'dce' ) );
 
-	// offer ID
-	$offer_id = (int) dce_get_value( 'offer' );
-	if ( !$offer_id )
+	// offer
+	$offer = new DCE_Offer( (int) dce_get_value( 'offer' ) );
+	if ( !$offer->exists() )
 		dce_ajax_error( 'offer', __( 'Invalid offer ID', 'dce' ) );
 
 	// target action/status
 	$status = str_replace( array( 'dce_', '_offer' ), '', dce_get_value( 'action' ) );
-	$status = 'confirm' == $status ? 'publish' : 'denied';
 
-	// update post
-	$offer_id = wp_update_post( array( 'ID' => $offer_id, 'post_status' => $status ), true );
-	if ( is_wp_error( $offer_id ) )
-		dce_ajax_error( $offer_id->get_error_code(), $offer_id->get_error_message() );
+	$update = $offer->change_status( $status );
+	if ( is_wp_error( $update ) )
+		dce_ajax_error( $update->get_error_code(), $update->get_error_message() );
 
 	// success
 	dce_ajax_response( $status );
@@ -46,12 +44,12 @@ function dce_ajax_cancel_offer()
 		dce_ajax_error( 'offer', __( 'Unknown offer!!!', 'dce' ) );
 
 	// check owner
-	$post = get_post( $offer_id );
-	if ( !$post || wp_get_current_user()->ID != $post->post_author )
+	$offer = new DCE_Offer( $offer_id );
+	if ( !$offer->exists() || wp_get_current_user()->ID != $offer->user->ID )
 		dce_ajax_error( 'permission', __( 'Unknown offer!!!', 'dce' ) );
 
 	// cancel/delete offer
-	wp_delete_post( $offer_id, true );
+	$offer->delete();
 
 	// success
 	dce_ajax_response( 'done' );
@@ -91,29 +89,6 @@ function dce_ajax_create_offer()
 
 		dce_ajax_error( 'form-errors', $error_messages );
 	}
-
-	// from value
-	$from_amount = (int) dce_get_value( 'from_amount' );
-	if ( !$from_amount )
-		dce_ajax_error( 'from_amount', __( 'From Amount Invalid value', 'dce' ) );
-
-	// to value
-	$to_amount = (int) dce_get_value( 'to_amount' );
-	if ( !$to_amount )
-		dce_ajax_error( 'to_amount', __( 'To Amount Invalid value', 'dce' ) );
-
-	// from coin type
-	$from_coin = dce_get_value( 'from_coin' );
-	if ( !isset( $coin_types[$from_coin] ) )
-		dce_ajax_error( 'from_coin', __( 'From Coin Invalid value', 'dce' ) );
-
-	// to coin type
-	$to_coin = dce_get_value( 'to_coin' );
-	if ( !isset( $coin_types[$from_coin] ) )
-		dce_ajax_error( 'to_coin', __( 'To Coin Invalid value', 'dce' ) );
-
-	// details
-	$deal_details = dce_get_value( 'details' );
 
 	// current user
 	$user = DCE_User::get_current_user();

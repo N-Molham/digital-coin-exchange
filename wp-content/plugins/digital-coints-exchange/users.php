@@ -188,7 +188,7 @@ class DCE_User extends WP_User
 	 * @param int $to_amount
 	 * @param string $to_coin
 	 * @param array $escrow_args
-	 * @return int|WP_Error
+	 * @return DCE_Escrow|WP_Error
 	 */
 	public function save_escrow( $from_amount, $from_coin, $to_amount, $to_coin, $escrow_args = '' )
 	{

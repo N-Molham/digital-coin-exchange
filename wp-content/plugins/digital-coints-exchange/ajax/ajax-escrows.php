@@ -14,41 +14,51 @@ function dce_ajax_create_escrow()
 {
 	check_ajax_referer( 'dce_save_escrow', 'nonce' );
 
-	// from value
-	$from_amount = (int) dce_get_value( 'from_amount' );
-	if ( !$from_amount )
-		dce_ajax_error( 'from_amount', __( 'From Amount Invalid value', 'dce' ) );
-
-	// to value
-	$to_amount = (int) dce_get_value( 'to_amount' );
-	if ( !$to_amount )
-		dce_ajax_error( 'to_amount', __( 'To Amount Invalid value', 'dce' ) );
-
+	// init data
 	$coin_types = dce_get_coin_types();
+	$form_fields = DCE_Escrow::form_fields( $coin_types );
 
-	// from coin type
-	$from_coin = dce_get_value( 'from_coin' );
-	if ( !isset( $coin_types[$from_coin] ) )
-		dce_ajax_error( 'from_coin', __( 'From Coin Invalid value', 'dce' ) );
+	// clear old errors
+	DCE_Utiles::clear_form_errors();
 
-	// to coin type
-	$to_coin = dce_get_value( 'to_coin' );
-	if ( !isset( $coin_types[$from_coin] ) )
-		dce_ajax_error( 'to_coin', __( 'To Coin Invalid value', 'dce' ) );
+	// validate form data
+	foreach ( $form_fields as $field_name => &$field_args )
+	{
+		$field_args['value'] = dce_parse_input( $field_name, $field_args );
+	}
 
-	// details
-	$deal_details = dce_get_value( 'details' );
+	// error messages
+	if ( DCE_Utiles::has_form_errors() )
+	{
+		$error_messages = '';
+		$errors = DCE_Utiles::show_form_errors( false, true );
+
+		foreach ( $errors as $error_message )
+		{
+			$error_messages .= dce_alert_message( $error_message, 'error' );
+		}
+
+		dce_ajax_error( 'form-errors', $error_messages );
+	}
 
 	// current user
 	$user = DCE_User::get_current_user();
 
 	// save offer
-	/*$offer_id = $user->save_offer( $from_amount, $from_coin, $to_amount, $to_coin, array( 'details' => $deal_details ) );
-	if ( is_wp_error( $offer_id ) )
+	$escrow = $user->save_escrow( $form_fields['from_amount']['value'], 
+									$form_fields['from_coin']['value'], 
+									$form_fields['to_amount']['value'], 
+									$form_fields['to_coin']['value'], 
+									array ( 
+											'target_email' => $form_fields['target_email']['value'], 
+											'comm_method' => $form_fields['comm_method']['value'], 
+											'details' => $form_fields['details']['value'],
+									) );
+	if ( is_wp_error( $escrow ) )
 		dce_ajax_error( 'save', __( 'Error saving offer, please try again later', 'dce' ) );
 
 	// success
-	dce_ajax_response( $offer_id );*/
+	dce_ajax_response( $escrow );
 }
 
 

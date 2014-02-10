@@ -23,7 +23,7 @@
 		}
 
 		// ajax form
-		var $viewport = $( 'body, html' );
+		window.$viewport = $( 'body, html' );
 		$( 'form.ajax-form' ).on( 'submit', function( e ) {
 			e.preventDefault();
 			var $form = $( this ),
@@ -50,7 +50,7 @@
 						// show errors
 						$errors_holder.html( response.error.message );
 						// scroll
-						$viewport.animate( {
+						window.$viewport.animate( {
 							scrollTop: $errors_holder.offset().top - 100
 						}, 500 );
 					}
