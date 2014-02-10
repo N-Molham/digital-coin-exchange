@@ -6,6 +6,37 @@
  * @since 1.0
  */
 
+add_filter( 'the_content', 'dce_escrow_public_content_handler' );
+/**
+ * Handle escrow post view/content
+ * 
+ * @param string $template
+ * @return string
+ */
+function dce_escrow_public_content_handler( $content )
+{
+	if ( !is_singular( DCE_POST_TYPE_ESCROW ) )
+		return $content;
+
+	return 'asd';
+}
+
+add_action( 'dce_save_user_escrow', 'dce_new_escrow_mail_notification' );
+/**
+ * Notify escrow related users
+ * 
+ * @param DCE_Escrow $escrow
+ */
+function dce_new_escrow_mail_notification( $escrow )
+{
+	// body message
+	$message = 'New escrow started, open link below for details'. "\n\r";
+	$message .= $escrow->url();
+
+	// sent to parties
+	wp_mail( array( $escrow->user->data->user_email, $escrow->target_email ), __( 'New Escrow Started', 'dce' ), $message );
+}
+
 /**
  * Escrow Class
  */

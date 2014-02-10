@@ -95,8 +95,13 @@ function dce_setup_init()
 			'description' => __( 'Clients escrows', 'dce' ),
 			'supports' => array( 'author' ),
 			'show_in_menu' => true,
-			'public' => false,
+			'public' => true,
 			'show_ui' => true,
+			'query_var' => 'escrow',
+			'rewrite' => array (
+					'slug' => 'escrow',
+					'with_front' => false,
+			),
 			'can_export' => true,
 	);
 	register_post_type( DCE_POST_TYPE_ESCROW, $args );
