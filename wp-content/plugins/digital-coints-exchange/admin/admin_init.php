@@ -98,7 +98,7 @@ function dce_admin_enqueue_scripts( $current_page )
 	switch ( $current_page )
 	{
 		case 'edit.php':
-			if ( DCE_POST_TYPE_OFFER == $_GET['post_type'] )
+			if ( in_array( $_GET['post_type'], array( DCE_POST_TYPE_OFFER, DCE_POST_TYPE_ESCROW ) ) )
 			{
 				// lightbox / thickbox
 				add_thickbox();

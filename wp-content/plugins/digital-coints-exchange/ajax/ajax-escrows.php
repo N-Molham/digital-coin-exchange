@@ -6,6 +6,28 @@
  * @since 1.0
  */
 
+add_action( 'wp_ajax_dce_close_escrow', 'dce_ajax_admin_escrow_actions' );
+/**
+ * Close user's escrow
+ */
+function dce_ajax_admin_escrow_actions()
+{
+	if ( !current_user_can( 'manage_options' ) )
+		dce_ajax_error( 'permission', __( 'You do not have permission to access here.', 'dce' ) );
+
+	// offer
+	$escrow = new DCE_Escrow( (int) dce_get_value( 'escrow' ) );
+	if ( !$escrow->exists() )
+		dce_ajax_error( 'escrow', __( 'Invalid escow ID', 'dce' ) );
+
+	$update = $escrow->change_status( 'closed' );
+	if ( is_wp_error( $update ) )
+		dce_ajax_error( $update->get_error_code(), $update->get_error_message() );
+
+	// success
+	dce_ajax_response( 'closed' );
+}
+
 add_action( 'wp_ajax_create_escrow', 'dce_ajax_create_escrow' );
 /**
  * Create new escrow

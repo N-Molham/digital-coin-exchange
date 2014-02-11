@@ -159,6 +159,16 @@ class DCE_Escrow extends DCE_Offer
 	}
 
 	/**
+	 * Escrow Status
+	 *
+	 * @return string
+	 */
+	public function get_status()
+	{
+		return 'publish' == $this->status ? 'open' : $this->status;
+	}
+
+	/**
 	 * Insert/Update user escrow
 	 *
 	 * @param int $user_id

@@ -1,7 +1,9 @@
 @CHARSET "UTF-8";
 
 .post-type-dce_offer .add-new-h2,
-#menu-posts-dce_offer .wp-submenu li:nth-child(3) {
+#menu-posts-dce_offer .wp-submenu li:nth-child(3),
+.post-type-dce_escrow .add-new-h2,
+#menu-posts-dce_escrow .wp-submenu li:nth-child(3) {
 	display: none !important;
 }
 
