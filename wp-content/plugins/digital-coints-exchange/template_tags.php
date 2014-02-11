@@ -7,6 +7,17 @@
  */
 
 /**
+ * Promotion Box
+ * 
+ * @param string $content
+ * @return string
+ */
+function dce_promotion_box( $content )
+{
+	return '<div class="reading-box-container clearfix"><section class="reading-box tagline-shadow"><h2>'. $content .'</h2></section></div>';
+}
+
+/**
  * Divider
  *  
  * @param string $type ( shadow | double | single | dashed | dotted )
