@@ -6,6 +6,56 @@
  * @since 1.0
  */
 
+add_action( 'template_redirect', 'dce_escrow_view_check' );
+/**
+ * Check if user who sees this escrow is allowed to
+ */
+function dce_escrow_view_check()
+{
+	global $wp_query, $data;
+
+	if ( !is_singular( DCE_POST_TYPE_ESCROW ) )
+		return;
+
+	// Avada theme
+	if ( !empty( $data ) )
+	{
+		// full width layout
+		$data['single_post_full_width'] = true;
+
+		// hide post navigation
+		$data['blog_pn_nav'] = true;
+
+		// hide sharing box
+		$data['social_sharing_box'] = false;
+
+		// hide comments
+		$data['blog_comments'] = false;
+
+		// hide author
+		$data['author_info'] = false;
+
+		// hide post meta
+		$data['post_meta'] = false;
+	}
+
+	// target escrow
+	$escrow = new DCE_Escrow( get_post() ); 
+
+	// check login
+	$user = DCE_User::get_current_user();
+	if ( !$user->exists() || !in_array( $user->data->user_email, array( $escrow->target_email, $escrow->user->user_email ) ) )
+	{
+		// clicked from mail
+		if ( 'mail' != dce_get_value( 'ref' ) )
+		{
+			// load 404
+			$wp_query->set_404();
+			status_header( 404 );
+		}
+	}
+}
+
 add_filter( 'the_content', 'dce_escrow_public_content_handler' );
 /**
  * Handle escrow post view/content
@@ -15,10 +65,27 @@ add_filter( 'the_content', 'dce_escrow_public_content_handler' );
  */
 function dce_escrow_public_content_handler( $content )
 {
-	if ( !is_singular( DCE_POST_TYPE_ESCROW ) )
-		return $content;
+	if ( is_singular( DCE_POST_TYPE_ESCROW ) )
+		return '[dce-single-escrow]';
 
-	return 'asd';
+	return $content;
+}
+
+add_filter( 'the_title', 'dce_escrow_public_title_handler', 10, 2 );
+/**
+ * Handle escrow post title
+ * 
+ * @param string $title
+ * @param int $post_id
+ * @return string
+ */
+function dce_escrow_public_title_handler( $title, $post_id )
+{
+	// check single post type
+	if ( DCE_POST_TYPE_ESCROW == get_post_type( $post_id ) )
+		return __( 'Escrow Details', 'dce' );
+
+	return $title;
 }
 
 add_action( 'dce_save_user_escrow', 'dce_new_escrow_mail_notification' );
@@ -31,7 +98,7 @@ function dce_new_escrow_mail_notification( $escrow )
 {
 	// body message
 	$message = 'New escrow started, open link below for details'. "\n\r";
-	$message .= $escrow->url();
+	$message .= add_query_arg( 'ref', 'mail', $escrow->url() );
 
 	// sent to parties
 	wp_mail( array( $escrow->user->data->user_email, $escrow->target_email ), __( 'New Escrow Started', 'dce' ), $message );
@@ -199,7 +266,7 @@ class DCE_Escrow extends DCE_Offer
 		$fields = parent::form_fields( $coin_types );
 
 		// change details label
-		$fields['details']['label'] = __( 'Escrow Terms & Agreements', 'dce' );
+		$fields['details']['label'] = __( 'Terms & Agreements', 'dce' );
 
 		// new fields
 		$fields['target_email'] = array ( 

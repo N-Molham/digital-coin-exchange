@@ -107,6 +107,16 @@ function dce_setup_init()
 	register_post_type( DCE_POST_TYPE_ESCROW, $args );
 }
 
+add_action( 'template_redirect', 'dce_public_template_redirect' );
+/**
+ * Frontend templates filter
+ */
+function dce_public_template_redirect()
+{
+	// enqueues
+	wp_enqueue_style( 'dce-public-style' );
+}
+
 /**
  * Registered digital coin types
  * 
