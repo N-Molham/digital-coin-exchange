@@ -45,7 +45,7 @@ class DCE_Component
 	 *
 	 * @var string
 	 */
-	var $status;
+	protected $status;
 
 	/**
 	 * WP_Post object properties

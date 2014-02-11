@@ -20,20 +20,50 @@ $current_view = dce_get_value( 'view' );
 if ( !in_array( $current_view, array( 'view_escrows', 'create_escrow' ) ) )
 	$current_view = 'view_escrows';
 
+$coin_types = dce_get_coin_types();
+
 // views switch
 switch ( $current_view )
 {
 	case 'view_escrows':
 		$output .= dce_section_title( __( 'Your Escrows', 'dce' ) );
-		
-		// get user offers
-		$escrows = $dce_user->get_escrows();
-		dump_data( $escrows );
+	
+		// get user escrows
+		$user_escrows = $dce_user->get_escrows();
+
+		// escrows table start
+		$output .= dce_table_start( 'user-escrows' ) .'<thead><tr>';
+		$output .= '<th>'. __( 'Original', 'dce' ) .'</th>';
+		$output .= '<th>'. __( 'Target', 'dce' ) .'</th>';
+		$output .= '<th>'. __( 'Commission Agreement', 'dce' ) .'</th>';
+		$output .= '<th>'. __( 'Date &amp; Time', 'dce' ) .'</th>';
+		$output .= '<th>'. __( 'Status', 'dce' ) .'</th>';
+		$output .= '</tr></thead><tbody>';
+
+		// content
+		/* @var $escrow DCE_Escrow */
+		foreach ( $user_escrows as $escrow )
+		{
+			// data display
+			$output .= '<tr><td>'. $escrow->convert_from_display( $coin_types ) .'</td>';
+			$output .= '<td>'. $escrow->convert_to_display( $coin_types ) .'</td>';
+			$output .= '<td>'. $escrow->commission_method_display() .'</td>';
+			$output .= '<td>'. $escrow->datetime .'</td>';
+			$output .= '<td>'. $escrow->status() .'</td>';
+
+			// escrow details
+			if ( !empty( $escrow->details ) )
+				$output .= '<tr><td colspan="6"><strong>'. __( 'Escrow Details', 'dce' ).':</strong> '. $escrow->details .'</td></tr>';
+		}
+
+		// table end
+		$output .= '</tbody>'. dce_table_end();
+
+		// new offer link
+		$output .= '<a href="'. add_query_arg( 'view', 'create_escrow' ) .'" class="button small green">'. __( 'Start New Escrow', 'dce' ) .'</a>';
 		break;
 
 	default:
-		$coin_types = dce_get_coin_types();
-
 		// offer to convert
 		$convert_offer = (int) dce_get_value( 'convert' );
 		if ( $convert_offer )

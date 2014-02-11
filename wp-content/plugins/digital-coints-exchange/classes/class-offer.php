@@ -139,6 +139,16 @@ class DCE_Offer extends DCE_Component
 	}
 
 	/**
+	 * Offer Status
+	 * 
+	 * @return string
+	 */
+	public function get_status()
+	{
+		return 'publish' == $this->status ? 'confirmed' : $this->status;
+	}
+
+	/**
 	 * Insert/Update user offer
 	 *
 	 * @param int $user_id
@@ -281,7 +291,7 @@ class DCE_Offer extends DCE_Component
 				'comm_method' => $offer->commission_method_display(),
 				'details' => $offer->post_content,
 				'datetime' => $offer->datetime,
-				'status' => $offer->status,
+				'status' => $offer->get_status(),
 				'url' => $offer->url(),
 		);
 	}
