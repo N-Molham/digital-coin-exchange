@@ -49,7 +49,7 @@ switch ( $current_view )
 			$output .= '<td>'. $escrow->convert_to_display( $coin_types ) .'</td>';
 			$output .= '<td>'. $escrow->commission_method_display() .'</td>';
 			$output .= '<td>'. $escrow->datetime .'</td>';
-			$output .= '<td>'. $escrow->status() .'</td>';
+			$output .= '<td>'. $escrow->get_status() .'</td>';
 
 			// escrow details
 			if ( !empty( $escrow->details ) )
