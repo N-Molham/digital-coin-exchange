@@ -44,6 +44,10 @@ function dce_admin_init()
 							// update page content with the shortcode
 							wp_update_post( array( 'ID' => $page->ID, 'post_content' => $page->post_content .'<br/>'. $page_info['content'] ) );
 						}
+
+						// page info
+						$page_info['id'] = $page->ID;
+						$page_info['url'] = get_permalink( $page->ID );
 					}
 					else
 					{
@@ -78,7 +82,7 @@ function dce_admin_notices()
 {
 	// check pages
 	$login_page = dce_get_pages( 'login' );
-	if ( !get_permalink( $login_page->id ) )
+	if ( !$login_page->id || !get_permalink( $login_page->id ) )
 	{
 		echo '<div class="error"><p>';
 		echo sprintf( __( 'In order to <strong>Digital Coins Exchanging Store</strong> plugin to work it needs to setup the needed pages, 
