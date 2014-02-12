@@ -126,26 +126,7 @@ function dce_public_template_redirect()
 function dce_get_coin_types( $type = null )
 {
 	// list of coin types
-	$coin_types = array ( 
-			'bitcoin' => array ( 
-					'label' => __( 'Bitcoin', 'dce' ),
-					'single' => '%d bitcoin',
-					'plural' => '%d bitcoins',
-					'command' => 'bitcoind',
-			),
-			'litecoin' => array ( 
-					'label' => __( 'Litecoin', 'dce' ),
-					'single' => '%d litecoin',
-					'plural' => '%d litecoins',
-					'command' => 'litecoind',
-			),
-			'dogecoin' => array ( 
-					'label' => __( 'Dogecoin', 'dce' ),
-					'single' => '%d dogecoin',
-					'plural' => '%d dogecoins',
-					'command' => 'dogecoind',
-			),
-	);
+	$coin_types = dce_admin_get_settgins( 'coin_types' );
 
 	// get specific coin type
 	if ( $type )

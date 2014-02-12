@@ -60,7 +60,7 @@ function dce_settings_init()
 							'name' => 'coin_types',
 							'input' => 'html',
 							'class' => 'coin-types',
-							'default' => dce_get_coin_types(),
+							'default' => array(),
 							'desc' => __( 'List of supported digital coins', 'dce' ),
 					),
 			),
