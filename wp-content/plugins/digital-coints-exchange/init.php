@@ -50,6 +50,7 @@ require DCE_PATH . 'ajax/ajax-escrows.php';
 // Admin pages
 require DCE_PATH . 'admin/admin_init.php';
 require DCE_PATH . 'admin/components.php';
+require DCE_PATH . 'admin/settings.php';
 
 // Users pages
 require DCE_PATH . 'users.php';
