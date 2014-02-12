@@ -79,7 +79,11 @@ function dce_admin_notices()
 	// check pages
 	$login_page = dce_get_pages( 'login' );
 	if ( !get_permalink( $login_page->id ) )
-		echo '<div class="error"><p>', sprintf( __( 'In order to <strong>Digital Coins Exchanging Store</strong> plugin to work it needs to setup the needed pages, <a class="button button-primary" href="%s">Click here to run setup</a>', 'dce' ), add_query_arg( 'dce_setup', 'pages' ) ) ,'</p></div>';
+	{
+		echo '<div class="error"><p>';
+		echo sprintf( __( 'In order to <strong>Digital Coins Exchanging Store</strong> plugin to work it needs to setup the needed pages, 
+				<a class="button button-primary" href="%s">Click here to run setup</a>', 'dce' ), add_query_arg( 'dce_setup', 'pages' ) ) ,'</p></div>';
+	}
 }
 
 add_action( 'admin_enqueue_scripts', 'dce_admin_enqueue_scripts' );
@@ -88,6 +92,8 @@ add_action( 'admin_enqueue_scripts', 'dce_admin_enqueue_scripts' );
 */
 function dce_admin_enqueue_scripts( $current_page )
 {
+	global $dce_admin_settings_page_slug;
+
 	/**
 	 * Styles
 	 */
@@ -97,6 +103,17 @@ function dce_admin_enqueue_scripts( $current_page )
 	// specific pages enqueues
 	switch ( $current_page )
 	{
+		// settings page
+		case $dce_admin_settings_page_slug:
+			wp_enqueue_script( 'dce-admin-settings', DCE_URL .'/js/admin-settings.js', array( 'dce-shared-script' ), false, true );
+
+			// localization
+			wp_localize_script( 'dce-admin-settings', 'dce_settings', array (
+					'delete_msg' => __( 'WARNING: delete a coin may cause problems with link escrows and offers, Are you Sure ?', 'dce' ),
+			) );
+			break;
+
+		// custom post types of offers & escrows
 		case 'edit.php':
 			if ( in_array( $_GET['post_type'], array( DCE_POST_TYPE_OFFER, DCE_POST_TYPE_ESCROW ) ) )
 			{
@@ -108,7 +125,26 @@ function dce_admin_enqueue_scripts( $current_page )
 	}
 }
 
+add_filter( 'plugin_action_links_'. str_replace( WP_PLUGIN_DIR .'/', '', DCE_PLUGIN_FILE ), 'dce_plugin_action_links' );
+/**
+ * Plugin Action links
+ * 
+ * @param array $links
+ * @return array
+ */
+function dce_plugin_action_links( $links )
+{
+	global $dce_admin_settings_page_slug;
 
+	// generate link
+	$settings_link = '<a href="'. admin_url( 'options-general.php?page='. str_replace( 'settings_page_', '', $dce_admin_settings_page_slug ) ) 
+					.'" title="'. __( 'Plugin Settings', 'dce' ) .'">'. __( 'Settings', 'dce' ) .'</a>';
+
+	// add settings page link
+	array_unshift( $links, $settings_link );
+
+	return $links;
+}
 
 
 
