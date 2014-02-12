@@ -61,7 +61,7 @@ switch ( $current_view )
 			$output .= __( 'Cancel', 'offer' ) .'</a>&nbsp;';
 
 			// convert offer
-			if ( 'publish' == $offer['status'] )
+			if ( 'confirmed' == $offer['status'] )
 				$output .= '<a href="'. add_query_arg( 'convert', $offer['ID'], $convert_url ) .'" class="button small green">'. __( 'Convert To Escrow', 'dce' ) .'</a>';
 
 			// actions end
