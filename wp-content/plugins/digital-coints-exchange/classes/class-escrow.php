@@ -215,10 +215,12 @@ class DCE_Escrow extends DCE_Offer
 		update_post_meta( $escrow_id, 'owner_address', DCE_Escrow::generate_address() );
 		update_post_meta( $escrow_id, 'target_address', DCE_Escrow::generate_address() );
 
-		// wp action
-		do_action( 'dce_save_user_escrow', new DCE_Escrow( $escrow_id ) );
+		$escrow = new DCE_Escrow( $escrow_id );
 
-		return $escrow_id;
+		// wp action
+		do_action( 'dce_save_user_escrow', $escrow );
+
+		return $escrow;
 	}
 
 	/**

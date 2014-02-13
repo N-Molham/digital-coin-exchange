@@ -80,7 +80,7 @@ function dce_ajax_create_escrow()
 		dce_ajax_error( 'save', __( 'Error saving offer, please try again later', 'dce' ) );
 
 	// success
-	dce_ajax_response( $escrow );
+	dce_ajax_response( $escrow->url() );
 }
 
 

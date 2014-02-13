@@ -23,7 +23,7 @@
 		window.new_escrow_callback = function( response ) {
 			if ( response.status ) {
 				// success
-				location.href = update_query_value( location.href, 'view', 'view_escrows' );
+				location.href = response.data;
 			}
 		};
 
