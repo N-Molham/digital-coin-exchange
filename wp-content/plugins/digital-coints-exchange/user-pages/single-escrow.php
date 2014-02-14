@@ -13,6 +13,9 @@ $escrow = new DCE_Escrow( get_post() );
 if ( !$escrow->exists() )
 	return dce_alert_message( __( 'Unknown escrow', 'dce' ), 'error' );
 
+// is the current logged in user is the owner/creator
+$is_owner = $dce_user->data->user_email != $escrow->target_email;
+
 // output holder
 $output = '';
 
@@ -20,7 +23,7 @@ $coin_types = dce_get_coin_types();
 
 // receive address
 $receive_address = __( 'Your Receive Address', 'dce' ) .' : ';
-$receive_address .= '<code>'. ( $dce_user->data->user_email == $escrow->target_email ? $escrow->target_address : $escrow->owner_address ) .'</code>';
+$receive_address .= '<code>'. ( $is_owner ? $escrow->owner_address : $escrow->target_address ) .'</code>';
 
 // display
 $output .= dce_promotion_box( $receive_address );
@@ -30,6 +33,9 @@ $output .= dce_table_start( 'single-escrow' );
 
 // form fields for data display
 $fields = DCE_Escrow::form_fields( $coin_types );
+
+// convert from
+$output .= '<tr><th>'. __( 'Other Party', 'dce' ) .'</th><td>'. ( $is_owner ? $escrow->target_email : $escrow->user->data->user_email ) .'</td></tr>';
 
 // convert from
 $output .= '<tr><th>'. __( 'Convert From', 'dce' ) .'</th><td>'. $escrow->convert_from_display( $coin_types ) .'</td></tr>';
