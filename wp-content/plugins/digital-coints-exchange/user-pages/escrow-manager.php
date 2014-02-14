@@ -38,6 +38,7 @@ switch ( $current_view )
 		$output .= '<th>'. __( 'Commission Agreement', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Date &amp; Time', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Status', 'dce' ) .'</th>';
+		$output .= '<th>'. __( 'Actions', 'dce' ) .'</th>';
 		$output .= '</tr></thead><tbody>';
 
 		// content
@@ -50,6 +51,7 @@ switch ( $current_view )
 			$output .= '<td>'. $escrow->commission_method_display() .'</td>';
 			$output .= '<td>'. $escrow->datetime .'</td>';
 			$output .= '<td>'. $escrow->get_status() .'</td>';
+			$output .= '<td><a href="'. $escrow->url() .'" class="button small green" target="_blank">'. __( 'View', 'dce' ) .'</a></td>';
 
 			// escrow details
 			if ( !empty( $escrow->details ) )
