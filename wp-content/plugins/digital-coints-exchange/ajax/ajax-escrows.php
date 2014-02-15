@@ -72,7 +72,7 @@ function dce_ajax_create_escrow()
 									$form_fields['to_amount']['value'], 
 									$form_fields['to_coin']['value'], 
 									array ( 
-											'target_email' => $form_fields['target_email']['value'], 
+											'target_email' => strtolower( $form_fields['target_email']['value'] ), 
 											'comm_method' => $form_fields['comm_method']['value'], 
 											'details' => $form_fields['details']['value'],
 									) );

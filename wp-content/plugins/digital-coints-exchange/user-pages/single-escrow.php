@@ -13,23 +13,17 @@ $escrow = new DCE_Escrow( get_post() );
 if ( !$escrow->exists() )
 	return dce_alert_message( __( 'Unknown escrow', 'dce' ), 'error' );
 
+// is the current logged in user is the owner/creator
+$is_owner = strtolower( $dce_user->data->user_email ) != strtolower( $escrow->target_email );
+
 // output holder
 $output = '';
 
 $coin_types = dce_get_coin_types();
 
-//check if the current viewer is the target user ?
-$target = strtolower($dce_user->data->user_email) == strtolower($escrow->target_email);
-//show what to send
-$send_text = $target ?$escrow->convert_to_display( $coin_types ):$escrow->convert_from_display( $coin_types );
-
-// output address
-$receive_address = __( 'Please send', 'dce' ) .' '.$send_text.' to this address : ';
-$receive_address .= '<code>'. ( $target ? $escrow->target_address : $escrow->owner_address ) .'</code>';
-
-//show what will be received
-$receive_text = $target ?$escrow->convert_from_display( $coin_types ):$escrow->convert_to_display( $coin_types );
-$receive_address .='<p style="text-align:center; margin-top:10px !important;">you will be notified once the other party sends <strong>'.$receive_text.'</strong> to us , if for any reason they did not send it on time , you will get your coins back with no commissions.</p>';
+// receive address
+$receive_address = __( 'Your Receive Address', 'dce' ) .' : ';
+$receive_address .= '<code>'. ( $is_owner ? $escrow->owner_address : $escrow->target_address ) .'</code>';
 
 // display
 $output .= dce_promotion_box( $receive_address );
@@ -40,11 +34,8 @@ $output .= dce_table_start( 'single-escrow' );
 // form fields for data display
 $fields = DCE_Escrow::form_fields( $coin_types );
 
-//escrow status
-$output .= '<tr><th>'. __( 'Escrow Status', 'dce' ) .'</th><td>'. $escrow->get_status() .'</td></tr>';
-
-//escrow status
-$output .= '<tr><th>'. __( 'Target User', 'dce' ) .'</th><td>'. $escrow->target_email .'</td></tr>';
+// convert from
+$output .= '<tr><th>'. __( 'Other Party', 'dce' ) .'</th><td>'. ( $is_owner ? $escrow->target_email : $escrow->user->data->user_email ) .'</td></tr>';
 
 // convert from
 $output .= '<tr><th>'. __( 'Convert From', 'dce' ) .'</th><td>'. $escrow->convert_from_display( $coin_types ) .'</td></tr>';

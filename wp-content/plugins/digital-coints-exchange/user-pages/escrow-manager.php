@@ -33,12 +33,13 @@ switch ( $current_view )
 
 		// escrows table start
 		$output .= dce_table_start( 'user-escrows' ) .'<thead><tr>';
+		$output .= '<th>'. __( 'Creator', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Original', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Target', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Commission Agreement', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Date &amp; Time', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Status', 'dce' ) .'</th>';
-		$output .= '<th>'. __( 'Action', 'dce' ) .'</th>';
+		$output .= '<th>'. __( 'Actions', 'dce' ) .'</th>';
 		$output .= '</tr></thead><tbody>';
 
 		// content
@@ -46,16 +47,17 @@ switch ( $current_view )
 		foreach ( $user_escrows as $escrow )
 		{
 			// data display
-			$output .= '<tr><td>'. $escrow->convert_from_display( $coin_types ) .'</td>';
+			$output .= '<tr><td>'. $escrow->user->display_name() .'</td>';
+			$output .= '<td>'. $escrow->convert_from_display( $coin_types ) .'</td>';
 			$output .= '<td>'. $escrow->convert_to_display( $coin_types ) .'</td>';
 			$output .= '<td>'. $escrow->commission_method_display() .'</td>';
 			$output .= '<td>'. $escrow->datetime .'</td>';
 			$output .= '<td>'. $escrow->get_status() .'</td>';
-			$output .= '<td><a href="'. $escrow->url() .'" class="button small green" target="_blank">'. __( 'View', 'dce' ) .'</a></td>';			
+			$output .= '<td><a href="'. $escrow->url() .'" class="button small green" target="_blank">'. __( 'View', 'dce' ) .'</a></td>';
 
 			// escrow details
 			if ( !empty( $escrow->details ) )
-				$output .= '<tr><td colspan="6"><strong>'. __( 'Escrow Details', 'dce' ).':</strong> '. $escrow->details .'</td></tr>';
+				$output .= '<tr><td colspan="7"><strong>'. __( 'Escrow Details', 'dce' ).':</strong> '. $escrow->details .'</td></tr>';
 		}
 
 		// table end

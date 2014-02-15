@@ -12,6 +12,7 @@ wp-content/themes/twentythirteen/
 wp-content/themes/twentyfourteen/
 wp-content/themes/headway/
 wp-content/plugins/akismet/
+wp-content/plugins/easy-wp-smtp/
 wp-content/plugins/hello.php
 wp-config-sample.php
 wp-content/themes/Avada/0 - READ ME FIRST.rtf
@@ -39,6 +40,10 @@ wp-settings.php
 wp-signup.php
 wp-trackback.php
 xmlrpc.php
+features.txt
 
 syntax: regexp
 ^\.
+
+syntax: regexp
+^\.hgignore$
