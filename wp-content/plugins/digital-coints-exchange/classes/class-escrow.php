@@ -238,6 +238,7 @@ class DCE_Escrow extends DCE_Offer
 				'ID' => '',
 				'post_type' => self::$post_type,
 				'author' => '',
+				'party_email' => '',
 				'nopaging' => true,
 				'post_status' => array( 'publish', 'pending' ),
 		) );
@@ -253,6 +254,13 @@ class DCE_Escrow extends DCE_Offer
 		{
 			// all escrows
 			$escrows = get_posts( $args );
+
+			// other parties
+			$args['author'] = '';
+			$args['meta_query'] = array ( 
+					array( 'key' => 'target_email', 'value' => $args['party_email'] ),
+			);
+			$escrows = array_merge( $escrows, get_posts( $args ) );
 		}
 
 		// class wrap

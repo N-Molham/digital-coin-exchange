@@ -14,7 +14,7 @@ if ( !$escrow->exists() )
 	return dce_alert_message( __( 'Unknown escrow', 'dce' ), 'error' );
 
 // is the current logged in user is the owner/creator
-$is_owner = $dce_user->data->user_email != $escrow->target_email;
+$is_owner = strtolower( $dce_user->data->user_email ) != strtolower( $escrow->target_email );
 
 // output holder
 $output = '';

@@ -30,6 +30,9 @@ function dce_users_init()
 		if ( DCE_Utiles::has_form_errors() )
 			dce_redirect();
 
+		// lower email chars
+		$register_fields['email']['value'] = strtolower( $register_fields['email']['value'] );
+
 		// register attrs
 		$user_attrs = array ( 
 				'user_login' => $register_fields['email']['value'],
@@ -204,7 +207,7 @@ class DCE_User extends WP_User
 	 */
 	public function get_escrows( $args = '' )
 	{
-		return apply_filters( 'dce_user_escrows', DCE_Escrow::query_escrows( array( 'author' => $this->ID ) ), $this->ID );
+		return apply_filters( 'dce_user_escrows', DCE_Escrow::query_escrows( array ( 'author' => $this->ID, 'party_email' => $this->data->user_email ) ), $this->ID );
 	}
 
 	/**
