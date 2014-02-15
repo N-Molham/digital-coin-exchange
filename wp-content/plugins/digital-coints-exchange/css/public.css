@@ -23,9 +23,19 @@
 
 .dce_escrow .reading-box-container {
 	margin-bottom: 40px !important;
+	text-align: center;
 }
 
+.offer-convert {
+	width: 114px;
+	font-size: 12px;
+	margin-bottom: 5px;
+}
 
+.cancel-offer {
+	width: 114px;
+	font-size: 12px;
+}
 
 
 
