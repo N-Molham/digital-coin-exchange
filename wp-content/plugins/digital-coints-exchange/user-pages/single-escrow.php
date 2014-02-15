@@ -18,9 +18,18 @@ $output = '';
 
 $coin_types = dce_get_coin_types();
 
-// receive address
-$receive_address = __( 'Your Receive Address', 'dce' ) .' : ';
-$receive_address .= '<code>'. ( $dce_user->data->user_email == $escrow->target_email ? $escrow->target_address : $escrow->owner_address ) .'</code>';
+//check if the current viewer is the target user ?
+$target = strtolower($dce_user->data->user_email) == strtolower($escrow->target_email);
+//show what to send
+$send_text = $target ?$escrow->convert_to_display( $coin_types ):$escrow->convert_from_display( $coin_types );
+
+// output address
+$receive_address = __( 'Please send', 'dce' ) .' '.$send_text.' to this address : ';
+$receive_address .= '<code>'. ( $target ? $escrow->target_address : $escrow->owner_address ) .'</code>';
+
+//show what will be received
+$receive_text = $target ?$escrow->convert_from_display( $coin_types ):$escrow->convert_to_display( $coin_types );
+$receive_address .='<p style="text-align:center; margin-top:10px !important;">you will be notified once the other party sends <strong>'.$receive_text.'</strong> to us , if for any reason they did not send it on time , you will get your coins back with no commissions.</p>';
 
 // display
 $output .= dce_promotion_box( $receive_address );
@@ -30,6 +39,12 @@ $output .= dce_table_start( 'single-escrow' );
 
 // form fields for data display
 $fields = DCE_Escrow::form_fields( $coin_types );
+
+//escrow status
+$output .= '<tr><th>'. __( 'Escrow Status', 'dce' ) .'</th><td>'. $escrow->get_status() .'</td></tr>';
+
+//escrow status
+$output .= '<tr><th>'. __( 'Target User', 'dce' ) .'</th><td>'. $escrow->target_email .'</td></tr>';
 
 // convert from
 $output .= '<tr><th>'. __( 'Convert From', 'dce' ) .'</th><td>'. $escrow->convert_from_display( $coin_types ) .'</td></tr>';

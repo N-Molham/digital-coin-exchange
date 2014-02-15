@@ -55,14 +55,15 @@ switch ( $current_view )
 			// actions
 			$output .= '<td align="center" width="280">';
 
-			// cancel offer
-			$output .= '<a href="#" class="button small red cancel-offer" data-action="cancel_offer" ';
-			$output .= 'data-offer="'. $offer['ID'] .'" data-nonce="'. wp_create_nonce( 'dce_cancel_nonce_'. $offer['ID'] ) .'">';
-			$output .= __( 'Cancel', 'offer' ) .'</a>&nbsp;';
-
 			// convert offer
 			if ( 'confirmed' == $offer['status'] )
-				$output .= '<a href="'. add_query_arg( 'convert', $offer['ID'], $convert_url ) .'" class="button small green">'. __( 'Convert To Escrow', 'dce' ) .'</a>';
+				$output .= '<a href="'. add_query_arg( 'convert', $offer['ID'], $convert_url ) .'" class="button small green" style="width:114px;font-size:12px;margin-bottom:5px;">'. __( 'Convert To Escrow', 'dce' ) .'</a>';
+
+			// cancel offer
+			$output .= '<a href="#" class="button small red cancel-offer" data-action="cancel_offer" ';
+			$output .= 'data-offer="'. $offer['ID'] .'" data-nonce="'. wp_create_nonce( 'dce_cancel_nonce_'. $offer['ID'] ) .'" style="width:114px;font-size:12px">';
+			$output .= __( 'Cancel', 'offer' ) .'</a>&nbsp;';
+
 
 			// actions end
 			$output .= '</td></tr>';
