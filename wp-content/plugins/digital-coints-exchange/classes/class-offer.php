@@ -171,7 +171,7 @@ class DCE_Offer extends DCE_Component
 		// post args
 		$post_args = array (
 				'ID' => is_numeric( $offer_args['id'] ) ? $offer_args['id'] : '',
-				'post_status' => 'pending',
+				'post_status' => 'publish',// offers are automatically confirmed for testing
 				'post_type' => DCE_POST_TYPE_OFFER,
 				'post_author' => $user_id,
 				'post_content' => $offer_args['details'],

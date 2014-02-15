@@ -14,7 +14,7 @@
  */
 function dce_promotion_box( $content )
 {
-	return '<div class="reading-box-container clearfix"><section class="reading-box tagline-shadow"><h2>'. $content .'</h2></section></div>';
+	return '<div class="reading-box-container clearfix"><section class="reading-box tagline-shadow"><h2 style="text-align:center">'. $content .'</h2></section></div>';
 }
 
 /**

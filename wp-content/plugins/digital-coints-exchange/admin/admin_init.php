@@ -32,6 +32,7 @@ function dce_admin_init()
 				);
 
 				$pages = dce_get_pages();
+				//dump_data( $pages );
 				foreach ( $pages as $page_name => &$page_info )
 				{
 					// check page existence
