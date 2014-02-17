@@ -22,7 +22,7 @@ $output = '';
 $coin_types = dce_get_coin_types();
 
 // receive address
-$receive_address = __( 'Your Receive Address', 'dce' ) .' : ';
+$receive_address = __( 'Coin Address to send to', 'dce' ) .' : ';
 $receive_address .= '<code>'. ( $is_owner ? $escrow->owner_address : $escrow->target_address ) .'</code>';
 
 // display

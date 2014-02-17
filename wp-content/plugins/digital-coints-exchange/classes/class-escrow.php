@@ -212,8 +212,8 @@ class DCE_Escrow extends DCE_Offer
 		update_post_meta( $escrow_id, 'target_email', $escrow_args['target_email'] );
 
 		// receive addresses
-		update_post_meta( $escrow_id, 'owner_address', DCE_Escrow::generate_address() );
-		update_post_meta( $escrow_id, 'target_address', DCE_Escrow::generate_address() );
+		update_post_meta( $escrow_id, 'owner_address', DCE_Escrow::generate_address( $to_coin ) );
+		update_post_meta( $escrow_id, 'target_address', DCE_Escrow::generate_address( $from_coin ) );
 
 		$escrow = new DCE_Escrow( $escrow_id );
 
@@ -302,18 +302,56 @@ class DCE_Escrow extends DCE_Offer
 	/**
 	 * Generate receive address
 	 * 
-	 * @return string
+	 * @param string $coin_type
+	 * @return string|WP_Error
 	 */
-	public static function generate_address()
+	public static function generate_address( $coin_type )
 	{
-		return wp_generate_password( 64, false );
+		$coin = dce_get_coin_types( $coin_type );
+
+		// check coin
+		if ( !$coin )
+			return new WP_Error( 'coin-type', __( 'Unkown coin type', 'dce' ) );
+
+		// run command to get receive address
+		$result = dce_exec( $coin->command .' getnewaddress' );
+
+		// check for errors
+		if ( $result['error'] || empty( $result['output'] ) )
+			return new WP_Error( $result['error'], __( 'Error executing command', 'dce' ) );
+
+		// return new address
+		return implode( '', $result['output'] );
 	}
 }
 
+/**
+ * Execute shell command though bash script
+ * 
+ * @param string $command
+ * @return string
+ */
+function dce_exec( $command )
+{
+	// execute command
+	exec( 'sudo -u nabeel '. DCE_PATH .'/inc/handler.sh '. escapeshellcmd( $command ), $output, $error_code );
+
+	// return results
+	return array( 'output' => $output, 'error' => $error_code );
+}
 
 
-
-
+/**
+ * Shell exec error codes
+	1 	  <------> Catchall for general errors	let "var1 = 1/0"	Miscellaneous errors, such as "divide by zero"
+	2 	  <------> Misuse of shell builtins (according to Bash documentation)	 	Seldom seen, usually defaults to exit code 1
+	126   <----> Command invoked cannot execute	 	Permission problem or command is not an executable
+	127   <----> "command not found"	 	Possible problem with $PATH or a typo
+	128   <----> Invalid argument to exit	exit 3.14159	exit takes only integer args in the range 0 - 255 (see footnote)
+	128+n <--> Fatal error signal "n"	kill -9 $PPID of script	$? returns 137 (128 + 9)
+	130   <----> Script terminated by Control-C	 	Control-C is fatal error signal 2, (130 = 128 + 2, see above)
+	255*  <---> Exit status out of range	exit -1	exit takes only integer args in the range 0 - 255
+ */
 
 
 
