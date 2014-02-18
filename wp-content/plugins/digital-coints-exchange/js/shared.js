@@ -44,7 +44,7 @@
 				// callback
 				if ( callback.length && typeof window[callback] == 'function' ) {
 					// call user defined function and pass response
-					window[callback]( response );
+					window[callback]( response, $form, $errors_holder );
 					// errors
 					if ( typeof response == 'object' && !response.status ) {
 						// show errors

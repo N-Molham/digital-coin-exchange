@@ -37,7 +37,23 @@
 	font-size: 12px;
 }
 
+.divider {
+	margin-bottom: 20px;
+}
 
+.reading-box .divider {
+	margin-top: 12px;
+	margin-bottom: 12px;
+}
+
+.reading-box .input-text {
+	width: 50%;
+}
+
+.reading-box .input-code {
+	font-family: Monaco, Menlo, Consolas, "Courier New", monospace !important;
+	font-size: 18px !important;
+}
 
 
 

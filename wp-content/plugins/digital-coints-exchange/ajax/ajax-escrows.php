@@ -6,6 +6,33 @@
  * @since 1.0
  */
 
+add_action( 'wp_ajax_save_receive_address', 'dce_ajax_save_receive_address' );
+/**
+ * Save escrow user receive address
+ */
+function dce_ajax_save_receive_address()
+{
+	check_ajax_referer( 'dce_receive_address', 'nonce' );
+
+	// current logged in user
+	$user_email = DCE_User::get_current_user()->data->user_email;
+
+	// check escrow && access
+	$escrow = new DCE_Escrow( (int) dce_get_value( 'escrow' ) );
+	if ( !$escrow->exists() || !$escrow->check_user( $user_email ) )
+		dce_ajax_error( 'escrow', dce_alert_message( __( 'Unknown escrow !!!', 'dce' ), 'error' ) );
+
+	$address = dce_get_value( 'receive_address' );
+	if ( !DCE_Escrow::verify_address( $address ) )
+		dce_ajax_error( 'address', dce_alert_message( __( 'Invalid receive address', 'dce' ), 'error' ) );
+
+	// save address
+	$escrow->set_receive_address( $address, $escrow->is_user_owner( $user_email ) );
+
+	// success
+	dce_ajax_response( dce_alert_message( __( 'Address Saved', 'dce' ), 'success', true ) );
+}
+
 add_action( 'wp_ajax_dce_close_escrow', 'dce_ajax_admin_escrow_actions' );
 /**
  * Close user's escrow

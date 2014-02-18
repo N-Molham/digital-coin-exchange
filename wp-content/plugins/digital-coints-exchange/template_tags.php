@@ -26,7 +26,7 @@ function dce_promotion_box( $content )
  */
 function dce_divider( $type = 'shadow', $tag = 'div' )
 {
-	return '<'. $tag .' class="sep-'. $type .'" style="margin-bottom:20px;"></'. $tag .'>';
+	return '<'. $tag .' class="divider sep-'. $type .'"></'. $tag .'>';
 }
 
 /**
@@ -111,8 +111,9 @@ function dce_table_end()
 /**
  * Alert messages layout
  * 
- * @param string $message
+ * @param string $message ( general | success | error | notice )
  * @param string $type
+ * @param boolean $close_link
  * @return string
  */
 function dce_alert_message( $message, $type = 'general', $close_link = false )
