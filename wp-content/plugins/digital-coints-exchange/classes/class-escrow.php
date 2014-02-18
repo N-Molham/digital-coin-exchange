@@ -44,7 +44,7 @@ function dce_escrow_view_check()
 
 	// check login
 	$user = DCE_User::get_current_user();
-	if ( !$user->exists() || !in_array( $user->data->user_email, array( $escrow->target_email, $escrow->user->user_email ) ) )
+	if ( !$user->exists() || !$escrow->check_user( $user->data->user_email ) )
 	{
 		// clicked from mail
 		if ( 'mail' != dce_get_value( 'ref' ) )
@@ -124,18 +124,32 @@ class DCE_Escrow extends DCE_Offer
 	var $target_email;
 
 	/**
-	 * Escrow owner receive address
+	 * Escrow owner send address
 	 * 
 	 * @var string
 	 */
 	var $owner_address;
 
 	/**
-	 * Escrow target receive address
+	 * Escrow target send address
 	 * 
 	 * @var string
 	 */
 	var $target_address;
+
+	/**
+	 * Escrow owner receive address
+	 * 
+	 * @var string
+	 */
+	var $owner_receive_address;
+
+	/**
+	 * Escrow target receive address
+	 * 
+	 * @var string
+	 */
+	var $target_receive_address;
 
 	/**
 	 * Constructor ( override )
@@ -153,9 +167,11 @@ class DCE_Escrow extends DCE_Offer
 		// additional fields
 		$this->target_email = $this->post_object->target_email;
 
-		// receive addresses
+		// exchange addresses
 		$this->owner_address = $this->post_object->owner_address;
 		$this->target_address = $this->post_object->target_address;
+		$this->owner_receive_address = $this->post_object->owner_receive_address;
+		$this->target_receive_address = $this->post_object->target_receive_address;
 	}
 
 	/**
@@ -166,6 +182,60 @@ class DCE_Escrow extends DCE_Offer
 	public function get_status()
 	{
 		return 'publish' == $this->status ? 'open' : $this->status;
+	}
+
+	/**
+	 * Check if the given user email has the access to the escrow or not
+	 * 
+	 * @param string|DCE_User|WP_User $user_email
+	 * @return boolean
+	 */
+	public function check_user( $user_email )
+	{
+		// if is user instance
+		if ( is_object( $user_email ) && ( is_a( $user_email, 'DCE_User' ) || is_a( $user_email, 'WP_User' ) ) )
+			$user_email = $user_email->data->user_email;
+
+		return in_array( $user_email, array( $this->target_email, $this->user->user_email ) );
+	}
+
+	/**
+	 * Check if the given user email is the owner/creator of the escrow
+	 * 
+	 * @param string|DCE_User|WP_User $user_email
+	 * @return boolean
+	 */
+	public function is_user_owner( $user_email )
+	{
+		// if is user instance
+		if ( is_object( $user_email ) && ( is_a( $user_email, 'DCE_User' ) || is_a( $user_email, 'WP_User' ) ) )
+			$user_email = $user_email->data->user_email;
+
+		return strtolower( $user_email ) != strtolower( $this->target_email );
+	}
+
+	/**
+	 * Set receive address for escrow users
+	 * 
+	 * @param string $address
+	 * @param boolean $for_owner
+	 */
+	public function set_receive_address( $address, $for_owner )
+	{
+		if ( $for_owner )
+		{
+			// set meta
+			update_post_meta( $this->ID, 'owner_receive_address', $address );
+			// set property
+			$this->owner_receive_address = $address;
+		}
+		else
+		{
+			// set meta
+			update_post_meta( $this->ID, 'target_receive_address', $address );
+			// set property
+			$this->target_receive_address = $address;
+		}
 	}
 
 	/**
@@ -198,6 +268,16 @@ class DCE_Escrow extends DCE_Offer
 				'post_content' => $escrow_args['details'],
 		);
 
+		// from coin address
+		$from_address = DCE_Escrow::generate_address( $from_coin );
+		if ( is_wp_error( $from_address ) )
+			return $from_address;
+
+		// to coin address
+		$to_address = DCE_Escrow::generate_address( $to_coin );
+		if ( is_wp_error( $to_address ) )
+			return $to_address;
+
 		// save post
 		$escrow_id = wp_insert_post( $post_args, true );
 		if ( is_wp_error( $escrow_id ) )
@@ -212,8 +292,8 @@ class DCE_Escrow extends DCE_Offer
 		update_post_meta( $escrow_id, 'target_email', $escrow_args['target_email'] );
 
 		// receive addresses
-		update_post_meta( $escrow_id, 'owner_address', DCE_Escrow::generate_address( $to_coin ) );
-		update_post_meta( $escrow_id, 'target_address', DCE_Escrow::generate_address( $from_coin ) );
+		update_post_meta( $escrow_id, 'owner_address', $from_address );
+		update_post_meta( $escrow_id, 'target_address', $to_address );
 
 		$escrow = new DCE_Escrow( $escrow_id );
 
@@ -322,6 +402,21 @@ class DCE_Escrow extends DCE_Offer
 
 		// return new address
 		return implode( '', $result['output'] );
+	}
+
+	/**
+	 * Verify/Validate send/receive address
+	 * 
+	 * @param string $address
+	 * @return boolean
+	 */
+	public static function verify_address( $address )
+	{
+		// address length
+		$len = strlen( $address );
+
+		// regex format
+		return preg_match( '/^[1-9A-Za-z]+$/', $address ) && $len >= 34 && $len <= 102 ? true : false;
 	}
 }
 

@@ -22,6 +22,7 @@ function dce_setup_init()
 
 	// js
 	wp_register_script( 'dce-shared-script', DCE_URL .'js/shared.js', array( 'jquery' ), false, true );
+	wp_register_script( 'dce-escrows', DCE_URL .'js/escrows.js', array( 'dce-shared-script' ), false, true );
 	// localized data
 	wp_localize_script( 'dce-shared-script', 'dce', array (
 			'ajax_url' => admin_url( 'admin-ajax.php', is_ssl() ? 'https' : 'http' ),

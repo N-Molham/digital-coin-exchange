@@ -10,7 +10,7 @@
 global $dce_user;
 
 // js & css
-wp_enqueue_script( 'dce-escrows', DCE_URL .'js/escrows.js', array( 'dce-shared-script' ), false, true );
+wp_enqueue_script( 'dce-escrows' );
 
 // shortcode output
 $output = '';
