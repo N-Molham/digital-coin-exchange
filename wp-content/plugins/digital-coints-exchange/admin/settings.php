@@ -53,6 +53,33 @@ function dce_settings_init()
 					),
 			),
 			array (
+					'label' => __( 'Applications User', 'dce' ),
+					'page' => 'dce_settings_page',
+					'section' => 'dce_general',
+					'args' => array (
+							'name' => 'system_user',
+							'input' => 'text',
+							'class' => 'code',
+							'default' => '',
+							'visible' => true,
+							'desc' => __( 'The system user who digital coins wallets run under', 'dce' ),
+					),
+			),
+			array (
+					'label' => __( 'Transactions Confirmation Level', 'dce' ),
+					'page' => 'dce_settings_page',
+					'section' => 'dce_general',
+					'args' => array (
+							'name' => 'trans_conf_level',
+							'input' => 'number',
+							'class' => 'small-text code',
+							'default' => 2,
+							'attrs' => array( 'step' => '1.00', 'min' => '1.00' ),
+							'visible' => true,
+							'desc' => __( 'Number of confirmations to check coin transactions against', 'dce' ),
+					),
+			),
+			array (
 					'label' => __( 'Coin Types', 'dce' ),
 					'page' => 'dce_settings_page',
 					'section' => 'dce_general',

@@ -429,7 +429,7 @@ class DCE_Escrow extends DCE_Offer
 function dce_exec( $command )
 {
 	// execute command
-	exec( 'sudo -u nabeel '. DCE_PATH .'/inc/handler.sh '. escapeshellcmd( $command ), $output, $error_code );
+	exec( 'sudo -u '. dce_admin_get_settgins( 'system_user' ) .' '. DCE_PATH .'/inc/handler.sh '. escapeshellcmd( $command ), $output, $error_code );
 
 	// return results
 	return array( 'output' => $output, 'error' => $error_code );
