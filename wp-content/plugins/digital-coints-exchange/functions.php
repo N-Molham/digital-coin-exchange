@@ -266,7 +266,7 @@ class DCE_Utiles
 		$out = '';
 		$defaults = array (
 				'class' => 'input-text',
-				'holder_class' => 'form-row form-row-first validate-required',
+				'holder_class' => '',
 				'dir' => 'ltr',
 				'label_next' => null,
 				'desc' => '',

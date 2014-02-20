@@ -26,6 +26,7 @@ function dce_setup_init()
 	// localized data
 	wp_localize_script( 'dce-shared-script', 'dce', array (
 			'ajax_url' => admin_url( 'admin-ajax.php', is_ssl() ? 'https' : 'http' ),
+			'login_first' => is_user_logged_in() ? false : dce_alert_message( __( 'Please, login ot register first', 'dce' ), 'error', true ),
 	) );
 
 	// restrict access to wp register form

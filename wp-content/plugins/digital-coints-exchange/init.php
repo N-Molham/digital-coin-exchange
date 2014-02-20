@@ -46,6 +46,7 @@ require DCE_PATH . 'classes/class-escrow.php';
 require DCE_PATH . 'ajax/ajax.php';
 require DCE_PATH . 'ajax/ajax-offers.php';
 require DCE_PATH . 'ajax/ajax-escrows.php';
+require DCE_PATH . 'ajax/ajax-messages.php';
 
 // Admin pages
 require DCE_PATH . 'admin/admin_init.php';
