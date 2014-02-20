@@ -16,6 +16,7 @@ add_shortcode( 'dce-escrow-manager', 'dce_user_page_loader' );
 add_shortcode( 'dce-user-profile', 'dce_user_page_loader' );
 add_shortcode( 'dce-user-messages', 'dce_user_page_loader' );
 add_shortcode( 'dce-single-escrow', 'dce_user_page_loader' );
+add_shortcode( 'dce-send-message', 'dce_user_page_loader' );
 /**
  * User's page loader
  * 
@@ -49,6 +50,9 @@ function dce_user_page_loader( $attrs, $content, $shortcode )
 	// load file if exists
 	if( file_exists( $user_page ) )
 	{
+		// globals
+		$GLOBALS[$shortcode] = array( 'attrs' => wp_parse_args( $attrs, array() ), 'content' => $content );
+
 		// found
 		return include $user_page;
 	}

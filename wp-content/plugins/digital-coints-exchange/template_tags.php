@@ -7,6 +7,21 @@
  */
 
 /**
+ * Image Lightbox 
+ * 
+ * @param string $thum_url
+ * @param string $full_size_url
+ * @param string $lightbox_title
+ * @param string $link_title
+ * @param string $rel
+ * @return string
+ */
+function dce_image_lightbox( $thum_url, $full_size_url, $lightbox_title = '', $link_title = '', $rel = 'prettyPhoto' )
+{
+	return '<a title="'. $link_title .'" href="'. $full_size_url .'" rel="'. $rel .'"><img alt="'. $lightbox_title .'" src="'. $thum_url .'" /></a>';
+}
+
+/**
  * Promotion Box
  * 
  * @param string $content

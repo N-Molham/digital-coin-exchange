@@ -157,6 +157,56 @@ class DCE_User extends WP_User
 	}
 
 	/**
+	 * Send message to user
+	 * 
+	 * @param integer $user
+	 * @param string $message
+	 * @param integer $object_id
+	 * @param string $type
+	 * @param integer $reply_id
+	 * @return integer|boolean
+	 */
+	public function send_message( $user_id, $message, $object_id, $type, $reply_id = 0 )
+	{
+		// check if to himself
+		if ( $user_id == $this->ID )
+			return false;
+
+		// build message data
+		$message_data = array (
+				'comment_post_ID' => $object_id,
+				'comment_author' => $this->display_name(),
+				'comment_author_email' => $this->data->user_email,
+				'comment_content' => $message,
+				'user_id' => $this->ID,
+				'comment_type' => $type,
+				'comment_parent' => $reply_id,
+				'comment_approved' => 1,
+		);
+
+		// insert & return msg id
+		$message_id = wp_insert_comment( $message_data );
+		if ( !$message_id )
+			return false;
+
+		// set target user
+		update_comment_meta( $message_id, '_target_user', $user_id );
+
+		// action
+		do_action( 'dce_message_sent', array ( 
+				'message_id' => $message_id,
+				'from' => $this->ID,
+				'to' => $user_id,
+				'message' => $message,
+				'object' => $object_id,
+				'type' => $type,
+				'reply' => $reply_id,
+		) );
+
+		return $message_id;
+	}
+
+	/**
 	 * Insert/Update user offer 
 	 * 
 	 * @param int $from_amount

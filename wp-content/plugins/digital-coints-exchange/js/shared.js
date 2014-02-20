@@ -24,7 +24,7 @@
 
 		// ajax form
 		window.$viewport = $( 'body, html' );
-		$( 'form.ajax-form' ).on( 'submit', function( e ) {
+		$body.on( 'submit', 'form.ajax-form', function( e ) {
 			e.preventDefault();
 			var $form = $( this ),
 				$errors_holder = $form.find( '.ajax-form' ),

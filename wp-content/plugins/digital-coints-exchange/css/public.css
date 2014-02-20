@@ -55,10 +55,29 @@
 	font-size: 18px !important;
 }
 
+#contact-from-lightbox {
+	display: none;
+}
 
+.send-message label {
+	display: block;
+}
 
+.send-message .inline {
+	display: inline-block;
+}
 
+.pp_inline .post-content {
+	padding: 10px 10px 0 10px;
+}
 
+.pp_social {
+	display: none;
+}
+
+.pp_fade #pp_full_res {
+	line-height: inherit !important;
+}
 
 
 
