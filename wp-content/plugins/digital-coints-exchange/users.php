@@ -157,6 +157,89 @@ class DCE_User extends WP_User
 	}
 
 	/**
+	 * Get user's messages
+	 * 
+	 * @param array $messages_args
+	 * @return number|boolean|array
+	 */
+	public function get_messages( $messages_args = '' )
+	{
+		return self::query_messages( wp_parse_args( $messages_args, array( 'user_id' => $this->ID ) ) );
+	}
+
+	/**
+	 * Query users messages/comments
+	 * 
+	 * @param array $messages_args
+	 * @return number|boolean|array
+	 */
+	public static function query_messages( $messages_args = '' )
+	{
+		// parse defaults
+		$messages_args = wp_parse_args( $messages_args, array ( 
+				'user_id' => '',
+				'object_id' => '',
+				'target' => 'received',
+				'meta_query' => array(),
+		) );
+
+		// comments query args
+		$query_args = array ( 
+				'status' => 'approve',
+				'number' => '',
+				'post_id' => $messages_args['object_id'],
+				'user_id' => '',
+				'meta_query' => $messages_args['meta_query'],
+				'orderby' => 'comment_date',
+		);
+
+		// which way
+		if ( 'sent' == $messages_args['target'] )
+		{
+			// sent messages
+			$query_args['user_id'] = $messages_args['user_id'];
+		}
+		elseif ( 'received' == $messages_args['target'] )
+		{
+			// received messages
+			$query_args['meta_query'][] = array( 'key' => '_target_user', 'value' => $messages_args['user_id'], 'compare' => '=' );
+		}
+		elseif ( 'both' == $messages_args['target'] )
+		{
+			// both all users
+		}
+		else
+		{
+			// invalid
+			return false;
+		}
+
+		// query comments -> messages
+		$comments = get_comments( $query_args );
+		$messages = array();
+		if ( is_array( $comments ) )
+		{
+			$len = count( $comments );
+			for ( $i = 0; $i < $len; $i++ )
+			{
+				$messages[] = array (
+						'ID' => $comments[$i]->comment_ID, // message id
+						'object_id' => $comments[$i]->comment_post_ID, // related object
+						'type' => $comments[$i]->comment_type, // object type
+						'from' => new DCE_User( $comments[$i]->user_id ), // sender
+						'to' => new DCE_User( get_comment_meta( $comments[$i]->comment_ID, '_target_user', true ) ), // receiver
+						'message' => $comments[$i]->comment_content, // message
+						'date_time' => $comments[$i]->comment_date, // message
+						'replay' => $comments[$i]->comment_parent,
+				);
+			}
+		}
+
+		// return filtered messages
+		return apply_filters( 'dce_user_messages', $messages, $query_args, $messages_args );
+	}
+
+	/**
 	 * Send message to user
 	 * 
 	 * @param integer $user
