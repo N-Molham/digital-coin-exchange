@@ -17,8 +17,14 @@
 	margin-bottom: 10px;
 }
 
-#single-escrow tr:nth-child(even) {
+#single-escrow tr:nth-child(even),
+#single-offer tr:nth-child(even) {
 	background: none;
+}
+
+#single-escrow th,
+#single-offer th {
+	width: 20%;
 }
 
 .dce_escrow .reading-box-container {
@@ -77,6 +83,10 @@
 
 .pp_fade #pp_full_res {
 	line-height: inherit !important;
+}
+
+#messages .message-body {
+	display: none;
 }
 
 

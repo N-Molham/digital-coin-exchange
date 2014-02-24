@@ -37,7 +37,7 @@ function dce_ajax_send_message()
 		$object = new DCE_Offer( $object_id );
 
 		// check
-		if ( !$object->exists() || $target_user->ID != $object->user->ID )
+		if ( !$object->exists() )
 			$object_id = null;
 	}
 	else
@@ -60,7 +60,7 @@ function dce_ajax_send_message()
 		dce_ajax_error( 'send', dce_alert_message( __( 'Error sending message, please try again later', 'dce' ), 'error' ) );
 
 	// success
-	dce_ajax_response( $message_id );
+	dce_ajax_response( dce_alert_message( __( 'Message sent successfully.', 'dce' ), 'success' ) );
 }
 
 

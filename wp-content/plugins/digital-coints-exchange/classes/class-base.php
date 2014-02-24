@@ -6,6 +6,103 @@
  * @since 1.0
  */
 
+add_action( 'template_redirect', 'dce_single_view_check' );
+/**
+ * Check if user who sees this escrow/offer is allowed to
+*/
+function dce_single_view_check()
+{
+	global $wp_query, $data;
+
+	$post_type = get_post_type();
+	if ( !in_array( $post_type, array( DCE_POST_TYPE_ESCROW, DCE_POST_TYPE_OFFER ) ) )
+		return;
+
+	// Avada theme
+	if ( !empty( $data ) )
+	{
+		// full width layout
+		$data['single_post_full_width'] = true;
+
+		// hide post navigation
+		$data['blog_pn_nav'] = true;
+
+		// hide sharing box
+		$data['social_sharing_box'] = false;
+
+		// hide comments
+		$data['blog_comments'] = false;
+
+		// hide author
+		$data['author_info'] = false;
+
+		// hide post meta
+		$data['post_meta'] = false;
+	}
+
+	if ( DCE_POST_TYPE_ESCROW == $post_type )
+	{
+		// target escrow
+		$escrow = new DCE_Escrow( get_post() );
+	
+		// check login
+		$user = DCE_User::get_current_user();
+		if ( !$user->exists() || !$escrow->check_user( $user->data->user_email ) )
+		{
+			// clicked from mail
+			if ( 'mail' != dce_get_value( 'ref' ) )
+			{
+				// load 404
+				$wp_query->set_404();
+				status_header( 404 );
+			}
+		}
+	}
+}
+
+add_filter( 'the_content', 'dce_single_public_content_handler' );
+/**
+ * Handle escrow/offer post view/content
+ *
+ * @param string $template
+ * @return string
+*/
+function dce_single_public_content_handler( $content )
+{
+	// escrow single
+	if ( is_singular( DCE_POST_TYPE_ESCROW ) )
+		return '[dce-single-escrow]';
+
+	// offer single
+	if ( is_singular( DCE_POST_TYPE_OFFER ) )
+		return '[dce-single-offer]';
+
+	return $content;
+}
+
+add_filter( 'the_title', 'dce_single_public_title_handler', 10, 2 );
+/**
+ * Handle escrow/offer post title
+ *
+ * @param string $title
+ * @param int $post_id
+ * @return string
+*/
+function dce_single_public_title_handler( $title, $post_id )
+{
+	$post_type = get_post_type( $post_id );
+
+	// escrow title
+	if ( DCE_POST_TYPE_ESCROW == $post_type )
+		return __( 'Escrow Details', 'dce' );
+
+	// offer title
+	if ( DCE_POST_TYPE_OFFER == $post_type )
+		return __( 'Offer Details', 'dce' );
+
+	return $title;
+}
+
 /**
  * Base Class
  */

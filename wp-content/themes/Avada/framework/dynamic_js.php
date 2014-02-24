@@ -646,6 +646,7 @@ jQuery(window).load(function($) {
 
 	if(jQuery().prettyPhoto) {
 		var ppArgs = {
+			keyboard_shortcuts: false,
 			<?php if($data["lightbox_animation_speed"]): ?>
 			animation_speed: '<?php echo strtolower($data["lightbox_animation_speed"]); ?>',
 			<?php endif; ?>
