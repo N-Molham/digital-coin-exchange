@@ -27,6 +27,25 @@
 			}
 		};
 
+		// send message data fill
+		$( 'a[rel^=sendform]' ).on( 'click', function( e ) {
+			e.preventDefault();
+			// check form
+			if ( window.send_form ) {
+				var data = e.currentTarget.dataset;
+
+				// fill data
+				window.send_form.find( '.send-to' ).text( data.userDisplay );
+				window.send_form.find( 'input[name=user]' ).val( data.user );
+				window.send_form.find( 'input[name=target]' ).val( data.target );
+				window.send_form.find( 'input[name=type]' ).val( data.type );
+			}
+
+			// display form
+			//$.prettyPhoto.open( '#contact-from-lightbox' );
+			window.is_form_open = true;
+		} );
+
 		if( $().prettyPhoto ) {
 			var pp_args = {
 					animation_speed: 'fast',
@@ -38,7 +57,7 @@
 					show_desc: false,
 					social_tools: ''
 			};
-			$( 'a[rel^=sendform]').prettyPhoto( pp_args );
+			$( 'a[rel^=sendform]' ).prettyPhoto( pp_args );
 
 			var media_query = 'desk';
 			if ( Modernizr.mq( 'only screen and (max-width: 600px)' ) || Modernizr.mq( 'only screen and (max-height: 520px)' ) ) {
