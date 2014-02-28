@@ -26,6 +26,9 @@ $output .= dce_table_start( 'single-offer' );
 // form fields for data display
 $fields = DCE_offer::form_fields( $coin_types );
 
+// creator
+$output .= '<tr><th>'. __( 'Creator', 'dce' ) .'</th><td><a href="'. $offer->user->profile_url() .'">'. $offer->user->display_name() .'</a></td></tr>';
+
 // convert from
 $output .= '<tr><th>'. __( 'Convert From', 'dce' ) .'</th><td>'. $offer->convert_from_display( $coin_types ) .'</td></tr>';
 
@@ -40,6 +43,10 @@ $output .= '<tr><th>'. $fields['details']['label'] .'</th><td>'. $offer->details
 
 // table end
 $output .= dce_table_end();
+
+// contact form
+$output .= '<a href="#contact-from-lightbox" rel="sendform" class="button small green contact" data-user-display="'. esc_attr( $offer->user->display_name() ) .'" data-user="'. $offer->user->ID .'" data-target="'. $offer->ID .'" data-type="offer">'. __( 'Contact', 'offer' ) .'</a>';
+$output .= '<div id="contact-from-lightbox"><div class="send-message post-content">'. do_shortcode( '[dce-send-message lightbox="yes"]' ) .'</div></div>';
 
 return $output;
 

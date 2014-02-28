@@ -136,7 +136,7 @@ if ( count( $offers ) )
 		$output .= '<td>'. $offer['to_display'] .'</td>';
 		$output .= '<td>'. $offer['datetime'] .'</td>';
 		$output .= '<td><a href="#offer-details-'. $offer['ID'] .'" class="button small darkgray'. ( $has_details ? '' : ' disabled' ) .'">'. __( 'Details', 'offer' ) .'</a></td>';
-		$output .= '<td><a href="#contact-from-lightbox" rel="sendform" class="button small green contact'. ( $offer['user']->ID != $dce_user->ID ? '' : ' disabled' ) .'" data-user-display="'. esc_attr( $offer['user']->display_name() ) .'" data-user="'. $offer['user']->ID .'" data-offer="'. $offer['ID'] .'">'. __( 'Contact', 'offer' ) .'</a></td></tr>';
+		$output .= '<td><a href="#contact-from-lightbox" rel="sendform" class="button small green contact'. ( $offer['user']->ID != $dce_user->ID ? '' : ' disabled' ) .'" data-user-display="'. esc_attr( $offer['user']->display_name() ) .'" data-user="'. $offer['user']->ID .'" data-target="'. $offer['ID'] .'" data-type="offer">'. __( 'Contact', 'offer' ) .'</a></td></tr>';
 
 		// offer details
 		if ( $has_details )
@@ -146,7 +146,7 @@ if ( count( $offers ) )
 else 
 {
 	// empty result
-	$output .= '<tr><td colspan="5"><strong>'. __( 'No offers found', 'dce' ).'</strong></td></tr>';
+	$output .= '<tr><td colspan="6"><strong>'. __( 'No offers found', 'dce' ).'</strong></td></tr>';
 }
 
 // table end

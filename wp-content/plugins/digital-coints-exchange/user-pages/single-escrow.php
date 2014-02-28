@@ -61,7 +61,7 @@ $output .= dce_table_start( 'single-escrow' );
 // form fields for data display
 $fields = DCE_Escrow::form_fields( $coin_types );
 
-// convert from
+// other party
 $output .= '<tr><th>'. __( 'Other Party', 'dce' ) .'</th><td>'. ( $is_owner ? $escrow->target_email : $escrow->user->data->user_email ) .'</td></tr>';
 
 // convert from
