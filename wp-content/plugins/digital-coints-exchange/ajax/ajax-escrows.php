@@ -104,7 +104,7 @@ function dce_ajax_create_escrow()
 											'details' => $form_fields['details']['value'],
 									) );
 	if ( is_wp_error( $escrow ) )
-		dce_ajax_error( 'save', __( 'Error saving offer, please try again later', 'dce' ) );
+		dce_ajax_error( $escrow->get_error_code(), dce_alert_message( __( 'Error saving offer, please try again later', 'dce' ), 'error' ) );
 
 	// success
 	dce_ajax_response( $escrow->url() );

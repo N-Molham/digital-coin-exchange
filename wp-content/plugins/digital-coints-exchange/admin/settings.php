@@ -53,19 +53,6 @@ function dce_settings_init()
 					),
 			),
 			array (
-					'label' => __( 'Applications User', 'dce' ),
-					'page' => 'dce_settings_page',
-					'section' => 'dce_general',
-					'args' => array (
-							'name' => 'system_user',
-							'input' => 'text',
-							'class' => 'code',
-							'default' => '',
-							'visible' => true,
-							'desc' => __( 'The system user who digital coins wallets run under', 'dce' ),
-					),
-			),
-			array (
 					'label' => __( 'Transactions Confirmation Level', 'dce' ),
 					'page' => 'dce_settings_page',
 					'section' => 'dce_general',
@@ -257,18 +244,18 @@ function dce_admin_settings_coin_item_template( $coin_key, $coin_data, $input_na
 	$out = '<li class="coin-item">';
 
 	// label
-	$out .= '<p><input type="text" name="'. $input_name .'[label]" class="regular-text" value="'. $coin_data['label'] .'" placeholder="'. __( 'Coin Label', 'dce' ) .'" /></p>';
+	$out .= '<p><input type="text" name="'. $input_name .'[label]" class="regular-text" value="'. esc_attr( $coin_data['label'] ) .'" placeholder="'. __( 'Coin Label', 'dce' ) .'" /></p>';
 
 	// singular format
-	$out .= '<p><input type="text" name="'. $input_name .'[single]" class="regular-text code" value="'. $coin_data['single'] .'" placeholder="'. __( 'Singular Display Format', 'dce' ) .'" />';
-	$out .= '&nbsp;<span class="description">'. __( 'Formated string, ex: <strong>%d coin</strong>', 'dce' ) .'</span></p>';
+	$out .= '<p><input type="text" name="'. $input_name .'[single]" class="regular-text code" value="'. esc_attr( $coin_data['single'] ) .'" placeholder="'. __( 'Singular Display Format', 'dce' ) .'" />';
+	$out .= '&nbsp;<span class="description">'. __( 'Formated string, ex: <strong>%f coin</strong>', 'dce' ) .'</span></p>';
 
 	// plural format
-	$out .= '<p><input type="text" name="'. $input_name .'[plural]" class="regular-text code" value="'. $coin_data['plural'] .'" placeholder="'. __( 'Plural Display Format', 'dce' ) .'" />';
-	$out .= '&nbsp;<span class="description">'. __( 'Formated string, ex: <strong>%d coins</strong>', 'dce' ) .'</span></p>';
+	$out .= '<p><input type="text" name="'. $input_name .'[plural]" class="regular-text code" value="'. esc_attr( $coin_data['plural'] ) .'" placeholder="'. __( 'Plural Display Format', 'dce' ) .'" />';
+	$out .= '&nbsp;<span class="description">'. __( 'Formated string, ex: <strong>%f coins</strong>', 'dce' ) .'</span></p>';
 
 	// base command
-	$out .= '<p><input type="text" name="'. $input_name .'[command]" class="regular-text code" value="'. $coin_data['command'] .'" placeholder="'. __( 'Command Line Base', 'dce' ) .'" /></p>';
+	$out .= '<p><input type="text" name="'. $input_name .'[command]" class="regular-text code" value="'. esc_attr( $coin_data['command'] ) .'" placeholder="'. __( 'Command Line Base', 'dce' ) .'" /></p>';
 
 	// remove button / item end
 	$out .= '<p><a href="#" title="'. __( 'Delete this Coin', 'dce' ) .'" class="button button-delete">'. __( 'Delete', 'dce' ) .'</a></p></li>';

@@ -129,8 +129,12 @@ class DCE_Utiles
 				'required' => false,
 				'min_length' => false,
 				'max_length' => false,
+				'sanitize_callback' => '',
 		);
 		$args = wp_parse_args( $args, $defaults );
+
+		if ( function_exists( $args['sanitize_callback'] ) )
+			$value = call_user_func( $args['sanitize_callback'], $value );
 
 		switch( $args['data_type'] )
 		{
@@ -286,6 +290,11 @@ class DCE_Utiles
 		// field description
 		$out .= '<p class="form-input form-input-'. $field .' '. $args['holder_class'] .'">';
 
+		// characters escapes
+		$field = esc_attr( $field );
+		$args['placeholder'] = esc_attr( $args['placeholder'] );
+		$args['class'] = esc_attr( $args['class'] );
+
 		// field input element
 		switch( $args['input'] )
 		{
@@ -301,7 +310,7 @@ class DCE_Utiles
 
 				foreach ( $args['source'] as $option_value => $option_label )
 				{
-					$out .= '<option value="'. $option_value .'"';
+					$out .= '<option value="'. esc_attr( $option_value ) .'"';
 					$out .= ( $option_value == $args['value'] ? ' selected' : '' ) .'>';
 					$out .= ( is_array( $option_label ) && isset( $option_label['label'] ) ? $option_label['label'] : $option_label );
 					$out .= '</option>';
@@ -333,7 +342,7 @@ class DCE_Utiles
 			case 'radio':
 				foreach( $args['values'] as $radio_value => $radio_label )
 				{
-					$out .= '<label><input type="radio" name="'. $field .'" value="'. $radio_value .'" ';
+					$out .= '<label><input type="radio" name="'. $field .'" value="'. esc_attr( $radio_value ) .'" ';
 					if( $radio_value == $args['value'] )
 						$out .= 'checked="checked" ';
 					$out .= '/> '. $radio_label .'</label>&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -341,11 +350,8 @@ class DCE_Utiles
 				break;
 
 			case 'text':
-				$out .= '<input type="text" placeholder="'. $args['placeholder'] .'" name="'. $field .'" id="'. $field .'" value="'. $args['value'] .'" class="'. $args['class'] .'" dir="'. $args['dir'] .'" /> ';
-				break;
-
 			case 'password':
-				$out .= '<input type="password" placeholder="'. $args['placeholder'] .'" name="'. $field .'" id="'. $field .'" value="'. $args['value'] .'" class="'. $args['class'] .'" dir="'. $args['dir'] .'" /> ';
+				$out .= '<input type="'. $args['input'] .'" placeholder="'. $args['placeholder'] .'" name="'. $field .'" id="'. $field .'" value="'. esc_attr( $args['value'] ) .'" class="'. $args['class'] .'" dir="'. $args['dir'] .'" /> ';
 				break;
 
 			case 'textarea':
@@ -358,7 +364,7 @@ class DCE_Utiles
 				break;
 
 			case 'button':
-				$out .= '<input type="'. $args['data_type'] .'" name="'. $field .'" id="'. $field .'" value="'. $args['label'] .'" class="'. $args['class'] .'" /> ';
+				$out .= '<input type="'. $args['data_type'] .'" name="'. $field .'" id="'. $field .'" value="'. esc_attr( $args['label'] ) .'" class="'. $args['class'] .'" /> ';
 				break;
 
 			case 'file':

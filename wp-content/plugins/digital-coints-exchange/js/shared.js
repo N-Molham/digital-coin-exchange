@@ -49,6 +49,7 @@
 					if ( typeof response == 'object' && !response.status ) {
 						// show errors
 						$errors_holder.html( response.error.message );
+						trace( response.error.key );
 						// scroll
 						window.$viewport.animate( {
 							scrollTop: $errors_holder.offset().top - 100

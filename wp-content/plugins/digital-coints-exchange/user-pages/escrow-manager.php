@@ -27,7 +27,7 @@ switch ( $current_view )
 {
 	case 'view_escrows':
 		$output .= dce_section_title( __( 'Your Escrows', 'dce' ) );
-	
+
 		// get user escrows
 		$user_escrows = $dce_user->get_escrows();
 
