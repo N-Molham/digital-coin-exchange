@@ -28,7 +28,7 @@ class DCE_Offer extends DCE_Component
 	/**
 	 * Original currency amount
 	 * 
-	 * @var int
+	 * @var float
 	 */
 	var $from_amount;
 
@@ -42,7 +42,7 @@ class DCE_Offer extends DCE_Component
 	/**
 	 * Target currency amount
 	 * 
-	 * @var int
+	 * @var float
 	 */
 	var $to_amount;
 
@@ -152,9 +152,9 @@ class DCE_Offer extends DCE_Component
 	 * Insert/Update user offer
 	 *
 	 * @param int $user_id
-	 * @param int $from_amount
+	 * @param float $from_amount
 	 * @param string $from_coin
-	 * @param int $to_amount
+	 * @param float $to_amount
 	 * @param string $to_coin
 	 * @param array $offer_args
 	 * 
@@ -311,7 +311,7 @@ class DCE_Offer extends DCE_Component
 				'from_amount' => array ( 
 						'label' => __( 'From Amount', 'dce' ), 
 						'input' => 'text',
-						'data_type' => 'int',
+						'data_type' => 'float',
 						'required' => true,
 				),
 				'from_coin' => array ( 
@@ -323,7 +323,7 @@ class DCE_Offer extends DCE_Component
 				'to_amount' => array ( 
 						'label' => __( 'To Amount', 'dce' ), 
 						'input' => 'text', 
-						'data_type' => 'int',
+						'data_type' => 'float',
 						'required' => true,
 				),
 				'to_coin' => array ( 
@@ -350,7 +350,7 @@ class DCE_Offer extends DCE_Component
 						'rows' => 8,
 						'data_type' => 'text',
 						'required' => false,
-						'max_length' => 500,
+						'max_length' => 1200,
 				),
 		);
 	}

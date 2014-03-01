@@ -101,7 +101,7 @@ function dce_components_admin_columns_content( $column, $post_id )
 		// amounts
 		case 'from_amount';
 		case 'to_amount';
-			echo number_format( $item->$column );
+			echo $item->$column;
 			break;
 
 		// coins

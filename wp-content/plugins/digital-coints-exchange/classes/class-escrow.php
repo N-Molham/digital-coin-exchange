@@ -315,8 +315,8 @@ class DCE_Escrow extends DCE_Offer
 		$result = dce_exec( $coin->command .' getnewaddress' );
 
 		// check for errors
-		if ( $result['error'] || empty( $result['output'] ) )
-			return new WP_Error( $result['error'], __( 'Error executing command', 'dce' ) );
+		if ( empty( $result['output'] ) )
+			return new WP_Error( $coin_type .'-cmd-'. $result['error'], __( 'Error executing command', 'dce' ) );
 
 		// return new address
 		return implode( '', $result['output'] );
@@ -347,7 +347,7 @@ class DCE_Escrow extends DCE_Offer
 function dce_exec( $command )
 {
 	// execute command
-	exec( 'sudo -u '. dce_admin_get_settgins( 'system_user' ) .' '. DCE_PATH .'/inc/handler.sh '. escapeshellcmd( $command ), $output, $error_code );
+	exec( $command, $output, $error_code );
 
 	// return results
 	return array( 'output' => $output, 'error' => $error_code );

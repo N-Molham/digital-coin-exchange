@@ -47,6 +47,9 @@
 	margin-bottom: 20px;
 }
 
+.coin-types .coin-item .regular-text[name*=command] {
+	width: 38em;
+}
 
 
 
