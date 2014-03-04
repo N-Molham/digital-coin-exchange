@@ -12,6 +12,11 @@ add_action( 'init', 'dce_setup_init' );
  */
 function dce_setup_init()
 {
+	// rewrite rules
+	// public profile
+	$profile_page_id = dce_get_pages( 'profile' )->id;
+	add_rewrite_rule( 'user/([^/]+)/?$', 'index.php?page_id='. $profile_page_id .'&user_id=$matches[1]', 'top' );
+
 	/**
 	 * Register Styles & Scripts
 	 */
@@ -23,6 +28,7 @@ function dce_setup_init()
 	// js
 	wp_register_script( 'dce-shared-script', DCE_URL .'js/shared.js', array( 'jquery' ), false, true );
 	wp_register_script( 'dce-escrows', DCE_URL .'js/escrows.js', array( 'dce-shared-script' ), false, true );
+	wp_register_script( 'dce-messages', DCE_URL .'js/messages.js', array( 'dce-shared-script' ), false, true );
 	// localized data
 	wp_localize_script( 'dce-shared-script', 'dce', array (
 			'ajax_url' => admin_url( 'admin-ajax.php', is_ssl() ? 'https' : 'http' ),
@@ -107,6 +113,20 @@ function dce_setup_init()
 			'can_export' => true,
 	);
 	register_post_type( DCE_POST_TYPE_ESCROW, $args );
+}
+
+add_filter( 'query_vars', 'dce_query_vars_filter' );
+/**
+ * Query Variables filter
+ *
+ * @param array $query_vars
+ * @return array
+ */
+function dce_query_vars_filter( $query_vars )
+{
+	$query_vars[] = 'user_id';
+
+	return $query_vars;
 }
 
 add_action( 'template_redirect', 'dce_public_template_redirect' );
@@ -235,7 +255,18 @@ function dce_get_pages( $page_name = '' )
 
 	// return specific page
 	if ( '' != $page_name )
-		return isset( $pages[$page_name] ) ? (object) $pages[$page_name] : false;
+	{
+		// if not found
+		if ( !isset( $pages[$page_name] ) )
+			return false;
+
+		// check permalink
+		if ( strpos( $pages[$page_name]['url'], 'page_id=' ) !== false )
+			$pages[$page_name]['url'] = get_permalink( $pages[$page_name]['id'] );
+
+		// return page data
+		return (object) $pages[$page_name];
+	}
 
 	// cache in global
 	if ( !isset( $GLOBALS['dce_pages'] ) )

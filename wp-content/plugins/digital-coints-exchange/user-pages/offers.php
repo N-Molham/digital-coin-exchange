@@ -9,7 +9,7 @@ global $dce_user;
 
 // enqueues
 wp_enqueue_style( 'dce-public-style' );
-wp_enqueue_script( 'dce-public-offers', DCE_URL .'js/public-offers.js', array( 'dce-shared-script' ), false, true );
+wp_enqueue_script( 'dce-public-offers', DCE_URL .'js/public-offers.js', array( 'dce-shared-script', 'dce-messages' ), false, true );
 
 // shortcode output
 $output = '';
