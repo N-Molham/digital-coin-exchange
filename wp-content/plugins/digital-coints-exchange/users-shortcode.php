@@ -56,7 +56,7 @@ function dce_user_page_loader( $attrs, $content, $shortcode )
 		$GLOBALS[$shortcode] = array( 'attrs' => wp_parse_args( $attrs, array() ), 'content' => $content );
 
 		// found
-		return include $user_page;
+		return apply_filters( 'dce_shortcode_output', include $user_page, $content, $shortcode );
 	}
 
 	// not found
@@ -124,38 +124,65 @@ add_shortcode( 'dce-register-form', 'dce_user_register_form' );
  * 
  * @return string
  */
-function dce_user_register_form()
+function dce_user_register_form( $attrs )
 {
+	global $dce_user;
+
 	// whether registration is open or not
 	if ( '0' == get_option( 'users_can_register' ) )
 		return dce_alert_message( __( 'Registration is closed right now, try again later.', 'dce' ), 'error' );
 
+	// default attributes
+	$attrs = wp_parse_args( $attrs, array ( 
+			'edit_user' => 'no',
+	) );
+
+	$edit_user = 'yes' == $attrs['edit_user'];
+	$data_fields = DCE_User::data_fields();
+
 	// logged-in user
 	if ( is_user_logged_in() )
 	{
-		// success message
-		if ( isset( $_GET['register'] ) && 'success' == $_GET['register'] )
-			return dce_alert_message( __( 'Registration successful', 'dce' ), 'success' );
+		if ( $edit_user )
+		{
+			// user edit's his profile
+			$fields_names = array_keys( $data_fields );
+			foreach ( $fields_names as $fname )
+			{
+				if ( 'password' == $fname )
+					continue;
 
-		return dce_alert_message( __( 'Your already registered.', 'dce' ), 'error' );
+				// fill in request data
+				$_REQUEST[$fname] = $dce_user->$fname;
+			}
+		}
+		else
+		{
+			// success message
+			if ( isset( $_GET['register'] ) && 'success' == $_GET['register'] )
+				return dce_alert_message( __( 'Registration successful', 'dce' ), 'success' );
+
+			// logged-in user access register page directry
+			return dce_alert_message( __( 'Your already registered.', 'dce' ), 'error' );
+		}
 	}
 
 	// style
 	wp_enqueue_style( 'dce-shared-style' );
 
 	// before form start
-	$out = apply_filters( 'dce_before_register_form', '' );
+	$output = apply_filters( 'dce_before_register_form', '' );
  
 	// error messages
 	if ( DCE_Utiles::has_form_errors() )
-		$out .= DCE_Utiles::show_form_errors();
+		$output .= DCE_Utiles::show_form_errors();
 
 	// form start
-	$out .= '<form id="register-form" action="" method="post">';
+	$output .= '<form id="register-form" action="" method="post">';
 
 	// form inputs loop
 	$register_fields = '';
-	foreach ( DCE_User::data_fields() as $field_name => $field_args )
+	foreach ( $data_fields as $field_name => $field_args )
 	{
 		// form input layout
 		$field_args['value'] = dce_get_value( $field_name, '', true );
@@ -165,19 +192,30 @@ function dce_user_register_form()
 	// hidden fields
 	$register_fields .= wp_nonce_field( 'dce_user_register', 'nonce', true, false );
 
+	// redirect after save
+	if ( $edit_user )
+		$redirect_to = dce_get_pages( 'profile' )->url;
+	else
+		$redirect_to = isset( $_GET['ref'] ) ? $_GET['ref'] : dce_get_pages( 'escrow-manager' )->url;
+
+	// redirect field
+	$register_fields .= '<input type="hidden" name="redirect_to" value="'. $redirect_to .'">';
+
 	// submit
-	$register_fields .= '<p class="form-input"><input type="submit" name="register_user" value="'. __( 'Register', 'dce' ) .'" class="button small green" /></p>';
+	$register_fields .= '<p class="form-input"><input type="submit" name="register_user" value="';
+	$register_fields .= $edit_user ? __( 'Update', 'dce' ) : __( 'Register', 'dce' );
+	$register_fields .= '" class="button small green" /></p>';
 
 	// filtered inputs
-	$out .= apply_filters( 'dce_register_form_inputs', $register_fields );
+	$output .= apply_filters( 'dce_register_form_inputs', $register_fields );
 
 	// form end
-	$out .= '</form>';
+	$output .= '</form>';
 
 	// before form start
-	$out .= apply_filters( 'dce_after_register_form', '' );
+	$output .= apply_filters( 'dce_after_register_form', '' );
 
-	return apply_filters( 'dce_register_form', $out );
+	return apply_filters( 'dce_register_form', $output );
 }
 
 

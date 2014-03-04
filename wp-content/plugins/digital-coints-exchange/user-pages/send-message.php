@@ -10,7 +10,7 @@
 global $dce_user, $attrs;
 
 // enqueues
-wp_enqueue_script( 'dce-messages', DCE_URL .'js/messages.js', array( 'dce-shared-script' ), false, true );
+wp_enqueue_script( 'dce-messages' );
 
 // shortcode output
 $output = '';

@@ -26,18 +26,46 @@ function dce_users_init()
 			$field_args['value'] = DCE_Utiles::parse_input( $field_name, $field_args );
 		}
 
+		// lower email chars
+		$register_fields['user_email']['value'] = strtolower( $register_fields['user_email']['value'] );
+
+		// edit user
+		$current_user = DCE_User::get_current_user();
+		if ( $current_user->exists() )
+		{
+			if ( strtolower( $current_user->data->user_email ) == $register_fields['user_email']['value'] )
+			{
+				// update user
+				$update = true;
+			}
+			else
+			{
+				// unknown user to update
+				DCE_Utiles::form_error( 'general', __( 'Unknown User', 'dce' ) );
+				$update = false;
+			}
+		}
+
 		// check form error
 		if ( DCE_Utiles::has_form_errors() )
 			dce_redirect();
 
-		// lower email chars
-		$register_fields['email']['value'] = strtolower( $register_fields['email']['value'] );
+		// password
+		$password = $register_fields['password']['value'];
+		if ( $update )
+		{
+			if ( empty( $password ) )
+				$password = $current_user->data->user_pass;
+			else
+				$password = wp_hash_password( $password );
+		}
 
 		// register attrs
 		$user_attrs = array ( 
-				'user_login' => $register_fields['email']['value'],
-				'user_pass' => $register_fields['password']['value'],
-				'user_email' => $register_fields['email']['value'],
+				'ID' => $update ? $current_user->ID : '',
+				'user_login' => $register_fields['user_email']['value'],
+				'user_pass' => $password,
+				'user_email' => $register_fields['user_email']['value'],
 				'display_name' => $register_fields['first_name']['value'] .' '. $register_fields['last_name']['value'],
 				'first_name' => $register_fields['first_name']['value'],
 				'last_name' => $register_fields['last_name']['value'],
@@ -59,13 +87,14 @@ function dce_users_init()
 		DCE_Utiles::clear_values();
 
 		// login user
-		wp_signon( array( 'user_login' => $register_fields['email']['value'], 'user_password' => $register_fields['password']['value'] ) );
+		wp_signon( array( 'user_login' => $register_fields['user_email']['value'], 'user_password' => $register_fields['password']['value'] ) );
 
 		// redirect
-		if(isset($_POST['redirect_to']))
-			dce_redirect($_POST['redirect_to']);
-		else		
+		$redirect_to = dce_get_value( 'redirect_to' );
+		if( empty( $redirect_to ) )
 			dce_redirect( add_query_arg( 'register', 'success' ) );
+		else		
+			dce_redirect( $update ? add_query_arg( 'update', 'success', $redirect_to ) : $redirect_to );
 	}
 }
 
@@ -149,11 +178,7 @@ class DCE_User extends WP_User
 	 */
 	public function profile_url()
 	{
-		$profile_page = dce_get_pages( 'profile' )->url;
-		if( !preg_match( '/\/$/', $profile_page ) )
-			$profile_page .= '/';
-
-		return dce_get_pages( 'profile' )->url . $this->ID;
+		return home_url( 'user/'. $this->ID );
 	}
 
 	/**
@@ -344,6 +369,30 @@ class DCE_User extends WP_User
 	}
 
 	/**
+	 * Get profile field data display
+	 * 
+	 * @param string $field_name
+	 * @return string
+	 */
+	public function get_profile_field( $field_name )
+	{
+		$value = $this->$field_name;
+
+		// specific field data parsing
+		switch ( $field_name )
+		{
+			// email
+			case 'user_email':
+			case 'email':
+				$value = DCE_Utiles::encode_email( $value );
+				break;
+		}
+
+		// apply filter before return
+		return apply_filters( 'dce_user_profile_field' , $value, $field_name, $this->ID );
+	}
+
+	/**
 	 * User data fields 
 	 * 
 	 * @return array
@@ -358,6 +407,7 @@ class DCE_User extends WP_User
 					'required' => true,
 					'min_length' => 3,
 					'max_length' => 32,
+					'public' => true,
 			),
 			'last_name' => array (
 					'input' => 'text',
@@ -366,18 +416,21 @@ class DCE_User extends WP_User
 					'required' => false,
 					'min_length' => 3,
 					'max_length' => 32,
+					'public' => true,
 			),
-			'email' => array (
+			'user_email' => array (
 					'input' => 'text',
 					'label' => __( 'E-mail', 'dce' ),
 					'data_type' => 'email',
 					'required' => true,
+					'public' => true,
 			),
 			'password' => array (
 					'input' => 'password',
 					'label' => __( 'Password', 'dce' ),
 					'data_type' => 'password',
 					'required' => true,
+					'public' => false,
 			),
 			'phone' => array (
 					'input' => 'text',
@@ -385,6 +438,7 @@ class DCE_User extends WP_User
 					'data_type' => 'text',
 					'required' => false,
 					'max_length' => 32,
+					'public' => true,
 			),
 			'address' => array (
 					'input' => 'text',
@@ -392,6 +446,7 @@ class DCE_User extends WP_User
 					'data_type' => 'text',
 					'required' => false,
 					'max_length' => 200,
+					'public' => true,
 			),
 		) );
 	}
