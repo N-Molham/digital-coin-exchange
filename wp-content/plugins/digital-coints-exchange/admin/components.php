@@ -171,11 +171,16 @@ function dce_components_admin_columns_content( $column, $post_id )
 					// status
 					_e( 'Denied', 'dce' );
 				}
+				elseif ( 'closed' == $item->get_status() )
+				{
+					// status
+					_e( 'Closed', 'dce' );
+				}
 				else 
 				{
 					// confirm
 					echo '<a href="#" class="button button-primary" data-offer="', $post_id ,'" data-action="dce_confirm_offer">', __( 'Confirm', 'dce' ) ,'</a>&nbsp;';
-	
+
 					// deny
 					echo '<a href="#" class="button button-delete" data-offer="', $post_id ,'" data-action="dce_deny_offer">', __( 'Deny', 'dce' ) ,'</a>';
 				}

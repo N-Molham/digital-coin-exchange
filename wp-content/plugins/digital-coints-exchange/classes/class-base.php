@@ -199,7 +199,15 @@ class DCE_Component
 	public function change_status( $new_status )
 	{
 		// parse status
-		$new_status = 'confirm' == $new_status ? 'publish' : 'denied';
+		switch ( $new_status )
+		{
+			case 'confirm':
+				$new_status = 'publish';
+				break;
+			case 'deny':
+				$new_status = 'denied';
+				break;
+		}
 
 		// update status
 		$update = wp_update_post( array( 'ID' => $this->ID, 'post_status' => $new_status ), true );
@@ -240,6 +248,17 @@ class DCE_Component
 	public function exists()
 	{
 		return $this->post_object && static::$post_type == $this->post_object->post_type;
+	}
+
+	/**
+	 * Set component meta
+	 * 
+	 * @param string $meta_key
+	 * @param mixed $meta_value
+	 */
+	public function set_meta( $meta_key, $meta_value )
+	{
+		update_post_meta( $this->ID, $meta_key, $meta_value );
 	}
 
 	/**

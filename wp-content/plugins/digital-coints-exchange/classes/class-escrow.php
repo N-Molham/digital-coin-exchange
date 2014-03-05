@@ -230,7 +230,7 @@ class DCE_Escrow extends DCE_Offer
 	public static function query_escrows( $args = '' )
 	{
 		global $wpdb;
-	
+
 		// default args
 		$args = wp_parse_args( $args, array (
 				'ID' => '',
@@ -311,15 +311,8 @@ class DCE_Escrow extends DCE_Offer
 		if ( !$coin )
 			return new WP_Error( 'coin-type', __( 'Unkown coin type', 'dce' ) );
 
-		// run command to get receive address
-		$result = dce_exec( $coin->command .' getnewaddress' );
-
-		// check for errors
-		if ( empty( $result['output'] ) )
-			return new WP_Error( $coin_type .'-cmd-'. $result['error'], __( 'Error executing command', 'dce' ) );
-
-		// return new address
-		return implode( '', $result['output'] );
+		// connect with RPC
+		return dce_coins_rpc_connections( $coin_type, $coin->rpc_url )->getnewaddress();
 	}
 
 	/**
@@ -339,34 +332,31 @@ class DCE_Escrow extends DCE_Offer
 }
 
 /**
- * Execute shell command though bash script
+ * Get Coin RPC Client using with caching
  * 
- * @param string $command
- * @return string
+ * @param string $coin_type
+ * @param string $rpc_url
+ * @return DCE_RPC_Client
  */
-function dce_exec( $command )
+function dce_coins_rpc_connections( $coin_type, $rpc_url = '' )
 {
-	// execute command
-	exec( $command, $output, $error_code );
+	// init cache
+	if ( !isset( $GLOBALS['rpc_clients'] ) || !is_array( $GLOBALS['rpc_clients'] ) )
+		$GLOBALS['rpc_clients'] = array();
 
-	// return results
-	return array( 'output' => $output, 'error' => $error_code );
+	// check in cache
+	if ( isset( $GLOBALS[$coin_type] ) )
+		return $GLOBALS[$coin_type];
+
+	// check url
+	if ( '' == $rpc_url )
+		$rpc_url = dce_get_coin_types( $coin_type )->rpc_url;
+
+	// create connection
+	$GLOBALS[$coin_type] = new DCE_RPC_Client( $rpc_url );
+
+	return $GLOBALS[$coin_type];
 }
-
-
-/**
- * Shell exec error codes
-	1 	  <------> Catchall for general errors	let "var1 = 1/0"	Miscellaneous errors, such as "divide by zero"
-	2 	  <------> Misuse of shell builtins (according to Bash documentation)	 	Seldom seen, usually defaults to exit code 1
-	126   <----> Command invoked cannot execute	 	Permission problem or command is not an executable
-	127   <----> "command not found"	 	Possible problem with $PATH or a typo
-	128   <----> Invalid argument to exit	exit 3.14159	exit takes only integer args in the range 0 - 255 (see footnote)
-	128+n <--> Fatal error signal "n"	kill -9 $PPID of script	$? returns 137 (128 + 9)
-	130   <----> Script terminated by Control-C	 	Control-C is fatal error signal 2, (130 = 128 + 2, see above)
-	255*  <---> Exit status out of range	exit -1	exit takes only integer args in the range 0 - 255
- */
-
-
 
 
 

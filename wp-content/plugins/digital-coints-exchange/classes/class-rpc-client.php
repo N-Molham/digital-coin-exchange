@@ -103,7 +103,7 @@ class DCE_RPC_Client
 	 *
 	 * @param string $method
 	 * @param array $params
-	 * @return array
+	 * @return mixed
 	 */
 	public function __call( $method, $params = array() ) 
 	{
@@ -158,7 +158,7 @@ class DCE_RPC_Client
 			$response = json_decode( $response, true );
 		} 
 		else 
-			return new WP_Error( 'error_connect', 'Unable to connect to '.$this->url );
+			return new WP_Error( 'error_connect', 'Unable to connect to '. $this->url );
 
 		// debug output
 		if ( $this->debug )

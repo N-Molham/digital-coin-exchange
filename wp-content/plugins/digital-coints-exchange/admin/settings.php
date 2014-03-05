@@ -137,7 +137,11 @@ function dce_admin_settings_sanitize_values( $settings_values )
 					if ( strpos( $coin_key, 'new-' ) !== false )
 					{
 						// generate new index key
-						$value[ sanitize_key( $coin_data['label'] ) ] = array_map( 'sanitize_text_field', $coin_data );
+						$key_gen = sanitize_key( $coin_data['label'] );
+						if ( empty( $key_gen ) )
+							$key_gen = 'coin-'. uniqid();
+
+						$value[$key_gen] = array_map( 'sanitize_text_field', $coin_data );
 
 						// remove old one
 						unset( $value[$coin_key] );
@@ -158,7 +162,7 @@ function dce_admin_settings_sanitize_values( $settings_values )
 function dce_admin_settings_field_ui( $args )
 {
 	// value
-	$input_value = dce_admin_get_settgins( $args['name'] );
+	$input_value = dce_admin_get_settings( $args['name'] );
 
 	// inputs names
 	$input_name = 'dce_admin_options['. $args[ 'name' ] .']';
@@ -287,7 +291,7 @@ function dce_admin_settgins_add_page()
  *
  * @since Digital Coins Exchanging Store 2.0
  */
-function dce_admin_get_settgins( $option_name = null )
+function dce_admin_get_settings( $option_name = null )
 {
 	global $dce_admin_settings_fields;
 
