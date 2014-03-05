@@ -148,7 +148,7 @@ function dce_public_template_redirect()
 function dce_get_coin_types( $type = null )
 {
 	// list of coin types
-	$coin_types = dce_admin_get_settgins( 'coin_types' );
+	$coin_types = dce_admin_get_settings( 'coin_types' );
 
 	// get specific coin type
 	if ( $type )
@@ -295,6 +295,9 @@ function dce_plugin_activation()
 	// update registration options
 	update_option( 'users_can_register', 1 );
 	update_option( 'default_role', DCE_CLIENT_ROLE );
+
+	// cron jobs register
+	wp_schedule_event( time(), 'hourly', 'dce_cron_hourly' );
 
 	// rewrite flush for custom post types
 	flush_rewrite_rules();

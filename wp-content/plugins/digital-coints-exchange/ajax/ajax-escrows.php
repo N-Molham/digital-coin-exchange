@@ -33,28 +33,6 @@ function dce_ajax_save_receive_address()
 	dce_ajax_response( dce_alert_message( __( 'Address Saved', 'dce' ), 'success', true ) );
 }
 
-add_action( 'wp_ajax_dce_close_escrow', 'dce_ajax_admin_escrow_actions' );
-/**
- * Close user's escrow
- */
-function dce_ajax_admin_escrow_actions()
-{
-	if ( !current_user_can( 'manage_options' ) )
-		dce_ajax_error( 'permission', __( 'You do not have permission to access here.', 'dce' ) );
-
-	// offer
-	$escrow = new DCE_Escrow( (int) dce_get_value( 'escrow' ) );
-	if ( !$escrow->exists() )
-		dce_ajax_error( 'escrow', __( 'Invalid escow ID', 'dce' ) );
-
-	$update = $escrow->change_status( 'closed' );
-	if ( is_wp_error( $update ) )
-		dce_ajax_error( $update->get_error_code(), $update->get_error_message() );
-
-	// success
-	dce_ajax_response( 'closed' );
-}
-
 add_action( 'wp_ajax_create_escrow', 'dce_ajax_create_escrow' );
 /**
  * Create new escrow
@@ -76,6 +54,16 @@ function dce_ajax_create_escrow()
 		$field_args['value'] = dce_parse_input( $field_name, $field_args );
 	}
 
+	// lower-case email address
+	$form_fields['target_email']['value'] = strtolower( $form_fields['target_email']['value'] );
+
+	// current user
+	$user = DCE_User::get_current_user();
+
+	// escrow with himself !!!!
+	if ( $form_fields['target_email']['value'] == $user->user_email )
+		DCE_Utiles::form_error( 'wtf', __( 'WTF, REALLY !!!!', 'dce' ) );
+
 	// error messages
 	if ( DCE_Utiles::has_form_errors() )
 	{
@@ -90,16 +78,13 @@ function dce_ajax_create_escrow()
 		dce_ajax_error( 'form-errors', $error_messages );
 	}
 
-	// current user
-	$user = DCE_User::get_current_user();
-
 	// save offer
 	$escrow = $user->save_escrow( $form_fields['from_amount']['value'], 
 									$form_fields['from_coin']['value'], 
 									$form_fields['to_amount']['value'], 
 									$form_fields['to_coin']['value'], 
 									array ( 
-											'target_email' => strtolower( $form_fields['target_email']['value'] ), 
+											'target_email' => $form_fields['target_email']['value'], 
 											'comm_method' => $form_fields['comm_method']['value'], 
 											'details' => $form_fields['details']['value'],
 									) );

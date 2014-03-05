@@ -50,6 +50,10 @@ require DCE_PATH . 'ajax/ajax-offers.php';
 require DCE_PATH . 'ajax/ajax-escrows.php';
 require DCE_PATH . 'ajax/ajax-messages.php';
 
+// cron jobs
+require DCE_PATH . 'cron/cron-escrow.php';
+
+
 // Admin pages
 require DCE_PATH . 'admin/admin_init.php';
 require DCE_PATH . 'admin/components.php';
