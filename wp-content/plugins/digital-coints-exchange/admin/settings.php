@@ -237,25 +237,27 @@ function dce_admin_settings_coin_item_template( $coin_key, $coin_data, $input_na
 			'label' => '',
 			'single' => '',
 			'plural' => '',
-			'command' => '',
+			'rpc_url' => '',
 	) );
 
 	// item start
 	$out = '<li class="coin-item">';
 
 	// label
-	$out .= '<p><input type="text" name="'. $input_name .'[label]" class="regular-text" value="'. esc_attr( $coin_data['label'] ) .'" placeholder="'. __( 'Coin Label', 'dce' ) .'" /></p>';
+	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[label]" class="regular-text" value="'. esc_attr( $coin_data['label'] ) .'" placeholder="'. __( 'Coin Label', 'dce' ) .'" /></p>';
 
 	// singular format
-	$out .= '<p><input type="text" name="'. $input_name .'[single]" class="regular-text code" value="'. esc_attr( $coin_data['single'] ) .'" placeholder="'. __( 'Singular Display Format', 'dce' ) .'" />';
+	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[single]" class="regular-text code" value="'. esc_attr( $coin_data['single'] ) .'" placeholder="'. __( 'Singular Display Format', 'dce' ) .'" />';
 	$out .= '&nbsp;<span class="description">'. __( 'Formated string, ex: <strong>%f coin</strong>', 'dce' ) .'</span></p>';
 
 	// plural format
-	$out .= '<p><input type="text" name="'. $input_name .'[plural]" class="regular-text code" value="'. esc_attr( $coin_data['plural'] ) .'" placeholder="'. __( 'Plural Display Format', 'dce' ) .'" />';
+	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[plural]" class="regular-text code" value="'. esc_attr( $coin_data['plural'] ) .'" placeholder="'. __( 'Plural Display Format', 'dce' ) .'" />';
 	$out .= '&nbsp;<span class="description">'. __( 'Formated string, ex: <strong>%f coins</strong>', 'dce' ) .'</span></p>';
 
-	// base command
-	$out .= '<p><input type="text" name="'. $input_name .'[command]" class="regular-text code" value="'. esc_attr( $coin_data['command'] ) .'" placeholder="'. __( 'Command Line Base', 'dce' ) .'" /></p>';
+	// rpc url
+	$out .= '<div class="item-field"><input type="text" name="'. $input_name .'[rpc_url]" class="large-text code" value="'. esc_attr( $coin_data['rpc_url'] ) .'" placeholder="'. __( 'RPC Server URL', 'dce' ) .'" />';
+	$out .= '<span class="description">'. __( 'You can find those data in <strong>*coin.conf</strong> file, <br/>example URL: "http[s]://[rpcuse]:[rpcpassword]@127.0.0.1:[rpcport]/"', 'dce' ) .'</span>';
+	$out .= '<br/><a href="#" class="button rpc-test">'. __( 'Test RPC Connection', 'dce' ) .'</a><p class="rpc-test-res"></p></div>';
 
 	// remove button / item end
 	$out .= '<p><a href="#" title="'. __( 'Delete this Coin', 'dce' ) .'" class="button button-delete">'. __( 'Delete', 'dce' ) .'</a></p></li>';

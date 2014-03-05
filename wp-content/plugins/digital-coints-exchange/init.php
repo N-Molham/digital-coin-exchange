@@ -38,12 +38,14 @@ require DCE_PATH . 'setup.php';
 require DCE_PATH . 'template_tags.php';
 
 // classes
+require DCE_PATH . 'classes/class-rpc-client.php';
 require DCE_PATH . 'classes/class-base.php';
 require DCE_PATH . 'classes/class-offer.php';
 require DCE_PATH . 'classes/class-escrow.php';
 
 // ajax
 require DCE_PATH . 'ajax/ajax.php';
+require DCE_PATH . 'ajax/ajax-admin.php';
 require DCE_PATH . 'ajax/ajax-offers.php';
 require DCE_PATH . 'ajax/ajax-escrows.php';
 require DCE_PATH . 'ajax/ajax-messages.php';
