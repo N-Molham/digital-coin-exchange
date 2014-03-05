@@ -16,6 +16,15 @@
 				$( this ).parent().parent().fadeOut( function( e ) {
 					$( this ).remove();
 				} );
+		} )
+		// RPC test
+		.on( 'click', '.rpc-test', function( e ) {
+			e.preventDefault();
+
+			var $parent = $( this ).parent();
+			$.post( ajaxurl, { action: 'test_rpc_connection', 'url': $parent.find( 'input[type=text]' ).val() }, function( response ) {
+				$parent.find( '.rpc-test-res' ).html( response );
+			} );
 		} );
 
 		// add new coin

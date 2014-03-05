@@ -1331,9 +1331,9 @@ class DCE_Utiles
 
 if( !function_exists( 'dump_data_export' ) )
 {
-	function dump_data_export( $data )
+	function dump_data_export( $data, $type = false )
 	{
-		return '<pre>'. var_export( $data, true ) .'</pre>';
+		return '<pre>'. ( $type ? var_export( $data, true ) : print_r( $data, true ) ) .'</pre>';
 	}
 }
 
