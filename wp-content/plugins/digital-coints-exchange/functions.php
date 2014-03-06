@@ -1337,6 +1337,18 @@ if( !function_exists( 'dump_data_export' ) )
 	}
 }
 
+if( !function_exists( 'trace_data' ) )
+{
+	function trace_data()
+	{
+		$args = func_get_args();
+		for ( $i = 0; $i < func_num_args(); $i++ )
+		{
+			dump_data( $args[$i] );
+		}
+	}
+}
+
 if( !function_exists( 'dump_data' ) )
 {
 	function dump_data( $data, $type = false )

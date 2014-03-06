@@ -361,7 +361,7 @@ function dce_coins_rpc_connections( $coin_type, $coin_data = null )
 		$coin_data = dce_get_coin_types( $coin_type );
 
 	// create connection
-	$GLOBALS[$coin_type] = new DCE_Coin_RPC( $coin_data['rpc_user'], $coin_data['rpc_pass'], $coin_data['rpc_host'], $coin_data['rpc_port'], $coin_data['rpc_uri'] );
+	$GLOBALS[$coin_type] = new DCE_Coin_RPC( $coin_data->rpc_user, $coin_data->rpc_pass, $coin_data->rpc_host, $coin_data->rpc_port, $coin_data->rpc_uri );
 
 	return $GLOBALS[$coin_type];
 }
