@@ -6,7 +6,7 @@
  * @since 1.0
  */
 
-//add_action( 'template_redirect', 'dce_cron_test' );
+add_action( 'template_redirect', 'dce_cron_test' );
 /**
  * Cron test
  */
@@ -136,15 +136,15 @@ function dce_cron_escrows_transactions_check()
 			}
 
 			// send amounts to parties
-			$owner_txid = $to_rpc_client->sendtoaddress( $escrow->owner_receive_address, sprintf( "%.8f", $amount_for_owner ) );
-			$target_txid = $from_rpc_client->sendtoaddress( $escrow->target_receive_address, sprintf( "%.8f", $amount_for_target ) );
+			$owner_txid = $to_rpc_client->sendtoaddress( $escrow->owner_receive_address, $amount_for_owner );
+			$target_txid = $from_rpc_client->sendtoaddress( $escrow->target_receive_address, $amount_for_target );
 
 			// save results
 			$escrow->set_meta( 'owner_txid', $owner_txid );
 			$escrow->set_meta( 'target_txid', $target_txid );
 
 			// set as completed
-			// $escrow->change_status( 'completed' );
+			$escrow->change_status( 'completed' );
 
 			// wp action
 			do_action( 'dce_escrow_success', $escrow );
