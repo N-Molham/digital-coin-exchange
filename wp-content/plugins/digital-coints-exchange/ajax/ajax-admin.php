@@ -16,7 +16,13 @@ function dce_ajax_test_rpc_connection()
 		dce_ajax_error( 'permission', __( 'You do not have permission to access here.', 'dce' ) );
 
 	// get basic coins info
-	dump_data( ( new DCE_RPC_Client( dce_get_value( 'url' ) ) )->getinfo() );
+	dump_data( dce_coins_rpc_connections( 'test', array ( 
+			'rpc_user' => dce_get_value( 'rpc_user' ), 
+			'rpc_pass' => dce_get_value( 'rpc_pass' ), 
+			'rpc_host' => dce_get_value( 'rpc_host' ), 
+			'rpc_port' => dce_get_value( 'rpc_port' ), 
+			'rpc_uri' => dce_get_value( 'rpc_uri' ), 
+	) )->getinfo() );
 	die();
 }
 

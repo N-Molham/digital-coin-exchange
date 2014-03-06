@@ -21,8 +21,17 @@
 		.on( 'click', '.rpc-test', function( e ) {
 			e.preventDefault();
 
-			var $parent = $( this ).parent();
-			$.post( ajaxurl, { action: 'test_rpc_connection', 'url': $parent.find( 'input[type=text]' ).val() }, function( response ) {
+			var $parent = $( this ).parent(),
+				data = { 
+					action: 'test_rpc_connection' 
+				};
+
+			$parent.find( 'input[name*=rpc]' ).each( function( index, item ) {
+				var obj = {};
+				data[item.name.replace( /\w+\[\w+\]\[\w+\]/, '' ).replace( '[', '' ).replace( ']', '' )] = item.value;
+			} );
+
+			$.post( ajaxurl, data, function( response ) {
 				$parent.find( '.rpc-test-res' ).html( response );
 			} );
 		} );
