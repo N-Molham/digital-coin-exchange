@@ -38,7 +38,7 @@ require DCE_PATH . 'setup.php';
 require DCE_PATH . 'template_tags.php';
 
 // classes
-require DCE_PATH . 'classes/class-rpc-client.php';
+require DCE_PATH . 'classes/class-coin-rpc.php';
 require DCE_PATH . 'classes/class-base.php';
 require DCE_PATH . 'classes/class-offer.php';
 require DCE_PATH . 'classes/class-escrow.php';
