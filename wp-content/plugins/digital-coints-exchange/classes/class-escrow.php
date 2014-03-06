@@ -99,7 +99,15 @@ class DCE_Escrow extends DCE_Offer
 	 */
 	public function get_status()
 	{
-		return 'publish' == $this->status ? 'open' : $this->status;
+		// marked as failed
+		if ( 'yes' == $this->is_failure )
+			return 'failed';
+
+		// open
+		if ( 'publish' == $this->status )
+			return 'open';
+
+		return $this->status;
 	}
 
 	/**
@@ -238,7 +246,7 @@ class DCE_Escrow extends DCE_Offer
 				'author' => '',
 				'party_email' => '',
 				'nopaging' => true,
-				'post_status' => array( 'publish', 'pending' ),
+				'post_status' => array( 'publish', 'pending', 'failed', 'completed' ),
 		) );
 
 		// query escrow

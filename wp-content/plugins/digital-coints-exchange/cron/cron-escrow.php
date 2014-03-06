@@ -6,6 +6,15 @@
  * @since 1.0
  */
 
+//add_action( 'template_redirect', 'dce_cron_test' );
+/**
+ * Cron test
+ */
+function dce_cron_test()
+{
+	do_action( 'dce_cron_hourly' );
+}
+
 add_action( 'dce_cron_hourly', 'dce_cron_escrows_transactions_check' );
 /**
  * Check open escrow transactions
@@ -22,8 +31,10 @@ function dce_cron_escrows_transactions_check()
 	if ( !$len )
 		return;
 
-	// escrow expire days
-	$expire_days = dce_admin_get_settings( 'escrow_expire' );
+	// system settings
+	$settings = dce_admin_get_settings();
+	$settings['commission'] = floatval( $settings['commission'] );
+	$settings['escrow_expire'] = intval( $settings['escrow_expire'] );
 
 	// escrows loop
 	for ( $i = 0; $i < $len; $i++ )
@@ -36,13 +47,13 @@ function dce_cron_escrows_transactions_check()
 			continue;
 
 		// check from coin
-		$from_rpc_client = dce_coins_rpc_connections( $escrow->from_coin );
+		$from_rpc_client = &dce_coins_rpc_connections( $escrow->from_coin );
 		$from_amount_received = $from_rpc_client->getreceivedbyaddress( $escrow->owner_address );
 		if ( is_wp_error( $from_amount_received ) )
 			continue;
 
 		// check to coin
-		$to_rpc_client = dce_coins_rpc_connections( $escrow->to_coin );
+		$to_rpc_client = &dce_coins_rpc_connections( $escrow->to_coin );
 		$to_amount_received = $to_rpc_client->getreceivedbyaddress( $escrow->target_address );
 		if ( is_wp_error( $to_amount_received ) )
 			continue;
@@ -52,7 +63,7 @@ function dce_cron_escrows_transactions_check()
 		$escrow->set_meta( 'to_amount_received', $to_amount_received );
 
 		// expires on
-		$is_expired = current_time( 'timestamp' ) > strtotime( '+'. $expire_days .'days', strtotime( $escrow->datetime ) );
+		$is_expired = current_time( 'timestamp' ) > strtotime( '+'. intval( $settings['escrow_expire'] ) .'days', strtotime( $escrow->datetime ) );
 
 		// escrow expired
 		if ( $is_expired )
@@ -80,15 +91,63 @@ function dce_cron_escrows_transactions_check()
 					);
 			}
 
+			// wp action
+			do_action( 'dce_escrow_failed', $escrow );
+
 			// skip to next escrow
 			continue;
 		}
 
-		// check received amounts
+		// all amounts received
 		if ( $from_amount_received >= $escrow->from_amount || $to_amount_received >= $escrow->to_amount )
 		{
-			// all amounts received
-			dump_data( 'convert and send' );
+			// check for receive addresses
+			if ( empty( $escrow->owner_receive_address ) || empty( $escrow->target_receive_address ) )
+				continue;
+
+			// final amounts
+			$amount_for_owner = $escrow->to_amount;
+			$amount_for_target = $escrow->from_amount;
+
+			// commission divider
+			switch ( $escrow->comm_method )
+			{
+				// all on the owner
+				case 'by_user':
+					$amount_for_owner *= ( 100 - $settings['commission'] ) / 100;
+					break;
+
+				// all on the other paty
+				case 'by_target':
+					$amount_for_target *= ( 100 - $settings['commission'] ) / 100;
+					break;
+
+				// divided on both party equally
+				case '50_50':
+					// calculate 50% of the commission
+					$half_commission = ( 100 - ( $settings['commission'] * 0.5 ) ) / 100;
+
+					// cut from both amounts
+					$amount_for_owner *= $half_commission;
+					$amount_for_target *= $half_commission;
+					break;
+				default:
+					return;
+			}
+
+			// send amounts to parties
+			$owner_txid = $to_rpc_client->sendtoaddress( $escrow->owner_receive_address, sprintf( "%.8f", $amount_for_owner ) );
+			$target_txid = $from_rpc_client->sendtoaddress( $escrow->target_receive_address, sprintf( "%.8f", $amount_for_target ) );
+
+			// save results
+			$escrow->set_meta( 'owner_txid', $owner_txid );
+			$escrow->set_meta( 'target_txid', $target_txid );
+
+			// set as completed
+			// $escrow->change_status( 'completed' );
+
+			// wp action
+			do_action( 'dce_escrow_success', $escrow );
 		}
 	}
 }

@@ -7,7 +7,7 @@
  */
 /* @var $dce_user DCE_User */
 global $dce_user;
-do_action( 'dce_cron_hourly' );
+
 // enqueues
 wp_enqueue_script( 'dce-escrows' );
 
