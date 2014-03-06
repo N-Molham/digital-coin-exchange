@@ -21,7 +21,7 @@ class DCE_Coin_RPC
 	private $proto;
 	private $host;
 	private $port;
-	private $url;
+	private $uri;
 	private $CACertificate;
 
 	// Information and debugging
@@ -97,15 +97,15 @@ class DCE_Coin_RPC
 	 * @param string $host
 	 * @param int $port
 	 * @param string $proto
-	 * @param string $url
+	 * @param string $uri
 	 */
-	function __construct( $username, $password, $host = 'localhost', $port = 8332, $url = null ) 
+	function __construct( $username, $password, $host, $port, $uri = null ) 
 	{
 		$this->username	  = $username;
 		$this->password	  = $password;
 		$this->host		  = $host;
 		$this->port		  = $port;
-		$this->url		   = $url;
+		$this->uri		   = $uri;
 
 		// Set some defaults
 		$this->proto		 = 'http';
@@ -142,7 +142,7 @@ class DCE_Coin_RPC
 		) );
 
 		// Build the cURL session
-		$curl = curl_init( "{$this->proto}://{$this->username}:{$this->password}@{$this->host}:{$this->port}/{$this->url}" );
+		$curl = curl_init( "{$this->proto}://{$this->username}:{$this->password}@{$this->host}:{$this->port}/{$this->uri}" );
 		$options = array (
 			CURLOPT_RETURNTRANSFER => TRUE,
 			CURLOPT_FOLLOWLOCATION => TRUE,

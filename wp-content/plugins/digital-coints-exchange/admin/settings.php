@@ -241,7 +241,11 @@ function dce_admin_settings_coin_item_template( $coin_key, $coin_data, $input_na
 			'label' => '',
 			'single' => '',
 			'plural' => '',
-			'rpc_url' => '',
+			'rpc_user' => '',
+			'rpc_pass' => '',
+			'rpc_host' => '',
+			'rpc_port' => '',
+			'rpc_uri' => '',
 	) );
 
 	// item start
@@ -252,16 +256,34 @@ function dce_admin_settings_coin_item_template( $coin_key, $coin_data, $input_na
 
 	// singular format
 	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[single]" class="regular-text code" value="'. esc_attr( $coin_data['single'] ) .'" placeholder="'. __( 'Singular Display Format', 'dce' ) .'" />';
-	$out .= '&nbsp;<span class="description">'. __( 'Formated string, ex: <strong>%f coin</strong>', 'dce' ) .'</span></p>';
+	$out .= '&nbsp;<span class="description">'. __( 'Formated string, ex: <strong>%s coin</strong>', 'dce' ) .'</span></p>';
 
 	// plural format
 	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[plural]" class="regular-text code" value="'. esc_attr( $coin_data['plural'] ) .'" placeholder="'. __( 'Plural Display Format', 'dce' ) .'" />';
-	$out .= '&nbsp;<span class="description">'. __( 'Formated string, ex: <strong>%f coins</strong>', 'dce' ) .'</span></p>';
+	$out .= '&nbsp;<span class="description">'. __( 'Formated string, ex: <strong>%s coins</strong>', 'dce' ) .'</span></p>';
 
-	// rpc url
-	$out .= '<div class="item-field"><input type="text" name="'. $input_name .'[rpc_url]" class="large-text code" value="'. esc_attr( $coin_data['rpc_url'] ) .'" placeholder="'. __( 'RPC Server URL', 'dce' ) .'" />';
-	$out .= '<span class="description">'. __( 'You can find those data in <strong>*coin.conf</strong> file, <br/>example URL: "http[s]://[rpcuse]:[rpcpassword]@127.0.0.1:[rpcport]/"', 'dce' ) .'</span>';
-	$out .= '<br/><a href="#" class="button rpc-test">'. __( 'Test RPC Connection', 'dce' ) .'</a><p class="rpc-test-res"></p></div>';
+	// rpc user
+	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[rpc_user]" class="regular-text code" value="'. esc_attr( $coin_data['rpc_user'] ) .'" placeholder="'. __( 'RPC Username', 'dce' ) .'" /></p>';
+
+	// rpc pass
+	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[rpc_pass]" class="regular-text code" value="'. esc_attr( $coin_data['rpc_pass'] ) .'" placeholder="'. __( 'RPC Password', 'dce' ) .'" /></p>';
+
+	// rpc host
+	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[rpc_host]" class="regular-text code" value="'. esc_attr( $coin_data['rpc_host'] ) .'" placeholder="'. __( 'RPC Host', 'dce' ) .'" />';
+	$out .= '&nbsp;<span class="description">'. __( 'Default is <strong>127.0.0.1</strong> or <strong>localhost</strong>', 'dce' ) .'</span></p>';
+
+	// rpc port
+	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[rpc_port]" class="regular-text code" value="'. esc_attr( $coin_data['rpc_port'] ) .'" placeholder="'. __( 'RPC Port', 'dce' ) .'" /></p>';
+
+	// rpc uri
+	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[rpc_uri]" class="regular-text code" value="'. esc_attr( $coin_data['rpc_uri'] ) .'" placeholder="'. __( 'RPC URL/URI', 'dce' ) .'" />';
+	$out .= '&nbsp;<span class="description">'. __( 'Default is empty', 'dce' ) .'</span></p>';
+
+	// rpc description
+	$out .= '<p class="item-field description">'. __( 'You can find those data in *coin.conf file', 'dce' ) .'</p>';
+
+	// rpc test
+	$out .= '<a href="#" class="button rpc-test">'. __( 'Test RPC Connection', 'dce' ) .'</a><div class="rpc-test-res"></div>';
 
 	// remove button / item end
 	$out .= '<p><a href="#" title="'. __( 'Delete this Coin', 'dce' ) .'" class="button button-delete">'. __( 'Delete', 'dce' ) .'</a></p></li>';

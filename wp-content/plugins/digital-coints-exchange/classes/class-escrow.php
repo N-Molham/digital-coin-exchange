@@ -320,7 +320,7 @@ class DCE_Escrow extends DCE_Offer
 			return new WP_Error( 'coin-type', __( 'Unkown coin type', 'dce' ) );
 
 		// connect with RPC
-		return dce_coins_rpc_connections( $coin_type, $coin->rpc_url )->getnewaddress();
+		return dce_coins_rpc_connections( $coin_type, $coin )->getnewaddress();
 	}
 
 	/**
@@ -343,10 +343,10 @@ class DCE_Escrow extends DCE_Offer
  * Get Coin RPC Client using with caching
  * 
  * @param string $coin_type
- * @param string $rpc_url
+ * @param array $coin_data
  * @return DCE_RPC_Client
  */
-function dce_coins_rpc_connections( $coin_type, $rpc_url = '' )
+function dce_coins_rpc_connections( $coin_type, $coin_data = null )
 {
 	// init cache
 	if ( !isset( $GLOBALS['rpc_clients'] ) || !is_array( $GLOBALS['rpc_clients'] ) )
@@ -357,11 +357,11 @@ function dce_coins_rpc_connections( $coin_type, $rpc_url = '' )
 		return $GLOBALS[$coin_type];
 
 	// check url
-	if ( '' == $rpc_url )
-		$rpc_url = dce_get_coin_types( $coin_type )->rpc_url;
+	if ( !$coin_data )
+		$coin_data = dce_get_coin_types( $coin_type );
 
 	// create connection
-	$GLOBALS[$coin_type] = new DCE_RPC_Client( $rpc_url );
+	$GLOBALS[$coin_type] = new DCE_Coin_RPC( $coin_data['rpc_user'], $coin_data['rpc_pass'], $coin_data['rpc_host'], $coin_data['rpc_port'], $coin_data['rpc_uri'] );
 
 	return $GLOBALS[$coin_type];
 }
