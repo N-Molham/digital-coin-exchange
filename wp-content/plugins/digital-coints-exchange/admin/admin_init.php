@@ -97,7 +97,7 @@ add_action( 'admin_enqueue_scripts', 'dce_admin_enqueue_scripts' );
 */
 function dce_admin_enqueue_scripts( $current_page )
 {
-	global $dce_admin_settings_page_slug;
+	global $dce_admin_pages_slugs;
 
 	/**
 	 * Styles
@@ -105,19 +105,21 @@ function dce_admin_enqueue_scripts( $current_page )
 	wp_enqueue_style( 'dce-shared-style' );
 	wp_enqueue_style( 'dce-admin-style', DCE_URL .'css/admin.css' );
 
+	// admin pages
+	if ( in_array( $current_page, $dce_admin_pages_slugs ) )
+	{
+		wp_enqueue_script( 'dce-admin-settings', DCE_URL .'/js/admin-settings.js', array( 'dce-shared-script' ), false, true );
+		wp_enqueue_script( 'dce-admin-api-explorer', DCE_URL .'/js/admin-api-explorer.js', array( 'dce-shared-script' ), false, true );
+
+		// localization
+		wp_localize_script( 'dce-admin-settings', 'dce_settings', array (
+				'delete_msg' => __( 'WARNING: delete a coin may cause problems with link escrows and offers, Are you Sure ?', 'dce' ),
+		) );
+	}
+
 	// specific pages enqueues
 	switch ( $current_page )
 	{
-		// settings page
-		case $dce_admin_settings_page_slug:
-			wp_enqueue_script( 'dce-admin-settings', DCE_URL .'/js/admin-settings.js', array( 'dce-shared-script' ), false, true );
-
-			// localization
-			wp_localize_script( 'dce-admin-settings', 'dce_settings', array (
-					'delete_msg' => __( 'WARNING: delete a coin may cause problems with link escrows and offers, Are you Sure ?', 'dce' ),
-			) );
-			break;
-
 		// custom post types of offers & escrows
 		case 'edit.php':
 			if ( in_array( $_GET['post_type'], array( DCE_POST_TYPE_OFFER, DCE_POST_TYPE_ESCROW ) ) )

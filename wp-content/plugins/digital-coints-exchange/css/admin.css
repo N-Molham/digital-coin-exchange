@@ -56,9 +56,38 @@
 	margin-bottom: 0;
 }
 
+#api-result {
+	padding: 8px;
+	width: 100%;
+	height: 546px;
+	font-size: 14px;
+	background: #f9f9f9;
+	border: 1px solid #ddd;
+	word-break: break-all;
+	word-wrap: break-word;
+	white-space: pre;
+	white-space: pre-wrap;
+	direction: ltr;
+	overflow: auto;
+}
 
+#api-result p {
+	margin: 0;
+	margin-bottom: 4px;
+}
 
+#api-result .command {
+	padding: 5px;
+	background: #eee;
+}
 
+#api-result .output {
+	padding-left: 12px;
+}
+
+input.disabled {
+	cursor: wait;
+}
 
 
 

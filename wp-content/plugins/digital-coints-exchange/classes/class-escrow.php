@@ -357,7 +357,9 @@ function dce_coins_rpc_connections( $coin_type, $coin_data = null )
 		return $GLOBALS[$coin_type];
 
 	// check url
-	if ( !$coin_data )
+	if ( $coin_data )
+		$coin_data = ( object ) $coin_data;
+	else
 		$coin_data = dce_get_coin_types( $coin_type );
 
 	// create connection
