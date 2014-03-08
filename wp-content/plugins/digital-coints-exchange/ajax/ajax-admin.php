@@ -6,6 +6,49 @@
  * @since 1.0
  */
 
+add_action( 'wp_ajax_dce_api_explor', 'dce_ajax_dce_api_explor' );
+/**
+ * Coin RPC API Explorer
+ */
+function dce_ajax_dce_api_explor()
+{
+	if ( !current_user_can( 'manage_options' ) )
+		dce_ajax_error( 'permission', __( 'You do not have permission to access here.', 'dce' ) );
+
+	// command
+	preg_match_all( '/("[^"]+"|[^\s"]+)/', dce_get_value( 'api_command' ), $command_parts );
+	if ( empty( $command_parts ) )
+		die( __( 'Unknown command', 'dce' ) );
+
+	// coin
+	$coin_type = sanitize_key( dce_get_value( 'api_coin' ) );
+	$coin_data = dce_get_coin_types( $coin_type );
+	if ( !$coin_data )
+		die( __( 'Unknown coin type', 'dce' ) );
+
+	// get rpc connection
+	$rpc_client = dce_coins_rpc_connections( $coin_type, $coin_data );
+
+	// method
+	$method = $command_parts[0][0];
+
+	// method params
+	array_shift( $command_parts[0] );
+
+	// execute command
+	$result = call_user_func_array( array( $rpc_client, sanitize_key( $method ) ), $command_parts[0] );
+
+	// is error
+	if ( is_wp_error( $result ) )
+		$output = 'Error => code: '. $result->get_error_code() .', message: '. $result->get_error_message();
+	else
+		$output = is_array( $result ) || is_object( $result ) ? DCE_Utiles::pretty_json( $rpc_client->raw_response ) : $result;
+
+	// set header
+	header( 'Content-type: text/plain; charset=utf-8' );
+	die( $output );
+}
+
 add_action( 'wp_ajax_test_rpc_connection', 'dce_ajax_test_rpc_connection' );
 /**
  * Test Coin RPC connection

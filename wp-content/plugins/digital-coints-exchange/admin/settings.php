@@ -6,13 +6,13 @@
  * @since 1.0
  */
 
-global $dce_admin_settings_fields, $dce_admin_settings_page_slug;
+global $dce_admin_settings_fields, $dce_admin_pages_slugs;
 
 // settings fields
 $dce_admin_settings_fields = array();
 
 // settings page slug
-$dce_admin_settings_page_slug = '';
+$dce_admin_pages_slugs = array();
 
 add_action( 'init', 'dce_settings_init' );
 /**
@@ -85,7 +85,7 @@ add_action( 'admin_init', 'dce_admin_settings_init' );
 /**
  * Register the form setting for our dce_options array.
  *
- * @since Digital Coins Exchanging Store 2.0
+ * @since Digital Coins Exchanging Store 1.0
  */
 function dce_admin_settings_init()
 {
@@ -295,14 +295,17 @@ add_action( 'admin_menu', 'dce_admin_settgins_add_page' );
 /**
  * Add our options page to the admin menu.
  *
- * @since Digital Coins Exchanging Store 2.0
+ * @since Digital Coins Exchanging Store 1.0
  */
 function dce_admin_settgins_add_page()
 {
-	global $dce_admin_settings_page_slug;
+	global $dce_admin_pages_slugs;
 
 	// add settings page
-	$dce_admin_settings_page_slug = add_options_page( __( 'Digital Coins Exchanging Store Settings', 'dce' ), __( 'DCE Store Settings', 'dce' ), 'manage_options', 'dce_admin_settings_page', 'dce_admin_settings_page_ui' );
+	$dce_admin_pages_slugs[] = add_options_page( __( 'Digital Coins Exchanging Store Settings', 'dce' ), __( 'DCE Store Settings', 'dce' ), 'manage_options', 'dce_admin_settings_page', 'dce_admin_settings_page_ui' );
+
+	// coins API explorer
+	$dce_admin_pages_slugs[] = add_options_page( __( 'Digital Coins API Explorer', 'dce' ), __( 'DCE API Explorer', 'dce' ), 'manage_options', 'dce_admin_api_page', 'dce_admin_api_page_ui' );
 }
 
 /**
@@ -311,7 +314,7 @@ function dce_admin_settgins_add_page()
  * @param string $option_name
  * @return mixed
  *
- * @since Digital Coins Exchanging Store 2.0
+ * @since Digital Coins Exchanging Store 1.0
  */
 function dce_admin_get_settings( $option_name = null )
 {
@@ -341,7 +344,7 @@ function dce_admin_get_settings( $option_name = null )
 /**
  * Renders the Options administration screen.
  *
- * @since Digital Coins Exchanging Store 2.0
+ * @since Digital Coins Exchanging Store 1.0
  */
 function dce_admin_settings_page_ui()
 {
@@ -360,6 +363,49 @@ function dce_admin_settings_page_ui()
 	<?php
 }
 
+/**
+ * Coins API Explorer page
+ * 
+ */
+function dce_admin_api_page_ui()
+{
+	$coin_types = dce_get_coin_types();
+	?>
+	<div class="wrap">
+		<h2><?php _e( 'Digital Coins API Explorer', 'dce' ); ?></h2>
+<div id="ajax-loading"></div>
+		<div id="api-result" class="large-text code"></div>
+
+		<form action="" method="post" id="api-from">
+			<table class="form-table">
+				<tbody>
+					<tr valign="top">
+						<th scope="row"><label for="api-command"><?php _e( 'API Command', 'dce' ) ?></label></th>
+						<td>
+							<input type="text" name="api_command" id="api-command" class="large-text code" />
+							<span class="description"><?php _e( 'Press <strong>Enter</strong> to execute, <strong>Up</strong> or <strong>Down</strong> to navigate through previous commands', 'dce' ); ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><label for="api-coin"><?php _e( 'Digital Coin', 'dce' ) ?></label></th>
+						<td>
+							<select name="api_coin" id="api-coin">
+								<?php 
+								foreach ( $coin_types as $coin_name => $coin_data )
+								{
+									echo '<option value="', $coin_name ,'">', $coin_data['label'] ,'</option>';
+								}
+								?>
+							</select>
+						</td>
+					</tr>
+				</tbody>
+			</table><!-- .form-table -->
+			<input type="hidden" name="action" value="dce_api_explor"  />
+		</form>
+	</div>
+	<?php
+}
 
 
 

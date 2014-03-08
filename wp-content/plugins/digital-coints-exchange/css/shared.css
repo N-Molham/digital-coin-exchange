@@ -61,5 +61,6 @@ pre code {
 	background: #fff;
 	opacity: 0;
 	cursor: wait;
+	z-index: 1000;
 }
 
