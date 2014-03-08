@@ -1353,9 +1353,18 @@ if( !function_exists( 'dump_data' ) )
 {
 	function dump_data( $data, $type = false )
 	{
-		echo '<pre>';
-		$type ? var_dump( $data ) : print_r( $data );
-		echo '</pre>';
+		if ( function_exists( 'd' ) )
+		{
+			// Kint debug
+			d( $data );
+		}
+		else
+		{
+			// normal
+			echo '<pre>';
+			$type ? var_dump( $data ) : print_r( $data );
+			echo '</pre>';
+		}
 	}
 }
 

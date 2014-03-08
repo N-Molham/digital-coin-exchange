@@ -6,16 +6,16 @@
  * @since 1.0
  */
 
-add_action( 'template_redirect', 'dce_cron_test' );
+//add_action( 'template_redirect', 'dce_cron_test' );
 /**
  * Cron test
  */
 function dce_cron_test()
 {
-	do_action( 'dce_cron_hourly' );
+	do_action( 'dce_cron_interval' );
 }
 
-add_action( 'dce_cron_hourly', 'dce_cron_escrows_transactions_check' );
+add_action( 'dce_cron_interval', 'dce_cron_escrows_transactions_check' );
 /**
  * Check open escrow transactions
  */
