@@ -296,11 +296,31 @@ function dce_plugin_activation()
 	update_option( 'users_can_register', 1 );
 	update_option( 'default_role', DCE_CLIENT_ROLE );
 
+	// create old schedule 
+	wp_clear_scheduled_hook( 'dce_cron_interval' );
+
 	// cron jobs register
-	wp_schedule_event( time(), 'hourly', 'dce_cron_hourly' );
+	wp_schedule_event( time(), 'dce_15_min', 'dce_cron_interval' );
 
 	// rewrite flush for custom post types
 	flush_rewrite_rules();
+}
+
+add_filter( 'cron_schedules', 'dce_cron_schedules' );
+/**
+ * Cron jobs schedule timing
+ *
+ * @param array $schedules
+ * @return array
+ */
+function dce_cron_schedules( $schedules )
+{
+	$schedules['dce_15_min'] = array ( 
+			'interval' => MINUTE_IN_SECONDS * 15,
+			'display' => __( 'Every 15 Minutes', 'dce' ), 
+	);
+
+	return $schedules;
 }
 
 add_filter( 'show_admin_bar', 'dce_admin_bar_visibility' );
