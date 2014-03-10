@@ -40,7 +40,7 @@ function dce_ajax_dce_api_explor()
 
 	// is error
 	if ( is_wp_error( $result ) )
-		$output = 'Error => code: '. $result->get_error_code() .', message: '. $result->get_error_message();
+		$output = '<span class="error">Error => code: <strong>'. $result->get_error_code() .'</strong>, message: <strong>'. $result->get_error_message() .'</strong></span>';
 	else
 		$output = is_array( $result ) || is_object( $result ) ? DCE_Utiles::pretty_json( $rpc_client->raw_response ) : $result;
 
