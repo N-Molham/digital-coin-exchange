@@ -371,7 +371,7 @@ function dce_admin_api_page_ui()
 {
 	$coin_types = dce_get_coin_types();
 	?>
-	<div class="wrap">
+	<div class="wrap" dir="ltr">
 		<h2><?php _e( 'Digital Coins API Explorer', 'dce' ); ?></h2>
 <div id="ajax-loading"></div>
 		<div id="api-result" class="large-text code"></div>

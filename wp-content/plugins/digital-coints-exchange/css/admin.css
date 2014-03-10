@@ -85,7 +85,15 @@
 	padding-left: 12px;
 }
 
-input.disabled {
+#api-result .output .error strong {
+	display: inline-block;
+	padding: 2px 4px;
+	background: red;
+	font-weight: bold;
+	color: #fff;
+}
+
+#api-command.disabled {
 	cursor: wait;
 }
 
