@@ -39,7 +39,10 @@ function dce_setup_init()
 	if ( strpos( $_SERVER['REQUEST_URI'], 'wp-login.php' ) !== false && isset( $_REQUEST['action'] ) && 'register' == $_REQUEST['action'] )
 		dce_redirect( home_url() );
 
-	// register post status
+	/**
+	 * register post status
+	 */ 
+	// Denied
 	register_post_status( 'denied', array (
 			'label' => _x( 'Denied', 'post', 'dce' ),
 			'public' => true,
@@ -48,6 +51,28 @@ function dce_setup_init()
 			'show_in_admin_all_list' => true,
 			'show_in_admin_status_list' => true,
 			'label_count' => _n_noop( 'Denied <span class="count">(%s)</span>', 'Denied <span class="count">(%s)</span>', 'dce' ),
+	) );
+
+	// Completed
+	register_post_status( 'completed', array (
+			'label' => _x( 'Completed', DCE_POST_TYPE_ESCROW, 'dce' ),
+			'public' => true,
+			'internal' => true,
+			'exclude_from_search' => false,
+			'show_in_admin_all_list' => true,
+			'show_in_admin_status_list' => true,
+			'label_count' => _n_noop( 'Completed <span class="count">(%s)</span>', 'Completed <span class="count">(%s)</span>', 'dce' ),
+	) );
+
+	// Failed
+	register_post_status( 'failed', array (
+			'label' => _x( 'Failed', DCE_POST_TYPE_ESCROW, 'dce' ),
+			'public' => true,
+			'internal' => true,
+			'exclude_from_search' => false,
+			'show_in_admin_all_list' => true,
+			'show_in_admin_status_list' => true,
+			'label_count' => _n_noop( 'Failed <span class="count">(%s)</span>', 'Failed <span class="count">(%s)</span>', 'dce' ),
 	) );
 
 	/**

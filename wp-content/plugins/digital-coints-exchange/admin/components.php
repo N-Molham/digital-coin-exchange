@@ -141,49 +141,40 @@ function dce_components_admin_columns_content( $column, $post_id )
 
 			// confirm/deny offers
 			echo '<div class="offer-actions">';
-			if ( isset( $item->target_email ) )
-			{
-				if ( 'completed' == $item->get_status() )
-				{
-					// status
-					_e( 'Completed', 'dce' );
-				}
-				elseif ( 'denied' == $item->get_status() )
-				{
-					// status
-					_e( 'Denied', 'dce' );
-				}
-				else
-				{
-					// Close
-					echo '<a href="#" class="button button-delete" data-escrow="', $post_id ,'" data-action="dce_close_escrow">', __( 'Close', 'dce' ) ,'</a>';
-				}
-			}
-			else
-			{
-				if ( 'confirmed' == $item->get_status() )
-				{
-					// status
-					_e( 'Confirmed', 'dce' );
-				}
-				elseif ( 'denied' == $item->get_status() )
-				{
-					// status
-					_e( 'Denied', 'dce' );
-				}
-				elseif ( 'closed' == $item->get_status() )
-				{
-					// status
-					_e( 'Closed', 'dce' );
-				}
-				else 
-				{
-					// confirm
-					echo '<a href="#" class="button button-primary" data-offer="', $post_id ,'" data-action="dce_confirm_offer">', __( 'Confirm', 'dce' ) ,'</a>&nbsp;';
 
-					// deny
-					echo '<a href="#" class="button button-delete" data-offer="', $post_id ,'" data-action="dce_deny_offer">', __( 'Deny', 'dce' ) ,'</a>';
-				}
+			// status
+			$item_status = $item->get_status();
+			switch ( $item_status )
+			{
+				case 'completed':
+					_e( 'Completed', 'dce' );
+					break;
+				case 'failed':
+					_e( 'Failed', 'dce' );
+					break;
+				case 'denied':
+					_e( 'Denied', 'dce' );
+					break;
+				case 'confirmed':
+					_e( 'Confirmed', 'dce' );
+					break;
+				case 'closed':
+					_e( 'Closed', 'dce' );
+					break;
+				default:
+					if ( isset( $item->target_email ) )
+					{
+						// Close
+						echo '<a href="#" class="button button-delete" data-escrow="', $post_id ,'" data-action="dce_close_escrow">', __( 'Close', 'dce' ) ,'</a>';
+					}
+					else
+					{
+						// confirm
+						echo '<a href="#" class="button button-primary" data-offer="', $post_id ,'" data-action="dce_confirm_offer">', __( 'Confirm', 'dce' ) ,'</a>&nbsp;';
+
+						// deny
+						echo '<a href="#" class="button button-delete" data-offer="', $post_id ,'" data-action="dce_deny_offer">', __( 'Deny', 'dce' ) ,'</a>';
+					}
 			}
 			echo '</div>';
 			break;
