@@ -138,18 +138,6 @@ class DCE_User extends WP_User
 	static $role = DCE_CLIENT_ROLE;
 
 	/**
-	 * Constructor
-	 * 
-	 * @param number $id
-	 * @param string $name
-	 * @param string $blog_id
-	 */
-	public function __construct( $id = 0, $name = '', $blog_id = '' )
-	{
-		parent::__construct( $id, $name, $blog_id );
-	}
-
-	/**
 	 * Determine whether the user exists in the database and a client.
 	 * 
 	 * (non-PHPdoc)
@@ -472,7 +460,7 @@ class DCE_User extends WP_User
 	 */
 	public static function get_current_user()
 	{
-		return new DCE_User( wp_get_current_user() );
+		return new DCE_User( wp_get_current_user()->ID );
 	}
 }
 
