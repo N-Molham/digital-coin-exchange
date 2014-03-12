@@ -141,6 +141,27 @@ class DCE_Escrow extends DCE_Offer
 	}
 
 	/**
+	 * Get escrow other party based on the given user
+	 * 
+	 * @param string|DCE_User|WP_User $user_email
+	 * @return DCE_User
+	 */
+	public function other_party( $user_email )
+	{
+		// is the owner
+		if ( $this->is_user_owner( $user_email ) )
+		{
+			// get target
+			return new DCE_User( get_user_by( 'email', $this->target_email ) );
+		}
+		else
+		{
+			// get owner
+			return $this->user;
+		}
+	}
+
+	/**
 	 * Set receive address for escrow users
 	 * 
 	 * @param string $address
@@ -162,6 +183,27 @@ class DCE_Escrow extends DCE_Offer
 			// set property
 			$this->target_receive_address = $address;
 		}
+	}
+
+	/**
+	 * Save user's feedback about escrow's other party
+	 * 
+	 * @param DCE_User $by
+	 * @param int $about
+	 * @param int $rating
+	 * @param string $feedback
+	 */
+	public function set_feedback( $by, $about, $rating, $feedback )
+	{
+		// given feedback
+		$this->set_meta( $about .'_feedback', array ( 
+				'by' => $by->display_name(), 
+				'rating' => $rating, 
+				'feedback' => $feedback, 
+		) );
+
+		// mark user so no more feedbacks given
+		$this->set_meta( $by->ID .'_gave_feedback', 'yes' );
 	}
 
 	/**

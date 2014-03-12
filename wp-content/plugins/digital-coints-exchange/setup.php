@@ -12,10 +12,17 @@ add_action( 'init', 'dce_setup_init' );
  */
 function dce_setup_init()
 {
-	// rewrite rules
+	/**
+	 * rewrite rules
+	 */ 
+
 	// public profile
-	$profile_page_id = dce_get_pages( 'profile' )->id;
-	add_rewrite_rule( 'user/([^/]+)/?$', 'index.php?page_id='. $profile_page_id .'&user_id=$matches[1]', 'top' );
+	$page_id = dce_get_pages( 'profile' )->id;
+	add_rewrite_rule( 'user/([^/]+)/?$', 'index.php?page_id='. $page_id .'&user_id=$matches[1]', 'top' );
+
+	// feedback form
+	$page_id = dce_get_pages( 'feedback' )->id;
+	add_rewrite_rule( 'feedback/([^/]+)/?$', 'index.php?page_id='. $page_id .'&feedback_escrow=$matches[1]', 'top' );
 
 	/**
 	 * Register Styles & Scripts
@@ -23,10 +30,12 @@ function dce_setup_init()
 	// styles
 	wp_register_style( 'dce-shared-style', DCE_URL .'css/shared.css' );
 	wp_register_style( 'dce-public-style', DCE_URL .'css/public.css' );
+	wp_register_style( 'dce-rateit-style', DCE_URL .'css/rateit.css' );
 	wp_enqueue_style( 'dce-shared-style' );
 
 	// js
 	wp_register_script( 'dce-shared-script', DCE_URL .'js/shared.js', array( 'jquery' ), false, true );
+	wp_register_script( 'dce-rateit-script', DCE_URL .'js/jquery.rateit.min.js', array( 'dce-shared-script' ), false, true );
 	wp_register_script( 'dce-escrows', DCE_URL .'js/escrows.js', array( 'dce-shared-script' ), false, true );
 	wp_register_script( 'dce-messages', DCE_URL .'js/messages.js', array( 'dce-shared-script' ), false, true );
 	// localized data
@@ -150,6 +159,7 @@ add_filter( 'query_vars', 'dce_query_vars_filter' );
 function dce_query_vars_filter( $query_vars )
 {
 	$query_vars[] = 'user_id';
+	$query_vars[] = 'feedback_escrow';
 
 	return $query_vars;
 }
@@ -161,6 +171,7 @@ add_action( 'template_redirect', 'dce_public_template_redirect' );
 function dce_public_template_redirect()
 {
 	// enqueues
+	wp_enqueue_style( 'dce-rateit-style' );
 	wp_enqueue_style( 'dce-public-style' );
 }
 
@@ -271,6 +282,12 @@ function dce_get_pages( $page_name = '' )
 			'messages' => array ( 
 					'title' => __( 'Messages', 'dce' ),
 					'content' => '[dce-user-messages]',
+					'id' => 0,
+					'url' => false,
+			),
+			'feedback' => array ( 
+					'title' => __( 'Your Feedback', 'dce' ),
+					'content' => '[dce-user-feedback]',
 					'id' => 0,
 					'url' => false,
 			),

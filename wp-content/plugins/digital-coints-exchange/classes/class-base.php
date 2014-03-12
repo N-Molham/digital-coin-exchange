@@ -262,6 +262,18 @@ class DCE_Component
 	}
 
 	/**
+	 * Get component meta
+	 * 
+	 * @param string $meta_key
+	 * @param boolean $single
+	 * @return mixed
+	 */
+	public function get_meta( $meta_key, $single = true )
+	{
+		return get_post_meta( $this->ID, $meta_key, $single );
+	}
+
+	/**
 	 * Magic Isset method for meta values or post object
 	 *
 	 * @param string $key

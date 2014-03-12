@@ -393,6 +393,20 @@ class DCE_User extends WP_User
 	}
 
 	/**
+	 * Get feedbacks given about the user
+	 * 
+	 * @return array
+	 */
+	public function get_feedbacks()
+	{
+		global $wpdb;
+
+		return array_map( function ( $item ) {
+			return maybe_unserialize( $item );
+		}, $wpdb->get_col( $wpdb->prepare( 'SELECT meta_value FROM '. $wpdb->postmeta .' WHERE meta_key = %s', $this->ID .'_feedback' ) ) );
+	}
+
+	/**
 	 * User data fields 
 	 * 
 	 * @return array
