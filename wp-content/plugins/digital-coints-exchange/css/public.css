@@ -91,6 +91,21 @@
 	display: none;
 }
 
+label[for=feedback] {
+	display: block;
+}
+
+.rateit {
+	vertical-align: middle;
+}
+
+.feedback {
+	margin-bottom: 4.4em;
+}
+
+
+
+
 
 
 

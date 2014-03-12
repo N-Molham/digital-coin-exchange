@@ -6,6 +6,42 @@
  * @since 1.0
  */
 
+add_action( 'wp_ajax_user_feedback', 'dce_ajax_user_feedback' );
+/**
+ * Escrow users' feedback
+ */
+function dce_ajax_user_feedback()
+{
+	check_ajax_referer( 'dce_user_feedback', 'nonce' );
+
+	// target escrow
+	$escrow = new DCE_Escrow( (int) dce_get_value( 'escrow' ) );
+
+	// current user
+	$user = DCE_User::get_current_user();
+
+	// check escrow status, only allow completed and failed ones
+	if ( !$escrow->exists() || !in_array( $escrow->get_status(), array( 'completed', 'failed' ) ) || !$escrow->check_user( $user->user_email ) )
+		dce_ajax_error( 'escrow', dce_alert_message( __( 'Unknown Escrow', 'dce' ), 'error', true ) );
+
+	// check if he gave feedback before
+	if ( 'yes' == $escrow->get_meta( $user->ID .'_gave_feedback' ) )
+		dce_ajax_error( 'rating', dce_alert_message( __( 'You already gave a feedback about this escrow', 'dce' ), 'error', true ) );
+
+	// rating
+	$rating = (int) dce_get_value( 'rating' );
+	if ( !$rating || $rating < 1 || $rating > 5 )
+		dce_ajax_error( 'rating', dce_alert_message( __( 'Invalid rating', 'dce' ), 'error', true ) );
+
+	// feedback
+	$feedback = sanitize_text_field( dce_get_value( 'feedback' ) );
+	if ( !DCE_Utiles::is_str_length_between( $feedback, 10, 500 ) )
+		dce_ajax_error( 'feedback', dce_alert_message( sprintf( __( '%s character length must be between %d and %d', 'dce' ), __( 'Feddback', 'dce' ), 10, 240 ), 'error', true ) );
+
+	$escrow->set_feedback( $user, $escrow->other_party( $user )->ID, $rating, $feedback );
+	dce_ajax_response( dce_alert_message( __( 'Thanks for your feedback', 'dce' ), 'success' ) );
+}
+
 add_action( 'wp_ajax_save_receive_address', 'dce_ajax_save_receive_address' );
 /**
  * Save escrow user receive address
