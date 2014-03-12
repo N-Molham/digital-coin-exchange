@@ -36,6 +36,8 @@ function dce_cron_escrows_transactions_check()
 	$settings['commission'] = floatval( $settings['commission'] );
 	$settings['escrow_expire'] = intval( $settings['escrow_expire'] );
 
+	$coin_types = dce_get_coin_types();
+
 	// escrows loop
 	for ( $i = 0; $i < $len; $i++ )
 	{
@@ -98,8 +100,49 @@ function dce_cron_escrows_transactions_check()
 			continue;
 		}
 
+		// which parties sent amounts right
+		$all_received = 0;
+		$to_notify = array();
+		$notify_mail_msg = __( 'The other party %s of this <a href="%s">escrow</a>, sent the required coins amount %s', 'dce' );
+
+		// owner sent right amount
+		if ( $from_amount_received >= $escrow->from_amount )
+		{
+			// notify target
+			if ( 'yes' != $escrow->target_notified )
+			{
+				// add to notification list
+				wp_mail( $escrow->target_email, 
+						__( 'Escrow Notification', 'dce' ), 
+						sprintf( $notify_mail_msg, $escrow->user->display_name(), $escrow->url(), $escrow->convert_from_display( $coin_types ) ) );
+
+				// mark as notified
+				$escrow->set_meta( 'target_notified', 'yes' );
+			}
+
+			$all_received++;
+		}
+
+		// target sent right amount
+		if ( $to_amount_received >= $escrow->to_amount )
+		{
+			// notify target
+			if ( 'yes' != $escrow->owner_notified )
+			{
+				// add to notification list
+				wp_mail( $escrow->user->data->user_email, 
+						__( 'Escrow Notification', 'dce' ), 
+						sprintf( $notify_mail_msg, $escrow->target_user->display_name(), $escrow->url(), $escrow->convert_to_display( $coin_types ) ) );
+
+				// mark as notified
+				$escrow->set_meta( 'owner_notified', 'yes' );
+			}
+
+			$all_received++;
+		}
+
 		// all amounts received
-		if ( $from_amount_received >= $escrow->from_amount || $to_amount_received >= $escrow->to_amount )
+		if ( 2 == $all_received )
 		{
 			// check for receive addresses
 			if ( empty( $escrow->owner_receive_address ) || empty( $escrow->target_receive_address ) )

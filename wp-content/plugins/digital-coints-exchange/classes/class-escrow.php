@@ -37,6 +37,13 @@ class DCE_Escrow extends DCE_Offer
 	/**
 	 * Targeted user to deal with
 	 * 
+	 * @var DCE_User
+	 */
+	var $target_user;
+
+	/**
+	 * Targeted user to deal with email address
+	 * 
 	 * @var string
 	 */
 	var $target_email;
@@ -84,6 +91,7 @@ class DCE_Escrow extends DCE_Offer
 
 		// additional fields
 		$this->target_email = $this->post_object->target_email;
+		$this->target_user = new DCE_User( get_user_by( 'email', $this->target_email ) );
 
 		// exchange addresses
 		$this->owner_address = $this->post_object->owner_address;
