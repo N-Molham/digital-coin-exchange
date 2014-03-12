@@ -23,7 +23,7 @@ class DCE_Offer extends DCE_Component
 	 * 
 	 * @var DCE_User
 	 */
-	var $user;
+	protected $_user;
 
 	/**
 	 * Original currency amount
@@ -79,9 +79,6 @@ class DCE_Offer extends DCE_Component
 		// check existence
 		if ( !$this->exists() )
 			return false;
-
-		// initialize properties
-		$this->user = new DCE_User( $this->post_author );
 
 		// fill in fields 
 		$fields = array_keys( self::form_fields() );
@@ -146,6 +143,31 @@ class DCE_Offer extends DCE_Component
 	public function get_status()
 	{
 		return 'publish' == $this->status ? 'confirmed' : $this->status;
+	}
+
+	/**
+	 * Get owner/creator user
+	 * 
+	 * @return DCE_User
+	 */
+	public function owner_user()
+	{
+		return $this->user;
+	}
+
+	public function __get( $key )
+	{
+		if ( 'user' == $key )
+		{
+			if ( !$this->_target_user )
+				$this->_user = new DCE_User( $this->post_author );
+
+			// owner/creator info
+			return $this->_user;
+		}
+
+		// parent class
+		return parent::__get( $key );
 	}
 
 	/**

@@ -39,7 +39,7 @@ class DCE_Escrow extends DCE_Offer
 	 * 
 	 * @var DCE_User
 	 */
-	var $target_user;
+	protected $_target_user;
 
 	/**
 	 * Targeted user to deal with email address
@@ -91,7 +91,6 @@ class DCE_Escrow extends DCE_Offer
 
 		// additional fields
 		$this->target_email = $this->post_object->target_email;
-		$this->target_user = new DCE_User( get_user_by( 'email', $this->target_email ) );
 
 		// exchange addresses
 		$this->owner_address = $this->post_object->owner_address;
@@ -212,6 +211,31 @@ class DCE_Escrow extends DCE_Offer
 
 		// mark user so no more feedbacks given
 		$this->set_meta( $by->ID .'_gave_feedback', 'yes' );
+	}
+
+	/**
+	 * Get target user
+	 *
+	 * @return DCE_User
+	 */
+	public function target_user()
+	{
+		return $this->target_user;
+	}
+
+	public function __get( $key )
+	{
+		if ( 'target_user' == $key )
+		{
+			if ( !$this->_target_user )
+				$this->_target_user = new DCE_User( get_user_by( 'email', $this->target_email ) );
+
+			// target user info
+			return $this->_target_user;
+		}
+
+		// parent class
+		return parent::__get( $key );
 	}
 
 	/**
