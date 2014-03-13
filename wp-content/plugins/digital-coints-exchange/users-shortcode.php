@@ -40,7 +40,7 @@ function dce_user_page_loader( $attrs, $content, $shortcode )
 
 	// check current user
 	$dce_user = DCE_User::get_current_user();
-	if ( !$dce_user->exists() && !in_array( $shortcode, $public_tags ) )
+	if ( !dce_is_user_admin( $dce_user ) && !$dce_user->exists() && !in_array( $shortcode, $public_tags ) )
 		return dce_alert_message( sprintf ( 
 					__( 'This is a client access only. please <a href="%s">login</a> or <a href="%s">register</a>', 'dce' ), 
 					add_query_arg( 'ref', $_SERVER['REQUEST_URI'], dce_get_pages( 'login' )->url ), 

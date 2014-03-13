@@ -97,7 +97,17 @@
 	cursor: wait;
 }
 
+.wrap #messages strong {
+	font-weight: bold;
+}
 
+.wrap #messages .column-author {
+	width: 12em;
+}
+
+.wrap #messages .column-response {
+	width: 8em;
+}
 
 
 

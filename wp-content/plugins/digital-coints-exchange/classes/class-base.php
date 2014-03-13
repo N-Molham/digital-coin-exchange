@@ -6,6 +6,21 @@
  * @since 1.0
  */
 
+add_action( 'admin_bar_menu', 'dce_admin_bar_menu', 120 );
+/**
+ * WP-Admin bar menu
+ */
+function dce_admin_bar_menu()
+{
+	/* @var $wp_admin_bar WP_Admin_Bar */
+	global $wp_admin_bar;
+
+	// remove unwanted links
+	$wp_admin_bar->remove_menu( 'edit' );
+	$wp_admin_bar->remove_menu( 'new-'. DCE_POST_TYPE_OFFER );
+	$wp_admin_bar->remove_menu( 'new-'. DCE_POST_TYPE_ESCROW );
+}
+
 add_action( 'template_redirect', 'dce_single_view_check' );
 /**
  * Check if user who sees this escrow/offer is allowed to
@@ -44,9 +59,15 @@ function dce_single_view_check()
 	{
 		// target escrow
 		$escrow = new DCE_Escrow( get_post() );
-	
-		// check login
+
+		// get current user
 		$user = DCE_User::get_current_user();
+
+		// check if admin
+		if ( dce_is_user_admin( $user ) )
+			return ;
+
+		// check login
 		if ( !$user->exists() || !$escrow->check_user( $user->data->user_email ) )
 		{
 			// clicked from mail
