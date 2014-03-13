@@ -53,23 +53,93 @@ function dce_settings_init()
 					),
 			),
 			array (
-					'label' => __( 'Transactions Confirmation Level', 'dce' ),
+					'label' => __( 'Escrow page top message', 'dce' ),
 					'page' => 'dce_settings_page',
-					'section' => 'dce_general',
+					'section' => 'dce_messages',
 					'args' => array (
-							'name' => 'trans_conf_level',
-							'input' => 'number',
-							'class' => 'small-text code',
-							'default' => 2,
-							'attrs' => array( 'step' => '1.00', 'min' => '1.00' ),
+							'name' => 'escrow_top_msg',
+							'input' => 'textarea',
+							'class' => 'large-text',
+							'default' => __( '<p>Send <strong>%s</strong> to us on this Address : <code>%s</code></p>' ."\n". '<p>You will be notified once the other party sends <strong>%s</strong> to us, if for any reason they did not send it on time, you will get your coins back with no commissions.</p>', 'dce' ),
+							'attrs' => array( 'rows' => '5' ),
 							'visible' => true,
-							'desc' => __( 'Number of confirmations to check coin transactions against', 'dce' ),
+							'desc' => __( 'Three parameters will be passed in order: <strong>"amount of coins to send"</strong>, <strong>"receive address"</strong>, and <strong>"amount of coins to receive"</strong>', 'dce' ),
+					),
+			),
+			array (
+					'label' => __( 'Escrow page set receive address message', 'dce' ),
+					'page' => 'dce_settings_page',
+					'section' => 'dce_messages',
+					'args' => array (
+							'name' => 'escrow_receive_msg',
+							'input' => 'textarea',
+							'class' => 'large-text',
+							'default' => __( 'Set below the address you will receive the exchanged coins on', 'dce' ),
+							'attrs' => array( 'rows' => '5' ),
+							'visible' => true,
+							'desc' => '',
+					),
+			),
+			array (
+					'label' => __( 'Escrow feedback top message', 'dce' ),
+					'page' => 'dce_settings_page',
+					'section' => 'dce_messages',
+					'args' => array (
+							'name' => 'escrow_feedback_msg',
+							'input' => 'textarea',
+							'class' => 'large-text',
+							'default' => __( 'How do you evaluate this escrow and your satisfaction about the other party?', 'dce' ),
+							'attrs' => array( 'rows' => '5' ),
+							'visible' => true,
+							'desc' => '',
+					),
+			),
+			array (
+					'label' => __( 'New escrow created notification mail', 'dce' ),
+					'page' => 'dce_settings_page',
+					'section' => 'dce_messages',
+					'args' => array (
+							'name' => 'new_escrow_notify_mail',
+							'input' => 'textarea',
+							'class' => 'large-text',
+							'default' => __( 'New escrow started, open link below for details <a href="%s">Click here</a>', 'dce' ),
+							'attrs' => array( 'rows' => '5' ),
+							'visible' => true,
+							'desc' => __( 'One parameter will be passed: <strong>"the escrow URL"</strong>', 'dce' ),
+					),
+			),
+			array (
+					'label' => __( 'Escrow expired notification mail', 'dce' ),
+					'page' => 'dce_settings_page',
+					'section' => 'dce_messages',
+					'args' => array (
+							'name' => 'escrow_expire_notify_mail',
+							'input' => 'textarea',
+							'class' => 'large-text',
+							'default' => __( 'The escrow you participated in expired without fulfilling the necessarily amounts, <a href="%s">Click here</a> to request a refund.', 'dce' ),
+							'attrs' => array( 'rows' => '5' ),
+							'visible' => true,
+							'desc' => __( 'One parameter will be passed: <strong>"coins refund URL"</strong>', 'dce' ),
+					),
+			),
+			array (
+					'label' => __( 'Notification mail when escrow other party send the required coins amount', 'dce' ),
+					'page' => 'dce_settings_page',
+					'section' => 'dce_messages',
+					'args' => array (
+							'name' => 'escrow_coins_sent_notify_mail',
+							'input' => 'textarea',
+							'class' => 'large-text',
+							'default' => __( 'The other party %s of this <a href="%s">escrow</a>, sent the required coins amount %s', 'dce' ),
+							'attrs' => array( 'rows' => '5' ),
+							'visible' => true,
+							'desc' => __( 'Three parameter will be passed in order: <strong>"Other party name"</strong>, <strong>"escrow URL"</strong>, and <strong>"amount sent"</strong>', 'dce' ),
 					),
 			),
 			array (
 					'label' => __( 'Coin Types', 'dce' ),
 					'page' => 'dce_settings_page',
-					'section' => 'dce_general',
+					'section' => 'dce_coins',
 					'args' => array (
 							'name' => 'coin_types',
 							'input' => 'html',
@@ -95,12 +165,21 @@ function dce_admin_settings_init()
 	register_setting( 'dce_options', 'dce_admin_options', 'dce_admin_settings_sanitize_values' );
 
 	/**
-	 * Register our settings field group
+	 * Settings Sections
 	 */
 
-	// general section
+	// general
 	add_settings_section( 'dce_general', __( 'General Settings', 'dce' ), '__return_false', 'dce_settings_page' );
 
+	// coins
+	add_settings_section( 'dce_coins', __( 'Coins settings', 'dce' ), '__return_false', 'dce_settings_page' );
+
+	// messages
+	add_settings_section( 'dce_messages', __( 'User Messages', 'dce' ), '__return_false', 'dce_settings_page' );
+
+	/**
+	 * Settings Fields
+	 */
 	// Register our individual settings fields
 	foreach ( $dce_admin_settings_fields as $field_data )
 	{
