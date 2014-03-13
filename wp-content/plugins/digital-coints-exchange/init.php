@@ -58,6 +58,7 @@ require DCE_PATH . 'cron/cron-escrow.php';
 require DCE_PATH . 'admin/admin_init.php';
 require DCE_PATH . 'admin/components.php';
 require DCE_PATH . 'admin/settings.php';
+require DCE_PATH . 'admin/messages.php';
 
 // Users pages
 require DCE_PATH . 'users.php';

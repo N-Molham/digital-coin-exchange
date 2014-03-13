@@ -29,6 +29,10 @@
 	width: 24%;
 }
 
+#single-escrow td code {
+	font-size: 1.2em;
+}
+
 .dce_escrow .reading-box-container {
 	margin-bottom: 40px !important;
 	text-align: center;

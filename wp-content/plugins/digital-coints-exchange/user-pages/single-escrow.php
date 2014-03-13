@@ -19,6 +19,8 @@ if ( !$escrow->exists() )
 // is the current logged in user is the owner/creator
 $is_owner = $escrow->is_user_owner( $dce_user->data->user_email );
 
+$is_admin = dce_is_user_admin( $dce_user );
+
 // output holder
 $output = '';
 
@@ -29,30 +31,33 @@ $to_display = $escrow->convert_to_display( $coin_types );
 $exchange_addresses = '';
 
 // exchange addresses
-// send address
-if ( $is_owner )
+if ( !$is_admin )
 {
-	// owner/creator user
-	$exchange_addresses .= sprintf( $plugin_settings['escrow_top_msg'], $form_display, $escrow->owner_address, $to_display );
-}
-else
-{
-	// target user
-	$exchange_addresses .= sprintf( $plugin_settings['escrow_top_msg'], $to_display, $escrow->target_address, $form_display );
-}
+	// send address
+	if ( $is_owner )
+	{
+		// owner/creator user
+		$exchange_addresses .= sprintf( $plugin_settings['escrow_top_msg'], $form_display, $escrow->owner_address, $to_display );
+	}
+	else
+	{
+		// target user
+		$exchange_addresses .= sprintf( $plugin_settings['escrow_top_msg'], $to_display, $escrow->target_address, $form_display );
+	}
 
-// receive addresses
-$exchange_addresses .= dce_divider( 'double' );
-$exchange_addresses .= '<p>'. $plugin_settings['escrow_receive_msg'] .'</p>';
-$exchange_addresses .= '<div class="receive-address"><form action="" method="post" class="ajax-form" data-callback="receive_address_callback">';
-$exchange_addresses .= '<input type="text" class="input-text input-code" name="receive_address" value="'. ( $is_owner ? $escrow->owner_receive_address : $escrow->target_receive_address ) .'" />';
-$exchange_addresses .= '<input type="submit" value="'. __( 'Save', 'dce' ) .'" class="button small green" />';
-$exchange_addresses .= '<input type="hidden" name="action" value="save_receive_address" />';
-$exchange_addresses .= '<input type="hidden" name="escrow" value="'. $escrow->ID .'" />';
-$exchange_addresses .= wp_nonce_field( 'dce_receive_address', 'nonce', false, false ) .'</form></div>'; 
+	// receive addresses
+	$exchange_addresses .= dce_divider( 'double' );
+	$exchange_addresses .= '<p>'. $plugin_settings['escrow_receive_msg'] .'</p>';
+	$exchange_addresses .= '<div class="receive-address"><form action="" method="post" class="ajax-form" data-callback="receive_address_callback">';
+	$exchange_addresses .= '<input type="text" class="input-text input-code" name="receive_address" value="'. ( $is_owner ? $escrow->owner_receive_address : $escrow->target_receive_address ) .'" />';
+	$exchange_addresses .= '<input type="submit" value="'. __( 'Save', 'dce' ) .'" class="button small green" />';
+	$exchange_addresses .= '<input type="hidden" name="action" value="save_receive_address" />';
+	$exchange_addresses .= '<input type="hidden" name="escrow" value="'. $escrow->ID .'" />';
+	$exchange_addresses .= wp_nonce_field( 'dce_receive_address', 'nonce', false, false ) .'</form></div>'; 
 
-// display
-$output .= dce_promotion_box( $exchange_addresses );
+	// display box
+	$output .= dce_promotion_box( $exchange_addresses );
+}
 
 // data table start
 $output .= dce_table_start( 'single-escrow' );
@@ -77,6 +82,18 @@ $output .= '<tr><th>'. $fields['comm_method']['label'] .'</th><td>'. $escrow->co
 
 // details
 $output .= '<tr><th>'. $fields['details']['label'] .'</th><td>'. $escrow->details .'</td></tr>';
+
+// show addresses for admin
+if ( $is_admin )
+{
+	// owner/creator addresses
+	$output .= '<tr><th>'. __( 'Creator Send Address', 'dce' ) .'</th><td><code>'. $escrow->owner_address .'</code></td></tr>';
+	$output .= '<tr><th>'. __( 'Creator Receive Address', 'dce' ) .'</th><td><code>'. $escrow->owner_receive_address .'</code></td></tr>';
+
+	// target addresses
+	$output .= '<tr><th>'. __( 'Target User Send Address', 'dce' ) .'</th><td><code>'. $escrow->target_address .'</code></td></tr>';
+	$output .= '<tr><th>'. __( 'Target User Receive Address', 'dce' ) .'</th><td><code>'. $escrow->target_receive_address .'</code></td></tr>';
+}
 
 // table end
 $output .= dce_table_end();

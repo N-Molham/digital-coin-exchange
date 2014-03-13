@@ -106,6 +106,10 @@ function dce_users_init()
  */
 function dce_is_user_admin( &$user_id = null )
 {
+	// check cache
+	if ( isset( $GLOBALS['dce_is_admin'] ) )
+		return $GLOBALS['dce_is_admin'];
+
 	// check if no user data passed
 	if ( !$user_id )
 		return current_user_can( 'manage_options' );
@@ -115,11 +119,10 @@ function dce_is_user_admin( &$user_id = null )
 		$user_id = get_user_by( 'id' , (string) $user_id );
 
 	// check permission
-	if ( $user_id && is_object( $user_id ) && $user_id->has_cap( 'manage_options' ) )
-		return true;
+	$GLOBALS['dce_is_admin'] = $user_id && is_object( $user_id ) && $user_id->has_cap( 'manage_options' );
 
 	// return false
-	return false;
+	return $GLOBALS['dce_is_admin'];
 }
 
 /**
@@ -193,12 +196,13 @@ class DCE_User extends WP_User
 				'user_id' => '',
 				'object_id' => '',
 				'target' => 'received',
+				'status' => 'approve',
 				'meta_query' => array(),
 		) );
 
 		// comments query args
 		$query_args = array ( 
-				'status' => 'approve',
+				'status' => $messages_args['status'],
 				'number' => '',
 				'post_id' => $messages_args['object_id'],
 				'user_id' => '',
@@ -226,6 +230,9 @@ class DCE_User extends WP_User
 			// invalid
 			return false;
 		}
+
+		// messages target meta
+		$query_args['meta_query'][] = array( 'key' => '_target_user', 'value' => '', 'compare' => '!=' );
 
 		// query comments -> messages
 		$comments = get_comments( $query_args );
