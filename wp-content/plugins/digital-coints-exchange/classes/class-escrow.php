@@ -14,12 +14,10 @@ add_action( 'dce_save_user_escrow', 'dce_new_escrow_mail_notification' );
  */
 function dce_new_escrow_mail_notification( $escrow )
 {
-	// body message
-	$message = 'New escrow started, open link below for details'. "\n\r";
-	$message .= add_query_arg( 'ref', 'mail', $escrow->url() );
-
 	// sent to parties
-	wp_mail( array( $escrow->user->data->user_email, $escrow->target_email ), __( 'New Escrow Started', 'dce' ), $message );
+	wp_mail( array( $escrow->user->data->user_email, $escrow->target_email ), 
+			__( 'New Escrow Started', 'dce' ), 
+			sprintf( dce_admin_get_settings( 'new_escrow_notify_mail' ), add_query_arg( 'ref', 'mail', $escrow->url() ) ) );
 }
 
 /**

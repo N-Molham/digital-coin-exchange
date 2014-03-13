@@ -89,7 +89,7 @@ function dce_cron_escrows_transactions_check()
 				if ( !empty( $notify ) )
 					wp_mail( $notify,
 							 __( 'Amount Refund notification', 'dce' ), 
-							sprintf( __( 'The escrow you participated in expired without fulfilling the necessarily amounts, <a href="%s">Click here</a> to request a refund.', 'dce' ), esc_attr( $escrow->url() ) ) 
+							sprintf( $settings['escrow_expire_notify_mail'], esc_attr( $escrow->url() ) ) 
 					);
 			}
 
@@ -103,7 +103,7 @@ function dce_cron_escrows_transactions_check()
 		// which parties sent amounts right
 		$all_received = 0;
 		$to_notify = array();
-		$notify_mail_msg = __( 'The other party %s of this <a href="%s">escrow</a>, sent the required coins amount %s', 'dce' );
+		$notify_mail_msg = $settings['escrow_coins_sent_notify_mail'];
 
 		// owner sent right amount
 		if ( $from_amount_received >= $escrow->from_amount )

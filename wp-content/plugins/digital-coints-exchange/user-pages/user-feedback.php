@@ -26,6 +26,9 @@ if ( !$escrow->exists() || !in_array( $escrow->get_status(), array( 'completed',
 if ( 'yes' == $escrow->get_meta( $dce_user->ID .'_gave_feedback' ) )
 	return dce_alert_message( __( 'You already gave a feedback about this escrow', 'dce' ), 'error' );
 
+// feedback message
+$output .= '<p>'. dce_admin_get_settings( 'escrow_feedback_msg' ) .'</p>';
+
 // form start
 $output .= '<form action="" id="user-feedback-form" method="post" class="ajax-form" data-callback="user_feedback_callback">';
 
