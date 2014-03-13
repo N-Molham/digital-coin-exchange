@@ -81,20 +81,6 @@ function dce_settings_init()
 					),
 			),
 			array (
-					'label' => __( 'Escrow feedback top message', 'dce' ),
-					'page' => 'dce_settings_page',
-					'section' => 'dce_messages',
-					'args' => array (
-							'name' => 'escrow_feedback_msg',
-							'input' => 'textarea',
-							'class' => 'large-text',
-							'default' => __( 'How do you evaluate this escrow and your satisfaction about the other party?', 'dce' ),
-							'attrs' => array( 'rows' => '5' ),
-							'visible' => true,
-							'desc' => '',
-					),
-			),
-			array (
 					'label' => __( 'New escrow created notification mail', 'dce' ),
 					'page' => 'dce_settings_page',
 					'section' => 'dce_messages',
