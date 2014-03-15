@@ -103,7 +103,6 @@ function dce_cron_escrows_transactions_check()
 		// which parties sent amounts right
 		$all_received = 0;
 		$to_notify = array();
-		$notify_mail_msg = $settings['escrow_coins_sent_notify_mail'];
 
 		// owner sent right amount
 		if ( $from_amount_received >= $escrow->from_amount )
@@ -114,7 +113,7 @@ function dce_cron_escrows_transactions_check()
 				// add to notification list
 				wp_mail( $escrow->target_email, 
 						__( 'Escrow Notification', 'dce' ), 
-						sprintf( $notify_mail_msg, $escrow->user->display_name(), $escrow->url(), $escrow->convert_from_display( $coin_types ) ) );
+						sprintf( $settings['escrow_coins_sent_notify_mail'], $escrow->user->display_name(), $escrow->url(), $escrow->convert_from_display( $coin_types ) ) );
 
 				// mark as notified
 				$escrow->set_meta( 'target_notified', 'yes' );
@@ -132,7 +131,7 @@ function dce_cron_escrows_transactions_check()
 				// add to notification list
 				wp_mail( $escrow->user->data->user_email, 
 						__( 'Escrow Notification', 'dce' ), 
-						sprintf( $notify_mail_msg, $escrow->target_user->display_name(), $escrow->url(), $escrow->convert_to_display( $coin_types ) ) );
+						sprintf( $settings['escrow_coins_sent_notify_mail'], $escrow->target_user->display_name(), $escrow->url(), $escrow->convert_to_display( $coin_types ) ) );
 
 				// mark as notified
 				$escrow->set_meta( 'owner_notified', 'yes' );
@@ -185,6 +184,48 @@ function dce_cron_escrows_transactions_check()
 			// save results
 			$escrow->set_meta( 'owner_txid', $owner_txid );
 			$escrow->set_meta( 'target_txid', $target_txid );
+
+			// transactions status
+			$owner_txid_failed = is_wp_error( $owner_txid );
+			$target_txid_failed = is_wp_error( $target_txid );
+
+			// notification mails
+			if ( $owner_txid_failed || $target_txid_failed )
+			{
+				// notify owner
+				if ( $owner_txid_failed )
+				{
+					wp_mail( $escrow->user->user_email, 
+							__( 'Escrow Transaction Failure', 'dce' ), 
+							sprintf( $settings['escrow_trans_failure_notify_mail'], $escrow->url(), $escrow->target_user->display_name(), $amount_for_owner ) 
+					);
+				}
+
+				// notify target
+				if ( $target_txid_failed )
+				{
+					wp_mail( $escrow->target_user->user_email, 
+							__( 'Escrow Transaction Failure', 'dce' ), 
+							sprintf( $settings['escrow_trans_failure_notify_mail'], $escrow->url(), $escrow->user->display_name(), $amount_for_target ) 
+					);
+				}
+			}
+			else
+			{
+				// both transactions successful
+
+				// notify owner
+				wp_mail( $escrow->user->user_email,
+						__( 'Escrow Successfully Completed', 'dce' ),
+						sprintf( $settings['escrow_success_notify_mail'], $escrow->url(), $escrow->target_user->display_name(), $amount_for_owner, $escrow->feedback_url() )
+				);
+
+				// notify owner
+				wp_mail( $escrow->target_user->user_email,
+						__( 'Escrow Successfully Completed', 'dce' ),
+						sprintf( $settings['escrow_success_notify_mail'], $escrow->url(), $escrow->user->display_name(), $amount_for_target, $escrow->feedback_url() )
+				);
+			}
 
 			// set as completed
 			$escrow->change_status( 'completed' );
