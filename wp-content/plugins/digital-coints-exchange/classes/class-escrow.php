@@ -221,6 +221,26 @@ class DCE_Escrow extends DCE_Offer
 		return $this->target_user;
 	}
 
+	/**
+	 * Get Owner/Creator user
+	 *
+	 * @return DCE_User
+	 */
+	public function owner_user()
+	{
+		return $this->user;
+	}
+
+	/**
+	 * Feedback URL
+	 *
+	 * @return string
+	 */
+	public function feedback_url()
+	{
+		return home_url( 'feedback/'. $this->ID );
+	}
+
 	public function __get( $key )
 	{
 		if ( 'target_user' == $key )
