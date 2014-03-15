@@ -19,6 +19,7 @@ add_shortcode( 'dce-single-escrow', 'dce_user_page_loader' );
 add_shortcode( 'dce-single-offer', 'dce_user_page_loader' );
 add_shortcode( 'dce-send-message', 'dce_user_page_loader' );
 add_shortcode( 'dce-user-feedback', 'dce_user_page_loader' );
+add_shortcode( 'dce-user-trans-history', 'dce_user_page_loader' );
 /**
  * User's page loader
  * 

@@ -402,6 +402,17 @@ class DCE_User extends WP_User
 	}
 
 	/**
+	 * Get Transactions history
+	 * 
+	 * @param array $args
+	 * @return array
+	 */
+	public function get_transactions_history( $args = '' )
+	{
+		return DCE_Transactions::query_transactions( wp_parse_args( $args, array( 'user' => $this->ID ) ) );
+	}
+
+	/**
 	 * User data fields 
 	 * 
 	 * @return array
