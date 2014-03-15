@@ -6,7 +6,7 @@
  * @since 1.0
  */
 
-//add_action( 'template_redirect', 'dce_cron_test' );
+add_action( 'template_redirect', 'dce_cron_test' );
 /**
  * Cron test
  */
@@ -21,6 +21,8 @@ add_action( 'dce_cron_interval', 'dce_cron_escrows_transactions_check' );
  */
 function dce_cron_escrows_transactions_check()
 {
+	global $wpdb;
+
 	// open up execution time
 	set_time_limit( 300 );
 
@@ -30,6 +32,9 @@ function dce_cron_escrows_transactions_check()
 	$len = count( $open_escrows );
 	if ( !$len )
 		return;
+
+	// set mail content
+	add_filter( 'wp_mail_content_type', 'dce_set_mail_html_content_type' );
 
 	// system settings
 	$settings = dce_admin_get_settings();
@@ -49,20 +54,36 @@ function dce_cron_escrows_transactions_check()
 			continue;
 
 		// check from coin
-		$from_rpc_client = &dce_coins_rpc_connections( $escrow->from_coin );
+		$from_rpc_client = dce_coins_rpc_connections( $escrow->from_coin );
 		$from_amount_received = $from_rpc_client->getreceivedbyaddress( $escrow->owner_address );
 		if ( is_wp_error( $from_amount_received ) )
 			continue;
 
 		// check to coin
-		$to_rpc_client = &dce_coins_rpc_connections( $escrow->to_coin );
+		$to_rpc_client = dce_coins_rpc_connections( $escrow->to_coin );
 		$to_amount_received = $to_rpc_client->getreceivedbyaddress( $escrow->target_address );
 		if ( is_wp_error( $to_amount_received ) )
 			continue;
 
-		// save results
-		$escrow->set_meta( 'from_amount_received', $from_amount_received );
-		$escrow->set_meta( 'to_amount_received', $to_amount_received );
+		// save owner received amounts
+		if ( $from_amount_received > 0 && $escrow->from_amount_received != $from_amount_received )
+		{
+			// save meta
+			$escrow->set_meta( 'from_amount_received', $from_amount_received );
+
+			// save transaction
+			DCE_Transactions::save( array( 'amount' => DCE_Escrow::display_amount_formated( $from_amount_received, $escrow->from_coin, $coin_types ) ), 'received', $escrow->user->ID, $escrow->ID );
+		}
+
+		// save target received amounts
+		if ( $to_amount_received > 0 && $escrow->to_amount_received != $to_amount_received )
+		{
+			// save meta
+			$escrow->set_meta( 'to_amount_received', $to_amount_received );
+
+			// save transaction
+			DCE_Transactions::save( array( 'amount' => DCE_Escrow::display_amount_formated( $to_amount_received, $escrow->to_coin, $coin_types ) ), 'received', $escrow->target_user->ID, $escrow->ID );
+		}
 
 		// expires on
 		$is_expired = current_time( 'timestamp' ) > strtotime( '+'. intval( $settings['escrow_expire'] ) .'days', strtotime( $escrow->datetime ) );
@@ -174,7 +195,7 @@ function dce_cron_escrows_transactions_check()
 					$amount_for_target *= $half_commission;
 					break;
 				default:
-					return;
+					continue;
 			}
 
 			// send amounts to parties
@@ -188,6 +209,12 @@ function dce_cron_escrows_transactions_check()
 			// transactions status
 			$owner_txid_failed = is_wp_error( $owner_txid );
 			$target_txid_failed = is_wp_error( $target_txid );
+			$amount_for_owner_display = DCE_Escrow::display_amount_formated( $amount_for_owner, $escrow->to_coin, $coin_types );
+			$amount_for_target_display = DCE_Escrow::display_amount_formated( $amount_for_target, $escrow->from_coin, $coin_types );
+
+			// save transactions
+			DCE_Transactions::save( array( 'amount' => $amount_for_owner_display, 'txid' => $owner_txid ), 'sent', $escrow->user->ID, $escrow->ID, $owner_txid_failed ? 'error' : $owner_txid );
+			DCE_Transactions::save( array( 'amount' => $amount_for_target_display, 'txid' => $target_txid ), 'sent', $escrow->target_user->ID, $escrow->ID, $target_txid_failed ? 'error' : $target_txid );
 
 			// notification mails
 			if ( $owner_txid_failed || $target_txid_failed )
@@ -197,7 +224,7 @@ function dce_cron_escrows_transactions_check()
 				{
 					wp_mail( $escrow->user->user_email, 
 							__( 'Escrow Transaction Failure', 'dce' ), 
-							sprintf( $settings['escrow_trans_failure_notify_mail'], $escrow->url(), $escrow->target_user->display_name(), $amount_for_owner ) 
+							sprintf( $settings['escrow_trans_failure_notify_mail'], $escrow->url(), $escrow->target_user->display_name(), $amount_for_owner_display ) 
 					);
 				}
 
@@ -206,7 +233,7 @@ function dce_cron_escrows_transactions_check()
 				{
 					wp_mail( $escrow->target_user->user_email, 
 							__( 'Escrow Transaction Failure', 'dce' ), 
-							sprintf( $settings['escrow_trans_failure_notify_mail'], $escrow->url(), $escrow->user->display_name(), $amount_for_target ) 
+							sprintf( $settings['escrow_trans_failure_notify_mail'], $escrow->url(), $escrow->user->display_name(), $amount_for_target_display ) 
 					);
 				}
 			}
@@ -217,13 +244,13 @@ function dce_cron_escrows_transactions_check()
 				// notify owner
 				wp_mail( $escrow->user->user_email,
 						__( 'Escrow Successfully Completed', 'dce' ),
-						sprintf( $settings['escrow_success_notify_mail'], $escrow->url(), $escrow->target_user->display_name(), $amount_for_owner, $escrow->feedback_url() )
+						sprintf( $settings['escrow_success_notify_mail'], $escrow->url(), $escrow->target_user->display_name(), $amount_for_owner_display, $escrow->feedback_url() )
 				);
 
 				// notify owner
 				wp_mail( $escrow->target_user->user_email,
 						__( 'Escrow Successfully Completed', 'dce' ),
-						sprintf( $settings['escrow_success_notify_mail'], $escrow->url(), $escrow->user->display_name(), $amount_for_target, $escrow->feedback_url() )
+						sprintf( $settings['escrow_success_notify_mail'], $escrow->url(), $escrow->user->display_name(), $amount_for_target_display, $escrow->feedback_url() )
 				);
 			}
 
@@ -234,6 +261,9 @@ function dce_cron_escrows_transactions_check()
 			do_action( 'dce_escrow_success', $escrow );
 		}
 	}
+
+	// reset mail content type
+	remove_filter( 'wp_mail_content_type', 'dce_set_mail_html_content_type' );
 }
 
 

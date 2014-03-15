@@ -14,10 +14,16 @@ add_action( 'dce_save_user_escrow', 'dce_new_escrow_mail_notification' );
  */
 function dce_new_escrow_mail_notification( $escrow )
 {
+	// set mail content type
+	add_filter( 'wp_mail_content_type', 'dce_set_mail_html_content_type' );
+
 	// sent to parties
 	wp_mail( array( $escrow->user->data->user_email, $escrow->target_email ), 
 			__( 'New Escrow Started', 'dce' ), 
 			sprintf( dce_admin_get_settings( 'new_escrow_notify_mail' ), add_query_arg( 'ref', 'mail', $escrow->url() ) ) );
+
+	// reset mail content type
+	remove_filter( 'wp_mail_content_type', 'dce_set_mail_html_content_type' );
 }
 
 /**

@@ -166,6 +166,16 @@ function dce_query_vars_filter( $query_vars )
 	return $query_vars;
 }
 
+/**
+ * Set sending mails content type to HTML
+ * 
+ * @return string
+ */
+function dce_set_mail_html_content_type()
+{
+	return 'text/html';
+}
+
 add_action( 'template_redirect', 'dce_public_template_redirect' );
 /**
  * Frontend templates filter
@@ -325,6 +335,8 @@ register_activation_hook( DCE_PLUGIN_FILE, 'dce_plugin_activation' );
  */
 function dce_plugin_activation()
 {
+	global $wpdb;
+
 	// register client role
 	$client_role = get_role( DCE_CLIENT_ROLE );
 	if ( !$client_role )
@@ -345,6 +357,23 @@ function dce_plugin_activation()
 
 	// cron jobs register
 	wp_schedule_event( time(), 'dce_15_min', 'dce_cron_interval' );
+
+	// db tables
+	$sql = "CREATE TABLE {$wpdb->prefix}transactions (
+  trans_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  user_id bigint(20) unsigned NOT NULL,
+  escrow_id bigint(20) unsigned NOT NULL,
+  trans_action varchar(24) CHARACTER SET utf8 NOT NULL,
+  trans_data text CHARACTER SET utf8 NOT NULL,
+  trans_txid varchar(128) CHARACTER SET utf8 NOT NULL DEFAULT '',
+  trans_datetime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY  (trans_id),
+  KEY trans_user_key (user_id),
+  KEY trans_escrow_key (escrow_id)
+);";
+
+	require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+	dbDelta( $sql );
 
 	// rewrite flush for custom post types
 	flush_rewrite_rules();

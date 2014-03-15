@@ -317,5 +317,21 @@ class DCE_Component
 		// get it from the post object
 		return $this->post_object->$key;
 	}
+
+	/**
+	 * Display coins amount formated
+	 * 
+	 * @param float $amount
+	 * @param string $type
+	 * @param array $coin_types
+	 * @return string
+	 */
+	public static function display_amount_formated( $amount, $type, &$coin_types = '' )
+	{
+		if ( empty( $coin_types ) )
+			$coin_types = dce_get_coin_types();
+
+		return _n( sprintf( $coin_types[$type]['single'], $amount ), sprintf( $coin_types[$type]['plural'], $amount ), $amount );
+	}
 }
 
