@@ -10,6 +10,81 @@ class DCE_Transactions
 	static $table = 'transactions';
  
 	/**
+	 * Query transactions
+	 * 
+	 * @param string $args
+	 * @return array
+	 */
+	public static function query_transactions( $args = '' )
+	{
+		global $wpdb;
+
+		// defaults
+		$args = wp_parse_args( $args, array (
+				'fields' => '*',
+				'user' => null, 
+				'escrow' => null, 
+				'limit' => 0,
+				'page' => 0,
+				'output' => OBJECT,
+		) );
+
+		// query SQL
+		$query_sql = 'SELECT ';
+
+		// query selected fields
+		$query_sql .= is_array( $args['fields'] ) ? implode( ', ', array_map( 'sanitize_key', $args['fields'] ) ) : $args['fields'];
+
+		// query conditions
+		$query_sql .= ' FROM '. $wpdb->prefix . self::$table .' WHERE 1=1';
+
+		// query values
+		$query_values = array();
+
+		// specific user
+		if ( $args['user'] )
+		{
+			$query_sql .= ' AND user_id = %d';
+			$query_values[] = $args['user'];
+		}
+
+		// specific escrow
+		if ( $args['escrow'] )
+		{
+			$query_sql .= ' AND escrow_id = %d';
+			$query_values[] = $args['escrow'];
+		}
+
+		// limit
+		if( $args['limit'] )
+		{
+			$query_sql .= ' LIMIT ';
+
+			// paging
+			if( $args['page'] )
+				$query_sql .= ( ( absint( $args['offset'] ) - 1 ) * $args['limit'] ) . ', ';
+
+			$query_sql .= $args['limit'];
+		}
+
+		// query results
+		$transactions = $wpdb->get_results( $wpdb->prepare( $query_sql, $query_values ), $args['output'] );
+		$len = count( $transactions );
+
+		if ( $len )
+		{
+			for ( $i = 0; $i < $len; $i++ )
+			{
+				// unserialize data if needed
+				$transactions[$i]->trans_data = maybe_unserialize( $transactions[$i]->trans_data );
+			}
+		}
+
+		// return filtered data
+		return apply_filters( 'dce', $transactions, $args );
+	}
+
+	/**
 	 * Save transaction
 	 * 
 	 * @param mixed $data

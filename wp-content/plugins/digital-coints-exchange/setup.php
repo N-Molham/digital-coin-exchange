@@ -303,6 +303,12 @@ function dce_get_pages( $page_name = '' )
 					'id' => 0,
 					'url' => false,
 			),
+			'trans-history' => array ( 
+					'title' => __( 'Transactions History', 'dce' ),
+					'content' => '[dce-user-trans-history]',
+					'id' => 0,
+					'url' => false,
+			),
 	);
 
 	$pages = wp_parse_args( $pages, $default_pages );

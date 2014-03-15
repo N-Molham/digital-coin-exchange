@@ -6,7 +6,7 @@
  * @since 1.0
  */
 
-add_action( 'template_redirect', 'dce_cron_test' );
+//add_action( 'template_redirect', 'dce_cron_test' );
 /**
  * Cron test
  */
@@ -54,8 +54,8 @@ function dce_cron_escrows_transactions_check()
 			continue;
 
 		// check from coin
-		$from_rpc_client = dce_coins_rpc_connections( $escrow->from_coin );
-		$from_amount_received = $from_rpc_client->getreceivedbyaddress( $escrow->owner_address );
+		$from_rpc_client =& dce_coins_rpc_connections( $escrow->from_coin );
+		$from_amount_received =& $from_rpc_client->getreceivedbyaddress( $escrow->owner_address );
 		if ( is_wp_error( $from_amount_received ) )
 			continue;
 
@@ -213,8 +213,8 @@ function dce_cron_escrows_transactions_check()
 			$amount_for_target_display = DCE_Escrow::display_amount_formated( $amount_for_target, $escrow->from_coin, $coin_types );
 
 			// save transactions
-			DCE_Transactions::save( array( 'amount' => $amount_for_owner_display, 'txid' => $owner_txid ), 'sent', $escrow->user->ID, $escrow->ID, $owner_txid_failed ? 'error' : $owner_txid );
-			DCE_Transactions::save( array( 'amount' => $amount_for_target_display, 'txid' => $target_txid ), 'sent', $escrow->target_user->ID, $escrow->ID, $target_txid_failed ? 'error' : $target_txid );
+			DCE_Transactions::save( array( 'amount' => $amount_for_owner_display, 'error' => $owner_txid_failed ? $owner_txid : false ), 'sent', $escrow->user->ID, $escrow->ID, $owner_txid_failed ? 'error' : $owner_txid );
+			DCE_Transactions::save( array( 'amount' => $amount_for_target_display, 'error' => $target_txid_failed ? $target_txid : false ), 'sent', $escrow->target_user->ID, $escrow->ID, $target_txid_failed ? 'error' : $target_txid );
 
 			// notification mails
 			if ( $owner_txid_failed || $target_txid_failed )
