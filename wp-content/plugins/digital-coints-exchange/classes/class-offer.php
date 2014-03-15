@@ -115,10 +115,7 @@ class DCE_Offer extends DCE_Component
 	 */
 	public function convert_from_display( &$coin_types = '' )
 	{
-		if ( empty( $coin_types ) )
-			$coin_types = dce_get_coin_types();
-
-		return _n( sprintf( $coin_types[$this->from_coin]['single'], $this->from_amount ), sprintf( $coin_types[$this->from_coin]['plural'], $this->from_amount ), $this->from_amount );
+		return self::display_amount_formated(  $this->from_amount, $this->from_coin, $coin_types );
 	}
 
 	/**
@@ -129,10 +126,7 @@ class DCE_Offer extends DCE_Component
 	 */
 	public function convert_to_display( &$coin_types = '' )
 	{
-		if ( empty( $coin_types ) )
-			$coin_types = dce_get_coin_types();
-
-		return _n( sprintf( $coin_types[$this->to_coin]['single'], $this->to_amount ), sprintf( $coin_types[$this->to_coin]['plural'], $this->to_amount ), $this->to_amount );
+		return self::display_amount_formated(  $this->to_amount, $this->to_coin, $coin_types );
 	}
 
 	/**

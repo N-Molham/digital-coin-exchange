@@ -38,6 +38,7 @@ require DCE_PATH . 'setup.php';
 require DCE_PATH . 'template_tags.php';
 
 // classes
+require DCE_PATH . 'classes/class-transactions.php';
 require DCE_PATH . 'classes/class-coin-rpc.php';
 require DCE_PATH . 'classes/class-base.php';
 require DCE_PATH . 'classes/class-offer.php';
