@@ -163,12 +163,12 @@ class DCE_Escrow extends DCE_Offer
 		if ( $this->is_user_owner( $user_email ) )
 		{
 			// get target
-			return new DCE_User( get_user_by( 'email', $this->target_email ) );
+			return $this->target_user();
 		}
 		else
 		{
 			// get owner
-			return $this->user;
+			return $this->owner_user();
 		}
 	}
 

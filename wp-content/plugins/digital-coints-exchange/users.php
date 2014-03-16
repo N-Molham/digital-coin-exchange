@@ -198,6 +198,8 @@ class DCE_User extends WP_User
 				'target' => 'received',
 				'status' => 'approve',
 				'meta_query' => array(),
+				'number' => '',
+				'offset' => '',
 		) );
 
 		// comments query args
@@ -207,6 +209,8 @@ class DCE_User extends WP_User
 				'post_id' => $messages_args['object_id'],
 				'user_id' => '',
 				'meta_query' => $messages_args['meta_query'],
+				'number' => $messages_args['number'],
+				'offset' => $messages_args['offset'],
 				'orderby' => 'comment_date',
 		);
 
@@ -360,7 +364,7 @@ class DCE_User extends WP_User
 	 */
 	public function get_escrows( $args = '' )
 	{
-		return apply_filters( 'dce_user_escrows', DCE_Escrow::query_escrows( array ( 'author' => $this->ID, 'party_email' => $this->data->user_email ) ), $this->ID );
+		return apply_filters( 'dce_user_escrows', DCE_Escrow::query_escrows( wp_parse_args( $args, array ( 'author' => $this->ID, 'party_email' => $this->data->user_email ) ) ), $this->ID );
 	}
 
 	/**

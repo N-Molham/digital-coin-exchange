@@ -91,7 +91,8 @@
 	line-height: inherit !important;
 }
 
-#messages .message-body {
+#messages .message-body,
+#dashboard-messages .message-body {
 	display: none;
 }
 
