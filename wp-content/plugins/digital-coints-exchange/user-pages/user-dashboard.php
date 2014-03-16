@@ -7,7 +7,7 @@
  */
 
 /* @var $dce_user DCE_User */
-global $dce_user;
+global $dce_user, $wpdb;
 
 // shortcode output
 $output = '';
@@ -15,7 +15,62 @@ $output = '';
 $coin_types = dce_get_coin_types();
 
 // balance
-$output .= '<div class="one_half">'. dce_section_title( __( 'Balance', 'dce' ) ) .'</div>';
+$output .= '<div class="one_half">'. dce_section_title( __( 'Balance', 'dce' ) );
+
+// payment balance
+$balance = array();
+
+$open_escrows = $dce_user->get_escrows( array ( 
+		'post_status' => 'publish',
+) );
+
+/* @var $open DCE_Escrow */
+foreach ( $open_escrows as $open )
+{
+	if ( $open->is_user_owner( $dce_user ) )
+	{
+		// escrow owner
+		$amount = (float) $open->from_amount_received;
+		$type = $open->from_coin;
+	}
+	else
+	{
+		// target
+		$amount = (float) $open->to_amount_received;
+		$type = $open->to_coin;
+	}
+
+	// check amount
+	if ( !$amount )
+		continue;
+
+	// add to balance
+	if ( isset( $balance[$type] ) )
+		$balance[$type] += $amount;
+	else 
+		$balance[$type] = $amount;
+}
+
+if ( empty( $balance ) )
+{
+	// no balance
+	$output .= '<strong>'. __( 'No Balance Yet', 'dce' ) .'</strong>';
+}
+else
+{
+	// balance list
+	$output .= '<ul id="checklist-2" class="list-icon circle-yes list-icon-star">';
+	foreach ( $balance as $coin_type => $coin_amount )
+	{
+		// formated display
+		$output .= '<li>'. DCE_Escrow::display_amount_formated( $coin_amount, $coin_type, $coin_types ) .'</li>';
+	}
+	$output .= '</ul>';
+}
+
+
+// balance end
+$output .= '</div>';
 
 // escrows
 $output .= '<div class="one_half last">'. dce_section_title( __( 'Latest Esrows', 'dce' ) );
@@ -99,7 +154,7 @@ $output .= '</div>';
 // offers
 $output .= '<div class="one_half last">'. dce_section_title( __( 'Latest Offers', 'dce' ) );
 
-$latest_offers = DCE_Offer::query_offers( array (
+$latest_offers = $dce_user->get_offers( array (
 		'nopaging' => false,
 		'numberposts' => 5,
 		'list_output' => 'class',

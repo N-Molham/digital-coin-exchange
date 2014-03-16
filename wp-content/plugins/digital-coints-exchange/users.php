@@ -337,7 +337,7 @@ class DCE_User extends WP_User
 	 */
 	public function get_offers( $args = '' )
 	{
-		return apply_filters( 'dce_user_offers', DCE_Offer::query_offers( array( 'author' => $this->ID ) ), $this->ID );
+		return apply_filters( 'dce_user_offers', DCE_Offer::query_offers( wp_parse_args( $args, array( 'author' => $this->ID ) ) ), $this->ID );
 	}
 
 	/**

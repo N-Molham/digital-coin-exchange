@@ -55,12 +55,12 @@ function dce_cron_escrows_transactions_check()
 
 		// check from coin
 		$from_rpc_client =& dce_coins_rpc_connections( $escrow->from_coin );
-		$from_amount_received =& $from_rpc_client->getreceivedbyaddress( $escrow->owner_address );
+		$from_amount_received = $from_rpc_client->getreceivedbyaddress( $escrow->owner_address );
 		if ( is_wp_error( $from_amount_received ) )
 			continue;
 
 		// check to coin
-		$to_rpc_client = dce_coins_rpc_connections( $escrow->to_coin );
+		$to_rpc_client =& dce_coins_rpc_connections( $escrow->to_coin );
 		$to_amount_received = $to_rpc_client->getreceivedbyaddress( $escrow->target_address );
 		if ( is_wp_error( $to_amount_received ) )
 			continue;
