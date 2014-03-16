@@ -33,7 +33,7 @@ switch ( $current_view )
 
 		// escrows table start
 		$output .= dce_table_start( 'user-escrows' ) .'<thead><tr>';
-		$output .= '<th>'. __( 'Creator', 'dce' ) .'</th>';
+		$output .= '<th>'. __( 'With', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Original', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Target', 'dce' ) .'</th>';
 		$output .= '<th>'. __( 'Commission Agreement', 'dce' ) .'</th>';
@@ -46,8 +46,10 @@ switch ( $current_view )
 		/* @var $escrow DCE_Escrow */
 		foreach ( $user_escrows as $escrow )
 		{
+			$other_party = $escrow->other_party( $dce_user );
+
 			// data display
-			$output .= '<tr><td>'. $escrow->user->display_name() .'</td>';
+			$output .= '<tr><td><a href="'. $other_party->profile_url() .'">'. $other_party->display_name() .'</a></td>';
 			$output .= '<td>'. $escrow->convert_from_display( $coin_types ) .'</td>';
 			$output .= '<td>'. $escrow->convert_to_display( $coin_types ) .'</td>';
 			$output .= '<td>'. $escrow->commission_method_display() .'</td>';

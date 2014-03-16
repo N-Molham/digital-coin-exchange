@@ -228,6 +228,7 @@ class DCE_Offer extends DCE_Component
 				'author' => '',
 				'nopaging' => true,
 				'post_status' => array( 'publish', 'pending' ),
+				'list_output' => 'wrapper',
 		) );
 
 		// query offers
@@ -259,7 +260,10 @@ class DCE_Offer extends DCE_Component
 				$offer =& $offers[$i];
 
 				// wrap offer data
-				$return[] = self::wrap_offer( $offer, $coin_types );
+				if ( 'class' == $args['list_output'] )
+					$return[] = new DCE_Offer( $offer );
+				else
+					$return[] = self::wrap_offer( $offer, $coin_types );
 			}
 		}
 

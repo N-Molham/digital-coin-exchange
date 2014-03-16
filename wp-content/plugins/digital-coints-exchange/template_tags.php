@@ -108,9 +108,9 @@ function dce_section_title( $title )
  * @param string $id
  * @return string
  */
-function dce_table_start( $id = '' )
+function dce_table_start( $id = '', $class = 'table-1' )
 {
-	return '<div'. ( '' == $id ? '' : ' id='. $id ) .' class="table-1"><table width="100%">';
+	return '<div'. ( '' == $id ? '' : ' id='. $id ) .' class="'. $class .'"><table width="100%">';
 }
 
 /**

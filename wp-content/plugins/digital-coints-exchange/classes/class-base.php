@@ -27,34 +27,14 @@ add_action( 'template_redirect', 'dce_single_view_check' );
 */
 function dce_single_view_check()
 {
-	global $wp_query, $data;
+	global $wp_query;
 
+	// if the target post types
 	$post_type = get_post_type();
 	if ( !in_array( $post_type, array( DCE_POST_TYPE_ESCROW, DCE_POST_TYPE_OFFER ) ) )
 		return;
 
-	// Avada theme
-	if ( !empty( $data ) )
-	{
-		// full width layout
-		$data['single_post_full_width'] = true;
-
-		// hide post navigation
-		$data['blog_pn_nav'] = true;
-
-		// hide sharing box
-		$data['social_sharing_box'] = false;
-
-		// hide comments
-		$data['blog_comments'] = false;
-
-		// hide author
-		$data['author_info'] = false;
-
-		// hide post meta
-		$data['post_meta'] = false;
-	}
-
+	// specific post type
 	if ( DCE_POST_TYPE_ESCROW == $post_type )
 	{
 		// target escrow

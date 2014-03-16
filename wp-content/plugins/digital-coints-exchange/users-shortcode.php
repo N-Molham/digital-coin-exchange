@@ -8,6 +8,46 @@
 
 global $dce_user;
 
+add_action( 'template_redirect', 'dce_avada_theme_settings_override' );
+/**
+ * Override Avada theme settings for some pages
+ */
+function dce_avada_theme_settings_override()
+{
+	global $data;
+
+	// check post type
+	$post_type = get_post_type();
+	if ( !in_array( $post_type, array( DCE_POST_TYPE_ESCROW, DCE_POST_TYPE_OFFER, 'page' ) ) )
+		return;
+
+	// check page
+	if ( 'page' == $post_type && !has_shortcode( get_post()->post_content, 'dce-user-dashboard' ) )
+		return;
+
+	// Avada theme
+	if ( !empty( $data ) )
+	{
+		// full width layout
+		$data['single_post_full_width'] = true;
+
+		// hide post navigation
+		$data['blog_pn_nav'] = true;
+
+		// hide sharing box
+		$data['social_sharing_box'] = false;
+
+		// hide comments
+		$data['blog_comments'] = false;
+
+		// hide author
+		$data['author_info'] = false;
+
+		// hide post meta
+		$data['post_meta'] = false;
+	}
+}
+
 add_shortcode( 'dce-user-offers', 'dce_user_page_loader' );
 add_shortcode( 'dce-offers', 'dce_user_page_loader' );
 add_shortcode( 'dce-contact-form', 'dce_user_page_loader' );
@@ -49,7 +89,7 @@ function dce_user_page_loader( $attrs, $content, $shortcode )
 		), 'error' );
 
 	// determine page path
-	$user_page = DCE_PATH .'user-pages'. DIRECTORY_SEPARATOR . str_replace( 'dce-', '', $shortcode ) .'.php';
+	$user_page = DCE_PATH .'user-pages/'. str_replace( 'dce-', '', $shortcode ) .'.php';
 
 	// load file if exists
 	if( file_exists( $user_page ) )
