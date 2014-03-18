@@ -123,6 +123,8 @@ function dce_ajax_create_escrow()
 											'target_email' => $form_fields['target_email']['value'], 
 											'comm_method' => $form_fields['comm_method']['value'], 
 											'details' => $form_fields['details']['value'],
+											'owner_receive_address' => $form_fields['owner_receive_address']['value'], 
+											'owner_refund_address' => $form_fields['owner_refund_address']['value'], 
 									) );
 	if ( is_wp_error( $escrow ) )
 		dce_ajax_error( $escrow->get_error_code(), dce_alert_message( __( 'Error saving offer, please try again later', 'dce' ), 'error' ) );

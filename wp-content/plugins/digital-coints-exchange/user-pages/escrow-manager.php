@@ -9,7 +9,7 @@
 /* @var $dce_user DCE_User */
 global $dce_user;
 
-// js & css
+// js
 wp_enqueue_script( 'dce-escrows' );
 
 // shortcode output
@@ -88,14 +88,50 @@ switch ( $current_view )
 
 		// input fields
 		$form_fields = DCE_Escrow::form_fields( $coin_types );
-		foreach ( $form_fields as $field_name => $field_args )
+		foreach ( $form_fields as $field_name => &$field_args )
 		{
 			// fill in convert values
 			$field_args['value'] = $convert_offer ? $convert_offer->$field_name : '';
-
-			// input
-			$output .= dce_form_input( $field_name, $field_args );
 		}
+
+		// wizard
+		$output .= '<div id="escrow-wizard">';
+
+		// step 1
+		$output .= '<h3>'. __( 'First Step', 'dce' ) .'</h3><div class="wizard-step">';
+		$output .= dce_form_input( 'from_amount', $form_fields['from_amount'] );
+		$output .= dce_form_input( 'from_coin', $form_fields['from_coin'] );
+		$output .= dce_form_input( 'comm_method', $form_fields['comm_method'] );
+		$output .= dce_form_input( 'accept_trans', array ( 
+				'show_label' => false,
+				'input' => 'checkbox',
+				'is_singular' => true,
+				'input_data' => array( 'label' => __( 'I Accept transaction.', 'dce' ), 'value' => 'yes' ),
+		) );
+		$output .= '</div>';
+
+		// step 2
+		$output .= '<h3>'. __( 'Second Step', 'dce' ) .'</h3><div class="wizard-step">';
+		$output .= dce_form_input( 'to_amount', $form_fields['to_amount'] );
+		$output .= dce_form_input( 'to_coin', $form_fields['to_coin'] );
+		$output .= dce_form_input( 'owner_receive_address', $form_fields['owner_receive_address'] );
+		$output .= dce_form_input( 'owner_refund_address', $form_fields['owner_refund_address'] );
+		$output .= dce_form_input( 'accept_response', array ( 
+				'show_label' => false,
+				'input' => 'checkbox',
+				'is_singular' => true,
+				'input_data' => array( 'label' => __( 'I’m responsible for entering the correct addresses and I confirm that those addresses are correct.', 'dce' ), 'value' => 'yes' ),
+		) );
+		$output .= '</div>';
+
+		// step 3
+		$output .= '<h3>'. __( 'Final Step', 'dce' ) .'</h3><div class="wizard-step">';
+		$output .= dce_form_input( 'target_email', $form_fields['target_email'] );
+		$output .= dce_form_input( 'details', $form_fields['details'] );
+		$output .= '</div>';
+
+		// wizard end
+		$output .='</div>';
 
 		// hidden inputs
 		$output .= '<input type="hidden" name="action" value="create_escrow" />';
@@ -103,7 +139,7 @@ switch ( $current_view )
 		$output .= wp_nonce_field( 'dce_save_escrow', 'nonce', false, false );
 
 		// submit
-		$output .= '<p class="form-input"><input type="submit" value="'. __( 'Start', 'dce' ) .'" class="button small green" /></p>';
+		// $output .= '<p class="form-input"><input type="submit" value="'. __( 'Start', 'dce' ) .'" class="button small green" /></p>';
 
 		// form end
 		$output .= '</form>';
