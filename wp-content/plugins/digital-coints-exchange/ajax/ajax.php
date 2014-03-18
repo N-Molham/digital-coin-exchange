@@ -10,11 +10,12 @@
  * AJAX Debug response
  *
  * @param mixed $data
+ * @param boolean $type
  */
-function dce_ajax_debug( $data )
+function dce_ajax_debug( $data, $type = false )
 {
 	// return dump
-	dce_ajax_error( 'debug', dump_data_export( $data ) );
+	dce_ajax_error( 'debug', dump_data_export( $data, $type ) );
 }
 
 /**

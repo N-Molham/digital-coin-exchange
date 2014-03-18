@@ -81,6 +81,20 @@ class DCE_Escrow extends DCE_Offer
 	var $target_receive_address;
 
 	/**
+	 * Escrow owner re-fund address
+	 * 
+	 * @var string
+	 */
+	var $owner_refund_address;
+
+	/**
+	 * Escrow target re-fund address
+	 * 
+	 * @var string
+	 */
+	var $target_refund_address;
+
+	/**
 	 * Constructor ( override )
 	 *
 	 * @param number|WP_Post|object $post_id
@@ -101,6 +115,8 @@ class DCE_Escrow extends DCE_Offer
 		$this->target_address = $this->post_object->target_address;
 		$this->owner_receive_address = $this->post_object->owner_receive_address;
 		$this->target_receive_address = $this->post_object->target_receive_address;
+		$this->owner_refund_address = $this->post_object->owner_refund_address;
+		$this->target_refund_address = $this->post_object->target_refund_address;
 	}
 
 	/**
@@ -314,6 +330,8 @@ class DCE_Escrow extends DCE_Offer
 		update_post_meta( $escrow_id, 'from_coin', $from_coin );
 		update_post_meta( $escrow_id, 'comm_method', $escrow_args['comm_method'] );
 		update_post_meta( $escrow_id, 'target_email', $escrow_args['target_email'] );
+		update_post_meta( $escrow_id, 'owner_receive_address', $escrow_args['owner_receive_address'] );
+		update_post_meta( $escrow_id, 'owner_refund_address', $escrow_args['owner_refund_address'] );
 
 		// receive addresses
 		update_post_meta( $escrow_id, 'owner_address', $from_address );
@@ -392,7 +410,33 @@ class DCE_Escrow extends DCE_Offer
 		// change details label
 		$fields['details']['label'] = __( 'Terms & Agreements', 'dce' );
 
-		// new fields
+		/**
+		 * New Fields
+		 */
+
+		// receive address
+		$fields['owner_receive_address'] = array ( 
+				'label' => __( 'Receive Address', 'dce' ), 
+				'input' => 'text',
+				'data_type' => 'text',
+				'required' => true,
+				'desc' => __( 'The address you will receive the converted coins on.', 'dce' ),
+				'validate_callback' => 'dce_verify_coins_address',
+				'validate_error_msg' => __( 'Invalid %s address', 'dce' ),
+		);
+
+		// re-fund address
+		$fields['owner_refund_address'] = array ( 
+				'label' => __( 'Re-fund Address', 'dce' ), 
+				'input' => 'text',
+				'data_type' => 'text',
+				'required' => true,
+				'desc' => __( 'The address to re-fund your sent coins in case of escrow failure.', 'dce' ),
+				'validate_callback' => 'dce_verify_coins_address',
+				'validate_error_msg' => __( 'Invalid %s address', 'dce' ),
+		);
+
+		// target user email
 		$fields['target_email'] = array ( 
 				'label' => __( 'Target User Email', 'dce' ), 
 				'input' => 'text',
@@ -435,6 +479,17 @@ class DCE_Escrow extends DCE_Offer
 		// regex format
 		return preg_match( '/^[1-9A-Za-z]+$/', $address ) && $len >= 34 && $len <= 102 ? true : false;
 	}
+}
+
+/**
+ * Wrapper for DCE_Escrow::verify_address
+ * 
+ * @param string $address
+ * @return boolean
+ */
+function dce_verify_coins_address( $address )
+{
+	return DCE_Escrow::verify_address( $address );
 }
 
 /**

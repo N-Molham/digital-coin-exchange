@@ -186,6 +186,7 @@ class DCE_Utiles
 				'min_length' => false,
 				'max_length' => false,
 				'sanitize_callback' => '',
+				'validate_callback' => '',
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -251,11 +252,18 @@ class DCE_Utiles
 							self::form_error( $field, __( 'Invalid file type', self::$text_domain ) );
 					}
 					else
-						self::form_error( $field, sprintf(__( '%s size is too big', self::$text_domain ), $args['label']) );
+						self::form_error( $field, sprintf( __( '%s size is too big', self::$text_domain ), $args['label'] ) );
 				}
 				else
 					$value = false;
 				break;
+		}
+
+		// validation custom callback
+		if ( '' != $args['validate_callback'] && function_exists( $args['validate_callback'] ) )
+		{
+			if ( !call_user_func( $args['validate_callback'], $value ) )
+				self::form_error( $field, sprintf( $args['validate_error_msg'], $args['label'] ) );
 		}
 
 		if ( 'select' == $args['input'] )
@@ -456,7 +464,7 @@ class DCE_Utiles
 		}
 
 		if( '' != $args['desc'] )
-			$out .= '&nbsp;&nbsp;<span class="description">'. $args['desc'] .'<span>';
+			$out .= '<em class="description">'. $args['desc'] .'</em>';
 
 		$out .= '</p>';
 

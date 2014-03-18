@@ -25,23 +25,50 @@ function dce_setup_init()
 	add_rewrite_rule( 'feedback/([^/]+)/?$', 'index.php?page_id='. $page_id .'&feedback_escrow=$matches[1]', 'top' );
 
 	/**
-	 * Register Styles & Scripts
+	 * Register Styles
 	 */
-	// styles
+	// Shared styles
 	wp_register_style( 'dce-shared-style', DCE_URL .'css/shared.css' );
-	wp_register_style( 'dce-public-style', DCE_URL .'css/public.css' );
-	wp_register_style( 'dce-rateit-style', DCE_URL .'css/rateit.css' );
 	wp_enqueue_style( 'dce-shared-style' );
 
-	// js
+	// Front-end style
+	wp_register_style( 'dce-public-style', DCE_URL .'css/public.css' );
+
+	// rateit plug-in style
+	wp_register_style( 'dce-rateit-style', DCE_URL .'css/rateit.css' );
+
+	// wizard steps plug-in style
+	wp_register_style( 'dce-jquery-wizard-style', DCE_URL .'css/jquery.steps.css' );
+
+	/**
+	 * Register Scripts
+	 */
+	// shared js
 	wp_register_script( 'dce-shared-script', DCE_URL .'js/shared.js', array( 'jquery' ), false, true );
+
+	// jQuery Wizard steps plug-in
+	wp_register_script( 'dce-jquery-wizard-script', DCE_URL .'js/jquery.steps.min.js', array( 'jquery' ), false, true );
+
+	// jQuery rateit plug-in
 	wp_register_script( 'dce-rateit-script', DCE_URL .'js/jquery.rateit.min.js', array( 'dce-shared-script' ), false, true );
-	wp_register_script( 'dce-escrows', DCE_URL .'js/escrows.js', array( 'dce-shared-script' ), false, true );
+
+	// escrow page
+	wp_register_script( 'dce-escrows', DCE_URL .'js/escrows.js', array( 'dce-shared-script', 'dce-jquery-wizard-script' ), false, true );
+
+	// send message
 	wp_register_script( 'dce-messages', DCE_URL .'js/messages.js', array( 'dce-shared-script' ), false, true );
-	// localized data
+
+	// global localized data
 	wp_localize_script( 'dce-shared-script', 'dce', array (
 			'ajax_url' => admin_url( 'admin-ajax.php', is_ssl() ? 'https' : 'http' ),
 			'login_first' => is_user_logged_in() ? false : dce_alert_message( __( 'Please, login ot register first', 'dce' ), 'error', true ),
+	) );
+
+	// escrow localized data
+	wp_localize_script( 'dce-shared-script', 'dce_escrow', array (
+			'wizard_next_label' => __( 'Next', 'dce' ),
+			'wizard_previous_label' => __( 'Previous', 'dce' ),
+			'wizard_finish_label' => __( 'Start Escrow', 'dce' ),
 	) );
 
 	// restrict access to wp register form
@@ -183,6 +210,7 @@ add_action( 'template_redirect', 'dce_public_template_redirect' );
 function dce_public_template_redirect()
 {
 	// enqueues
+	wp_enqueue_style( 'dce-jquery-wizard-style' );
 	wp_enqueue_style( 'dce-rateit-style' );
 	wp_enqueue_style( 'dce-public-style' );
 }

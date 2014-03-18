@@ -48,12 +48,21 @@ if ( !$is_admin )
 	// receive addresses
 	$exchange_addresses .= dce_divider( 'double' );
 	$exchange_addresses .= '<p>'. $plugin_settings['escrow_receive_msg'] .'</p>';
-	$exchange_addresses .= '<div class="receive-address"><form action="" method="post" class="ajax-form" data-callback="receive_address_callback">';
-	$exchange_addresses .= '<input type="text" class="input-text input-code" name="receive_address" value="'. ( $is_owner ? $escrow->owner_receive_address : $escrow->target_receive_address ) .'" />';
-	$exchange_addresses .= '<input type="submit" value="'. __( 'Save', 'dce' ) .'" class="button small green" />';
-	$exchange_addresses .= '<input type="hidden" name="action" value="save_receive_address" />';
-	$exchange_addresses .= '<input type="hidden" name="escrow" value="'. $escrow->ID .'" />';
-	$exchange_addresses .= wp_nonce_field( 'dce_receive_address', 'nonce', false, false ) .'</form></div>'; 
+	$receive_address = $is_owner ? $escrow->owner_receive_address : $escrow->target_receive_address;
+	if ( '' == $receive_address || empty( $receive_address ) )
+	{
+		$exchange_addresses .= '<div class="receive-address"><form action="" method="post" class="ajax-form" data-callback="receive_address_callback">';
+		$exchange_addresses .= '<input type="text" class="input-text input-code" name="receive_address" value="'. ( $is_owner ? $escrow->owner_receive_address : $escrow->target_receive_address ) .'" />';
+		$exchange_addresses .= '<input type="submit" value="'. __( 'Save', 'dce' ) .'" class="button small green" />';
+		$exchange_addresses .= '<input type="hidden" name="action" value="save_receive_address" />';
+		$exchange_addresses .= '<input type="hidden" name="escrow" value="'. $escrow->ID .'" />';
+		$exchange_addresses .= wp_nonce_field( 'dce_receive_address', 'nonce', false, false ) .'</form></div>'; 
+	}
+	else
+	{
+		// display address
+		$exchange_addresses .= '<code>'. $receive_address .'</code>';
+	}
 
 	// display box
 	$output .= dce_promotion_box( $exchange_addresses );
