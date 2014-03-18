@@ -187,6 +187,7 @@ class DCE_Utiles
 				'max_length' => false,
 				'sanitize_callback' => '',
 				'validate_callback' => '',
+				'min_number' => null,
 		);
 		$args = wp_parse_args( $args, $defaults );
 
@@ -212,6 +213,8 @@ class DCE_Utiles
 				if ( !$value )
 						self::form_error( $field, sprintf( __( '%s is not valid numeric value', self::$text_domain ), $args['label'] ) );
 
+				if ( $args['min_number'] && $value < $args['min_number'] )
+						self::form_error( $field, sprintf( __( '%s must be must be at least %s', self::$text_domain ), $args['label'], $args['min_number'] ) );
 				break;
 
 			case 'plain-text-aplha':

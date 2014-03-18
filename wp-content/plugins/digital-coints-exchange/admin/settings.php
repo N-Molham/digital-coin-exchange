@@ -334,6 +334,8 @@ function dce_admin_settings_coin_item_template( $coin_key, $coin_data, $input_na
 			'label' => '',
 			'single' => '',
 			'plural' => '',
+			'min_amount' => '',
+			'min_confirms' => '',
 			'rpc_user' => '',
 			'rpc_pass' => '',
 			'rpc_host' => '',
@@ -354,6 +356,12 @@ function dce_admin_settings_coin_item_template( $coin_key, $coin_data, $input_na
 	// plural format
 	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[plural]" class="regular-text code" value="'. esc_attr( $coin_data['plural'] ) .'" placeholder="'. __( 'Plural Display Format', 'dce' ) .'" />';
 	$out .= '&nbsp;<span class="description">'. __( 'Formated string, ex: <strong>%s coins</strong>', 'dce' ) .'</span></p>';
+
+	// minimum amount coins
+	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[min_amount]" class="regular-text code" value="'. esc_attr( $coin_data['min_amount'] ) .'" placeholder="'. __( 'Minimum Amount of Coins', 'dce' ) .'" /></p>';
+
+	// minimum confirmations number
+	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[min_confirms]" class="regular-text code" value="'. esc_attr( $coin_data['min_confirms'] ) .'" placeholder="'. __( 'Minimum Confirmations for Transactions', 'dce' ) .'" /></p>';
 
 	// rpc user
 	$out .= '<p class="item-field"><input type="text" name="'. $input_name .'[rpc_user]" class="regular-text code" value="'. esc_attr( $coin_data['rpc_user'] ) .'" placeholder="'. __( 'RPC Username', 'dce' ) .'" /></p>';

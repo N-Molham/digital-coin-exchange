@@ -73,6 +73,13 @@ function dce_ajax_create_offer()
 	// validate form data
 	foreach ( $form_fields as $field_name => &$field_args )
 	{
+		// set amount minimums
+		if ( 'from_amount' == $field_name )
+			$field_args['min_number'] = @$coin_types[ $_REQUEST['from_coin'] ]['min_amount'];
+
+		if ( 'to_amount' == $field_name )
+			$field_args['min_number'] = @$coin_types[ $_REQUEST['to_coin'] ]['min_amount'];
+
 		$field_args['value'] = dce_parse_input( $field_name, $field_args );
 	}
 
