@@ -37,12 +37,18 @@ if ( !$is_admin )
 	if ( $is_owner )
 	{
 		// owner/creator user
-		$exchange_addresses .= sprintf( $plugin_settings['escrow_top_msg'], $form_display, $escrow->owner_address, $to_display );
+		if ( empty( $escrow->from_amount_received ) )
+			$exchange_addresses .= sprintf( $plugin_settings['escrow_start_top_msg'], $form_display, $escrow->owner_address, $to_display );
+		else
+			$exchange_addresses .= sprintf( $plugin_settings['escrow_progress_top_msg'], $form_display, $to_display );
 	}
 	else
 	{
 		// target user
-		$exchange_addresses .= sprintf( $plugin_settings['escrow_top_msg'], $to_display, $escrow->target_address, $form_display );
+		if ( empty( $escrow->to_amount_received ) )
+			$exchange_addresses .= sprintf( $plugin_settings['escrow_start_top_msg'], $to_display, $escrow->target_address, $form_display );
+		else
+			$exchange_addresses .= sprintf( $plugin_settings['escrow_progress_top_msg'], $to_display, $form_display );
 	}
 
 	// receive addresses
@@ -73,6 +79,9 @@ $output .= dce_table_start( 'single-escrow' );
 
 // form fields for data display
 $fields = DCE_Escrow::form_fields( $coin_types );
+
+// Status
+$output .= '<tr><th>'. __( 'Status', 'dce' ) .'</th><td>'. $escrow->get_status( true ) .'</td></tr>';
 
 // Creator
 $output .= '<tr><th>'. __( 'Creator', 'dce' ) .'</th><td><a href="'. $escrow->owner_user()->profile_url() .'">'. $escrow->user->display_name() .'</a></td></tr>';
