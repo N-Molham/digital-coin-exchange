@@ -115,7 +115,7 @@ class DCE_Offer extends DCE_Component
 	 */
 	public function convert_from_display( &$coin_types = '' )
 	{
-		return self::display_amount_formated(  $this->from_amount, $this->from_coin, $coin_types );
+		return self::display_amount_formated( $this->from_amount, $this->from_coin, $coin_types );
 	}
 
 	/**
@@ -126,7 +126,7 @@ class DCE_Offer extends DCE_Component
 	 */
 	public function convert_to_display( &$coin_types = '' )
 	{
-		return self::display_amount_formated(  $this->to_amount, $this->to_coin, $coin_types );
+		return self::display_amount_formated( $this->to_amount, $this->to_coin, $coin_types );
 	}
 
 	/**
