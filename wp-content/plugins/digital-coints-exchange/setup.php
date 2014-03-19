@@ -79,6 +79,17 @@ function dce_setup_init()
 	 * register post status
 	 */ 
 	// Denied
+	register_post_status( 'in_progress', array (
+			'label' => _x( 'In Progress', 'post', 'dce' ),
+			'public' => true,
+			'internal' => true,
+			'exclude_from_search' => false,
+			'show_in_admin_all_list' => true,
+			'show_in_admin_status_list' => true,
+			'label_count' => _n_noop( 'In Progress <span class="count">(%s)</span>', 'In Progress <span class="count">(%s)</span>', 'dce' ),
+	) );
+
+	// Denied
 	register_post_status( 'denied', array (
 			'label' => _x( 'Denied', 'post', 'dce' ),
 			'public' => true,

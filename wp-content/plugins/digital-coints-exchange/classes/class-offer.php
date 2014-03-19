@@ -132,11 +132,22 @@ class DCE_Offer extends DCE_Component
 	/**
 	 * Offer Status
 	 * 
+	 * @param boolean $label
 	 * @return string
 	 */
-	public function get_status()
+	public function get_status( $label = false )
 	{
-		return 'publish' == $this->status ? 'confirmed' : $this->status;
+		$status = array ( 
+				'publish' => __( 'Confirmed', 'dce' ),
+				'pending' => __( 'Pending', 'dce' ),
+				'denied' => __( 'Denied', 'dce' ),
+				'closed' => __( 'Closed', 'dce' ),
+		);
+
+		if ( $label && isset( $status[$this->status] ) )
+			return $status[$this->status];
+		else
+			return 'publish' == $this->status ? 'confirmed' : $this->status;
 	}
 
 	/**

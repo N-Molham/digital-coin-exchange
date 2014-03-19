@@ -142,41 +142,24 @@ function dce_components_admin_columns_content( $column, $post_id )
 			// confirm/deny offers
 			echo '<div class="offer-actions">';
 
-			// status
-			$item_status = $item->get_status();
-			switch ( $item_status )
+			if ( isset( $item->target_email ) && 'started' == $item->get_status() )
 			{
-				case 'completed':
-					_e( 'Completed', 'dce' );
-					break;
-				case 'failed':
-					_e( 'Failed', 'dce' );
-					break;
-				case 'denied':
-					_e( 'Denied', 'dce' );
-					break;
-				case 'confirmed':
-					_e( 'Confirmed', 'dce' );
-					break;
-				case 'closed':
-					_e( 'Closed', 'dce' );
-					break;
-				default:
-					if ( isset( $item->target_email ) )
-					{
-						// Close
-						echo '<a href="#" class="button button-delete" data-escrow="', $post_id ,'" data-action="dce_close_escrow">', __( 'Close', 'dce' ) ,'</a>';
-					}
-					else
-					{
-						// confirm
-						echo '<a href="#" class="button button-primary" data-offer="', $post_id ,'" data-action="dce_confirm_offer">', __( 'Confirm', 'dce' ) ,'</a>&nbsp;';
-
-						// deny
-						echo '<a href="#" class="button button-delete" data-offer="', $post_id ,'" data-action="dce_deny_offer">', __( 'Deny', 'dce' ) ,'</a>';
-					}
+				// Close
+				echo '<a href="#" class="button button-delete" data-escrow="', $post_id ,'" data-action="dce_close_escrow">', __( 'Close', 'dce' ) ,'</a>';
 			}
+			elseif ( 'pending' == $item->get_status() )
+			{
+				// confirm
+				echo '<a href="#" class="button button-primary" data-offer="', $post_id ,'" data-action="dce_confirm_offer">', __( 'Confirm', 'dce' ) ,'</a>&nbsp;';
+
+				// deny
+				echo '<a href="#" class="button button-delete" data-offer="', $post_id ,'" data-action="dce_deny_offer">', __( 'Deny', 'dce' ) ,'</a>';
+			}
+
 			echo '</div>';
+
+			// status
+			echo $item->get_status( true );
 			break;
 	}
 }

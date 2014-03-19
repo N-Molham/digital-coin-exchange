@@ -122,19 +122,28 @@ class DCE_Escrow extends DCE_Offer
 	/**
 	 * Escrow Status
 	 *
+	 * @param boolean $label
 	 * @return string
 	 */
-	public function get_status()
+	public function get_status( $label = false )
 	{
+		$status = array (
+				'publish' => __( 'Started', 'dce' ),
+				'pending' => __( 'Pending', 'dce' ),
+				'denied' => __( 'Denied', 'dce' ),
+				'failed' => __( 'Failed', 'dce' ),
+				'in_progress' => __( 'In Progress', 'dce' ),
+				'completed' => __( 'Completed', 'dce' ),
+		);
+
 		// marked as failed
 		if ( 'yes' == $this->is_failure )
-			return 'failed';
+			return $label && isset( $status['failed'] ) ? $status['failed'] : 'failed';
 
-		// open
-		if ( 'publish' == $this->status )
-			return 'open';
-
-		return $this->status;
+		if ( $label && isset( $status[$this->status] ) )
+			return $status[$this->status];
+		else
+			return 'publish' == $this->status ? 'started' : $this->status;
 	}
 
 	/**
