@@ -82,8 +82,8 @@
 			}
 		};
 		
-		// receive address save
-		window.receive_address_callback = function( response, $form, $messages ) {
+		// coins address save
+		window.coins_address_callback = function( response, $form, $messages ) {
 			if ( response.status ) {
 				$messages.html( response.data );
 			}

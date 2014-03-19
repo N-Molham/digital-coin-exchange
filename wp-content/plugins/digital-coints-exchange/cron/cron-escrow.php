@@ -128,13 +128,17 @@ function dce_cron_escrows_transactions_check()
 		// owner sent right amount
 		if ( $from_amount_received >= $escrow->from_amount )
 		{
-			// notify target
 			if ( 'yes' != $escrow->target_notified )
 			{
-				// add to notification list
+				// notify owner
+				wp_mail( $escrow->user->data->user_email, 
+						__( 'Escrow Notification', 'dce' ), 
+						sprintf( $settings['escrow_user_sent_notify_mail'], $escrow->convert_from_display( $coin_types ), dce_get_pages( 'trans-history' )->url ) );
+
+				// notify target
 				wp_mail( $escrow->target_email, 
 						__( 'Escrow Notification', 'dce' ), 
-						sprintf( $settings['escrow_coins_sent_notify_mail'], $escrow->user->display_name(), $escrow->url(), $escrow->convert_from_display( $coin_types ) ) );
+						sprintf( $settings['escrow_other_sent_notify_mail'], $escrow->user->display_name(), $escrow->url(), $escrow->convert_from_display( $coin_types ) ) );
 
 				// mark as notified
 				$escrow->set_meta( 'target_notified', 'yes' );
@@ -146,13 +150,17 @@ function dce_cron_escrows_transactions_check()
 		// target sent right amount
 		if ( $to_amount_received >= $escrow->to_amount )
 		{
-			// notify target
 			if ( 'yes' != $escrow->owner_notified )
 			{
-				// add to notification list
+				// notify target
+				wp_mail( $escrow->target_email,
+						__( 'Escrow Notification', 'dce' ),
+						sprintf( $settings['escrow_user_sent_notify_mail'], $escrow->convert_to_display( $coin_types ), dce_get_pages( 'trans-history' )->url ) );
+
+				// notify owner
 				wp_mail( $escrow->user->data->user_email, 
 						__( 'Escrow Notification', 'dce' ), 
-						sprintf( $settings['escrow_coins_sent_notify_mail'], $escrow->target_user->display_name(), $escrow->url(), $escrow->convert_to_display( $coin_types ) ) );
+						sprintf( $settings['escrow_other_sent_notify_mail'], $escrow->target_user->display_name(), $escrow->url(), $escrow->convert_to_display( $coin_types ) ) );
 
 				// mark as notified
 				$escrow->set_meta( 'owner_notified', 'yes' );

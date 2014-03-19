@@ -42,13 +42,13 @@ function dce_ajax_user_feedback()
 	dce_ajax_response( dce_alert_message( __( 'Thanks for your feedback', 'dce' ), 'success' ) );
 }
 
-add_action( 'wp_ajax_save_receive_address', 'dce_ajax_save_receive_address' );
+add_action( 'wp_ajax_save_coins_address', 'dce_ajax_save_coins_address' );
 /**
- * Save escrow user receive address
+ * Save escrow user coins address
  */
-function dce_ajax_save_receive_address()
+function dce_ajax_save_coins_address()
 {
-	check_ajax_referer( 'dce_receive_address', 'nonce' );
+	check_ajax_referer( 'dce_coins_address', 'nonce' );
 
 	// current logged in user
 	$user_email = DCE_User::get_current_user()->data->user_email;
@@ -58,12 +58,23 @@ function dce_ajax_save_receive_address()
 	if ( !$escrow->exists() || !$escrow->check_user( $user_email ) )
 		dce_ajax_error( 'escrow', dce_alert_message( __( 'Unknown escrow !!!', 'dce' ), 'error' ) );
 
-	$address = dce_get_value( 'receive_address' );
+	// check type
+	$address_type = sanitize_key( dce_get_value( 'type' ) );
+	if ( !in_array( $address_type, array( 'receive', 'refund' ) ) )
+		dce_ajax_error( 'type', dce_alert_message( __( 'Invalid address type', 'dce' ), 'error' ) );
+
+	$address = dce_get_value( 'coin_address' );
 	if ( !DCE_Escrow::verify_address( $address ) )
-		dce_ajax_error( 'address', dce_alert_message( __( 'Invalid receive address', 'dce' ), 'error' ) );
+		dce_ajax_error( 'address', dce_alert_message( __( 'Invalid address', 'dce' ), 'error' ) );
+
+	// is the owner of not
+	$is_owner = $escrow->is_user_owner( $user_email );
 
 	// save address
-	$escrow->set_receive_address( $address, $escrow->is_user_owner( $user_email ) );
+	if ( 'receive' == $address_type )
+		$escrow->set_receive_address( $address, $is_owner );
+	else
+		$escrow->set_refund_address( $address, $is_owner );
 
 	// success
 	dce_ajax_response( dce_alert_message( __( 'Address Saved', 'dce' ), 'success', true ) );

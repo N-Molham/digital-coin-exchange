@@ -222,6 +222,30 @@ class DCE_Escrow extends DCE_Offer
 	}
 
 	/**
+	 * Set re-fund address for escrow users
+	 * 
+	 * @param string $address
+	 * @param boolean $for_owner
+	 */
+	public function set_refund_address( $address, $for_owner )
+	{
+		if ( $for_owner )
+		{
+			// set meta
+			update_post_meta( $this->ID, 'owner_refund_address', $address );
+			// set property
+			$this->owner_refund_address = $address;
+		}
+		else
+		{
+			// set meta
+			update_post_meta( $this->ID, 'target_refund_address', $address );
+			// set property
+			$this->target_refund_address = $address;
+		}
+	}
+
+	/**
 	 * Save user's feedback about escrow's other party
 	 * 
 	 * @param DCE_User $by

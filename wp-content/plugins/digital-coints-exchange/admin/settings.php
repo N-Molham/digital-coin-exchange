@@ -107,6 +107,20 @@ function dce_settings_init()
 					),
 			),
 			array (
+					'label' => __( 'Escrow page set re-fund address message', 'dce' ),
+					'page' => 'dce_settings_page',
+					'section' => 'dce_messages',
+					'args' => array (
+							'name' => 'escrow_refund_msg',
+							'input' => 'textarea',
+							'class' => 'large-text',
+							'default' => __( 'Set below the address to re-fund your coins in case of failure', 'dce' ),
+							'attrs' => array( 'rows' => '5' ),
+							'visible' => true,
+							'desc' => '',
+					),
+			),
+			array (
 					'label' => __( 'New escrow created notification mail', 'dce' ),
 					'page' => 'dce_settings_page',
 					'section' => 'dce_messages',
@@ -135,17 +149,31 @@ function dce_settings_init()
 					),
 			),
 			array (
-					'label' => __( 'Notification mail when escrow other party send the required coins amount', 'dce' ),
+					'label' => __( 'Notification mail when the user sent the required coins amount', 'dce' ),
 					'page' => 'dce_settings_page',
 					'section' => 'dce_messages',
 					'args' => array (
-							'name' => 'escrow_coins_sent_notify_mail',
+							'name' => 'escrow_user_sent_notify_mail',
+							'input' => 'textarea',
+							'class' => 'large-text',
+							'default' => __( 'Your %s were successfully received, you can check the transaction <a href="%s">here</a>', 'dce' ),
+							'attrs' => array( 'rows' => '5' ),
+							'visible' => true,
+							'desc' => __( 'Two parameters will be passed in order: <strong>"amount sent"</strong>, <strong>"transactions page URL"</strong>', 'dce' ),
+					),
+			),
+			array (
+					'label' => __( 'Notification mail when escrow other party sent the required coins amount', 'dce' ),
+					'page' => 'dce_settings_page',
+					'section' => 'dce_messages',
+					'args' => array (
+							'name' => 'escrow_other_sent_notify_mail',
 							'input' => 'textarea',
 							'class' => 'large-text',
 							'default' => __( 'The other party %s of this <a href="%s">escrow</a>, sent the required coins amount %s', 'dce' ),
 							'attrs' => array( 'rows' => '5' ),
 							'visible' => true,
-							'desc' => __( 'Three parameter will be passed in order: <strong>"Other party name"</strong>, <strong>"escrow URL"</strong>, and <strong>"amount sent"</strong>', 'dce' ),
+							'desc' => __( 'Three parameters will be passed in order: <strong>"Other party name"</strong>, <strong>"escrow URL"</strong>, and <strong>"amount sent"</strong>', 'dce' ),
 					),
 			),
 			array (
@@ -159,7 +187,7 @@ function dce_settings_init()
 							'default' => __( 'Your <a href="%s">escrow</a> with %s is successfully done, and you received %, do not forget to leave us your feedback <a href="%s">here</a>', 'dce' ),
 							'attrs' => array( 'rows' => '5' ),
 							'visible' => true,
-							'desc' => __( 'Four parameter will be passed in order: <strong>"escrow URL"</strong>, <strong>"Other party name"</strong>, <strong>"amount sent"</strong>, and <strong>"feddback URL"</strong>', 'dce' ),
+							'desc' => __( 'Four parameters will be passed in order: <strong>"escrow URL"</strong>, <strong>"Other party name"</strong>, <strong>"amount sent"</strong>, and <strong>"feddback URL"</strong>', 'dce' ),
 					),
 			),
 			array (
@@ -173,7 +201,7 @@ function dce_settings_init()
 							'default' => __( 'There is an error occurred while committing your <a href="%s">escrow</a> with %s while sending you %s, please contact site administrator for more information', 'dce' ),
 							'attrs' => array( 'rows' => '5' ),
 							'visible' => true,
-							'desc' => __( 'Three parameter will be passed in order: <strong>"escrow URL"</strong>, <strong>"Other party name"</strong>, <strong>"amount sent"</strong>', 'dce' ),
+							'desc' => __( 'Three parameters will be passed in order: <strong>"escrow URL"</strong>, <strong>"Other party name"</strong>, <strong>"amount sent"</strong>', 'dce' ),
 					),
 			),
 	);
