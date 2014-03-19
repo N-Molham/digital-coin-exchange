@@ -140,6 +140,14 @@ function dce_cron_escrows_transactions_check()
 						__( 'Escrow Notification', 'dce' ), 
 						sprintf( $settings['escrow_other_sent_notify_mail'], $escrow->user->display_name(), $escrow->url(), $escrow->convert_from_display( $coin_types ) ) );
 
+				// check if coins more than required
+				if ( $from_amount_received > $escrow->from_amount )
+				{
+					wp_mail( $escrow->user->data->user_email, 
+							__( 'Escrow Notification', 'dce' ), 
+							sprintf( $settings['escrow_coins_extra_notify_mail'], DCE_Escrow::display_amount_formated( $from_amount_received, $escrow->from_coin, $coin_types ), $escrow->convert_from_display( $coin_types ) ) );
+				}
+
 				// mark as notified
 				$escrow->set_meta( 'target_notified', 'yes' );
 			}
@@ -161,6 +169,14 @@ function dce_cron_escrows_transactions_check()
 				wp_mail( $escrow->user->data->user_email, 
 						__( 'Escrow Notification', 'dce' ), 
 						sprintf( $settings['escrow_other_sent_notify_mail'], $escrow->target_user->display_name(), $escrow->url(), $escrow->convert_to_display( $coin_types ) ) );
+
+				// check if coins more than required
+				if ( $to_amount_received > $escrow->to_amount )
+				{
+					wp_mail( $escrow->target_email, 
+							__( 'Escrow Notification', 'dce' ), 
+							sprintf( $settings['escrow_coins_extra_notify_mail'], DCE_Escrow::display_amount_formated( $to_amount_received, $escrow->to_amount, $coin_types ), $escrow->convert_to_display( $coin_types ) ) );
+				}
 
 				// mark as notified
 				$escrow->set_meta( 'owner_notified', 'yes' );

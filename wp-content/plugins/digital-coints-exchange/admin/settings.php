@@ -177,6 +177,20 @@ function dce_settings_init()
 					),
 			),
 			array (
+					'label' => __( 'Notification mail a user sends coins more that required', 'dce' ),
+					'page' => 'dce_settings_page',
+					'section' => 'dce_messages',
+					'args' => array (
+							'name' => 'escrow_coins_extra_notify_mail',
+							'input' => 'textarea',
+							'class' => 'large-text',
+							'default' => __( 'You have sent ( %s ) more coins than required ( %s ), please contact administrator to refund your extra coins', 'dce' ),
+							'attrs' => array( 'rows' => '5' ),
+							'visible' => true,
+							'desc' => __( 'Two parameters will be passed in order: <strong>"amount sent"</strong>, <strong>"required amount"</strong>', 'dce' ),
+					),
+			),
+			array (
 					'label' => __( 'Notification mail when escrow successfully done', 'dce' ),
 					'page' => 'dce_settings_page',
 					'section' => 'dce_messages',

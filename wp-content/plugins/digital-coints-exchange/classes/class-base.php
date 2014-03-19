@@ -308,10 +308,23 @@ class DCE_Component
 	 */
 	public static function display_amount_formated( $amount, $type, &$coin_types = '' )
 	{
+		// init cache
+		if ( !isset( $GLOBALS['coins_displays'] ) )
+			$GLOBALS['coins_displays'] = array();
+
+		// cache key
+		$key = $type .'_'. $amount;
+
+		// check cache
+		if ( isset( $GLOBALS['coins_displays'][$key] ) )
+			return $GLOBALS['coins_displays'][$key];
+
 		if ( empty( $coin_types ) )
 			$coin_types = dce_get_coin_types();
 
-		return _n( sprintf( $coin_types[$type]['single'], $amount ), sprintf( $coin_types[$type]['plural'], $amount ), $amount );
+		// format
+		$GLOBALS['coins_displays'][$key] = _n( sprintf( $coin_types[$type]['single'], $amount ), sprintf( $coin_types[$type]['plural'], $amount ), $amount );
+		return $GLOBALS['coins_displays'][$key];
 	}
 }
 
