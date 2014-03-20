@@ -163,17 +163,17 @@ function dce_settings_init()
 					),
 			),
 			array (
-					'label' => __( 'Escrow expired notification mail', 'dce' ),
+					'label' => __( 'Escrow expired or insufficient amounts sent failure notification mail', 'dce' ),
 					'page' => 'dce_settings_page',
 					'section' => 'dce_messages',
 					'args' => array (
-							'name' => 'escrow_expire_notify_mail',
+							'name' => 'escrow_expire_amount_failure_mail',
 							'input' => 'textarea',
 							'class' => 'large-text',
-							'default' => __( 'The escrow you participated in expired without fulfilling the necessarily amounts, <a href="%s">Click here</a> to request a refund.', 'dce' ),
+							'default' => __( 'The <a href="%s">escrow</a> you participated in expired without fulfilling the necessarily amounts, <a href="%s">Click here</a> to put your feedback.', 'dce' ),
 							'attrs' => array( 'rows' => '5' ),
 							'visible' => true,
-							'desc' => __( 'One parameter will be passed: <strong>"coins refund URL"</strong>', 'dce' ),
+							'desc' => __( 'Two parameters will be passed in order: <strong>"escrow URL"</strong>, and <strong>"feedback URL"</strong>', 'dce' ),
 					),
 			),
 			array (

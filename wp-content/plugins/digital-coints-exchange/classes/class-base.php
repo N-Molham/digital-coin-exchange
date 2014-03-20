@@ -210,6 +210,9 @@ class DCE_Component
 				break;
 		}
 
+		if ( $this->status == $new_status )
+			return true;
+
 		// update status
 		$update = wp_update_post( array( 'ID' => $this->ID, 'post_status' => $new_status ), true );
 		if ( is_wp_error( $update ) )
