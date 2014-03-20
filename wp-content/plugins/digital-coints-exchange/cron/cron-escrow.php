@@ -27,7 +27,7 @@ function dce_cron_escrows_transactions_check()
 	set_time_limit( 300 );
 
 	// query open escrows
-	$open_escrows = DCE_Escrow::query_escrows( array( 'post_status' => 'publish' ) );
+	$open_escrows = DCE_Escrow::query_escrows( array( 'post_status' => array( 'publish', 'in_progress' ) ) );
 
 	$len = count( $open_escrows );
 	if ( !$len )
@@ -65,6 +65,13 @@ function dce_cron_escrows_transactions_check()
 		if ( is_wp_error( $to_amount_received ) )
 			continue;
 
+		// cast values
+		$from_amount_received = ( float ) $from_amount_received;
+		$to_amount_received = ( float ) $to_amount_received;
+
+		// insufficient amounts
+		$insufficient_amounts = false;
+
 		// save owner received amounts
 		if ( $from_amount_received != 0 && $escrow->from_amount_received != $from_amount_received )
 		{
@@ -73,6 +80,13 @@ function dce_cron_escrows_transactions_check()
 
 			// save transaction
 			DCE_Transactions::save( array( 'amount' => DCE_Escrow::display_amount_formated( $from_amount_received, $escrow->from_coin, $coin_types ) ), 'received', $escrow->user->ID, $escrow->ID );
+
+			// update status
+			$escrow->change_status( 'in_progress' );
+
+			// check required amount
+			if ( $from_amount_received < $escrow->from_amount )
+				$insufficient_amounts = true;
 		}
 
 		// save target received amounts
@@ -83,36 +97,72 @@ function dce_cron_escrows_transactions_check()
 
 			// save transaction
 			DCE_Transactions::save( array( 'amount' => DCE_Escrow::display_amount_formated( $to_amount_received, $escrow->to_coin, $coin_types ) ), 'received', $escrow->target_user->ID, $escrow->ID );
+
+			// update status
+			$escrow->change_status( 'in_progress' );
+
+			// check required amount
+			if ( $to_amount_received < $escrow->to_amount )
+				$insufficient_amounts = true;
 		}
 
 		// expires on
 		$is_expired = current_time( 'timestamp' ) > strtotime( '+'. intval( $settings['escrow_expire'] ) .'days', strtotime( $escrow->datetime ) );
 
-		// escrow expired
-		if ( $is_expired )
+		// escrow expired or insufficient amounts
+		if ( $is_expired || $insufficient_amounts )
 		{
 			// escrow failed 
 			$escrow->set_meta( 'is_failure', 'yes' );
 
-			// no sufficient funds received
-			if ( $from_amount_received < $escrow->from_amount || $to_amount_received < $escrow->to_amount )
+			// refund owner
+			if ( $from_amount_received )
 			{
-				$notify = array();
+				// try to refund
+				$refund_txid = $from_rpc_client->sendtoaddress( $escrow->owner_refund_address, $from_amount_received );
 
-				// notify owner for refund
-				if ( ( float ) $from_amount_received )
-					$notify[] = $escrow->user->user_email;
+				// append message
+				$message = $settings['escrow_expire_amount_failure_mail'] .'<br/>';
+				if ( is_wp_error( $refund_txid ) )
+					$message .=  __( 'Contact site administrator to refund your coins.', 'dce' );
+				else
+					$message .=  __( 'Your coins have been refunded successfully.', 'dce' );
 
-				// notify other party to refund
-				if ( ( float ) $to_amount_received )
-					$notify[] = $escrow->target_email;
+				// save transaction
+				DCE_Transactions::save( array( 'amount' => DCE_Escrow::display_amount_formated( $from_amount_received, $escrow->from_coin, $coin_types ), 'txid' => $refund_txid ), 'refund', $escrow->user->ID, $escrow->ID );
 
-				if ( !empty( $notify ) )
-					wp_mail( $notify,
-							 __( 'Amount Refund notification', 'dce' ), 
-							sprintf( $settings['escrow_expire_notify_mail'], esc_attr( $escrow->url() ) ) 
-					);
+				// notify failure
+				wp_mail( $escrow->user->user_email,
+						 __( 'Escrow Expiration Failure', 'dce' ), 
+						sprintf( $message, esc_attr( $escrow->url() ), esc_attr( $escrow->feedback_url() ) ) 
+				);
 			}
+
+			// refund target
+			if ( $to_amount_received )
+			{
+				// try to refund
+				$refund_txid = $from_rpc_client->sendtoaddress( $escrow->target_refund_address, $to_amount_received );
+
+				// append message
+				$message = $settings['escrow_expire_amount_failure_mail'] .'<br/>';
+				if ( is_wp_error( $refund_txid ) )
+					$message .=  __( 'Contact site administrator to refund your coins.', 'dce' );
+				else
+					$message .=  __( 'Your coins have been refunded successfully.', 'dce' );
+
+				// save transaction
+				DCE_Transactions::save( array( 'amount' => DCE_Escrow::display_amount_formated( $to_amount_received, $escrow->from_coin, $coin_types ), 'txid' => $refund_txid ), 'refund', $escrow->target_user->ID, $escrow->ID );
+
+				// notify failure
+				wp_mail( $escrow->target_user->user_email,
+						 __( 'Escrow Expiration Failure', 'dce' ), 
+						sprintf( $message, esc_attr( $escrow->url() ), esc_attr( $escrow->feedback_url() ) ) 
+				);
+			}
+
+			// update status
+			$escrow->change_status( 'failed' );
 
 			// wp action
 			do_action( 'dce_escrow_failed', $escrow );
@@ -133,7 +183,7 @@ function dce_cron_escrows_transactions_check()
 				// notify owner
 				wp_mail( $escrow->user->data->user_email, 
 						__( 'Escrow Notification', 'dce' ), 
-						sprintf( $settings['escrow_user_sent_notify_mail'], $escrow->convert_from_display( $coin_types ), dce_get_pages( 'trans-history' )->url ) );
+						sprintf( $settings['escrow_user_sent_notify_mail'], $escrow->convert_from_display( $coin_types ), esc_attr( dce_get_pages( 'trans-history' )->url ) ) );
 
 				// notify target
 				wp_mail( $escrow->target_email, 
@@ -163,7 +213,7 @@ function dce_cron_escrows_transactions_check()
 				// notify target
 				wp_mail( $escrow->target_email,
 						__( 'Escrow Notification', 'dce' ),
-						sprintf( $settings['escrow_user_sent_notify_mail'], $escrow->convert_to_display( $coin_types ), dce_get_pages( 'trans-history' )->url ) );
+						sprintf( $settings['escrow_user_sent_notify_mail'], $escrow->convert_to_display( $coin_types ), esc_attr( dce_get_pages( 'trans-history' )->url ) ) );
 
 				// notify owner
 				wp_mail( $escrow->user->data->user_email, 
@@ -248,7 +298,7 @@ function dce_cron_escrows_transactions_check()
 				{
 					wp_mail( $escrow->user->user_email, 
 							__( 'Escrow Transaction Failure', 'dce' ), 
-							sprintf( $settings['escrow_trans_failure_notify_mail'], $escrow->url(), $escrow->target_user->display_name(), $amount_for_owner_display ) 
+							sprintf( $settings['escrow_trans_failure_notify_mail'], esc_attr( $escrow->url() ), $escrow->target_user->display_name(), $amount_for_owner_display ) 
 					);
 				}
 
@@ -257,7 +307,7 @@ function dce_cron_escrows_transactions_check()
 				{
 					wp_mail( $escrow->target_user->user_email, 
 							__( 'Escrow Transaction Failure', 'dce' ), 
-							sprintf( $settings['escrow_trans_failure_notify_mail'], $escrow->url(), $escrow->user->display_name(), $amount_for_target_display ) 
+							sprintf( $settings['escrow_trans_failure_notify_mail'], esc_attr( $escrow->url() ), $escrow->user->display_name(), $amount_for_target_display ) 
 					);
 				}
 			}
@@ -268,13 +318,13 @@ function dce_cron_escrows_transactions_check()
 				// notify owner
 				wp_mail( $escrow->user->user_email,
 						__( 'Escrow Successfully Completed', 'dce' ),
-						sprintf( $settings['escrow_success_notify_mail'], $escrow->url(), $escrow->target_user->display_name(), $amount_for_owner_display, $escrow->feedback_url() )
+						sprintf( $settings['escrow_success_notify_mail'], esc_attr( $escrow->url() ), $escrow->target_user->display_name(), $amount_for_owner_display, esc_attr( $escrow->feedback_url() ) )
 				);
 
 				// notify owner
 				wp_mail( $escrow->target_user->user_email,
 						__( 'Escrow Successfully Completed', 'dce' ),
-						sprintf( $settings['escrow_success_notify_mail'], $escrow->url(), $escrow->user->display_name(), $amount_for_target_display, $escrow->feedback_url() )
+						sprintf( $settings['escrow_success_notify_mail'], esc_attr( $escrow->url() ), $escrow->user->display_name(), $amount_for_target_display, esc_attr( $escrow->feedback_url() ) )
 				);
 			}
 

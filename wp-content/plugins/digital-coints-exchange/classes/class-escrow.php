@@ -410,7 +410,7 @@ class DCE_Escrow extends DCE_Offer
 				'author' => '',
 				'party_email' => '',
 				'nopaging' => true,
-				'post_status' => array( 'publish', 'pending', 'failed', 'completed' ),
+				'post_status' => array( 'publish', 'pending', 'failed', 'completed', 'in_progress' ),
 		) );
 
 		// query escrow
