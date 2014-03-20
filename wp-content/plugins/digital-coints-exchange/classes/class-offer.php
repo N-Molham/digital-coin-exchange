@@ -164,7 +164,7 @@ class DCE_Offer extends DCE_Component
 	{
 		if ( 'user' == $key )
 		{
-			if ( !$this->_target_user )
+			if ( !$this->_user )
 				$this->_user = new DCE_User( $this->post_author );
 
 			// owner/creator info

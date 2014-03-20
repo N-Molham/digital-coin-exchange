@@ -66,7 +66,7 @@ function dce_cron_escrows_transactions_check()
 			continue;
 
 		// save owner received amounts
-		if ( $from_amount_received > 0 && $escrow->from_amount_received != $from_amount_received )
+		if ( $from_amount_received != 0 && $escrow->from_amount_received != $from_amount_received )
 		{
 			// save meta
 			$escrow->set_meta( 'from_amount_received', $from_amount_received );
@@ -76,7 +76,7 @@ function dce_cron_escrows_transactions_check()
 		}
 
 		// save target received amounts
-		if ( $to_amount_received > 0 && $escrow->to_amount_received != $to_amount_received )
+		if ( $to_amount_received != 0 && $escrow->to_amount_received != $to_amount_received )
 		{
 			// save meta
 			$escrow->set_meta( 'to_amount_received', $to_amount_received );
