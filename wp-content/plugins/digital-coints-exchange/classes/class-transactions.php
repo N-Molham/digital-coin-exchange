@@ -26,6 +26,8 @@ class DCE_Transactions
 				'escrow' => null, 
 				'limit' => 0,
 				'page' => 0,
+				'orderby' => 'trans_datetime',
+				'order' => 'DESC',
 				'output' => OBJECT,
 		) );
 
@@ -55,6 +57,9 @@ class DCE_Transactions
 			$query_values[] = $args['escrow'];
 		}
 
+		// order
+		$query_sql .= ' ORDER BY '. $args['orderby'] . ' '. $args['order'];
+
 		// limit
 		if( $args['limit'] )
 		{
@@ -71,11 +76,11 @@ class DCE_Transactions
 		$transactions = $wpdb->get_results( $wpdb->prepare( $query_sql, $query_values ), $args['output'] );
 		$len = count( $transactions );
 
-		if ( $len )
+		// unserialize data if needed
+		if ( $len && ( '*' == $args['fields'] || ( is_array( $args['fields'] ) && in_array( 'trans_data', $args['fields'] ) ) ) )
 		{
 			for ( $i = 0; $i < $len; $i++ )
 			{
-				// unserialize data if needed
 				$transactions[$i]->trans_data = maybe_unserialize( $transactions[$i]->trans_data );
 			}
 		}

@@ -267,6 +267,21 @@ class DCE_Escrow extends DCE_Offer
 	}
 
 	/**
+	 * Get escrow transactions
+	 * 
+	 * @param array $args
+	 */
+	public function get_transactions( $args = '' )
+	{
+		// query
+		$transactions = DCE_Transactions::query_transactions( wp_parse_args( $args, array ( 
+				'escrow' => $this->ID,
+		) ) );
+
+		return $transactions;
+	}
+
+	/**
 	 * Get target user
 	 *
 	 * @return DCE_User

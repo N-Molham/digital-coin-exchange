@@ -33,68 +33,152 @@ $exchange_addresses = '';
 // exchange addresses
 if ( !$is_admin )
 {
-	// send address
-	if ( $is_owner )
+	$status = $escrow->get_status();
+
+	// message depending on escrow status
+	switch ( $status )
 	{
-		// owner/creator user
-		if ( empty( $escrow->from_amount_received ) )
-			$exchange_addresses .= sprintf( $plugin_settings['escrow_start_top_msg'], $form_display, $escrow->owner_address, $to_display );
+		case 'pending':
+		case 'started':
+			if ( $is_owner )
+			{
+				// owner/creator user
+				$exchange_addresses .= '<p>'. sprintf( $plugin_settings['escrow_start_top_msg'], $form_display, $escrow->owner_address ) .'</p>';
+				$exchange_addresses .= '<p>'. sprintf( $plugin_settings['escrow_waiting_party_msg'], $to_display ) .'</p>';
+			}
+			else
+			{
+				// target user
+				$exchange_addresses .= '<p>'. sprintf( $plugin_settings['escrow_start_top_msg'], $to_display, $escrow->target_address ) .'</p>';
+				$exchange_addresses .= '<p>'. sprintf( $plugin_settings['escrow_waiting_party_msg'], $form_display ) .'</p>';
+			}
+			break;
+		case 'in_progress':
+			// received coins
+			$owner_received_coins = (float) $escrow->from_amount_received;
+			$target_received_coins = (float) $escrow->to_amount_received;
+
+			if ( $is_owner )
+			{
+				// owner part
+				if ( $owner_received_coins )
+				{
+					// owner sent the coins
+					$exchange_addresses .= '<p>'. $plugin_settings['escrow_progress_top_msg'] .'</p>';
+				}
+				else 
+				{
+					// owner didn't send the coins yet
+					$exchange_addresses .= '<p>'. sprintf( $plugin_settings['escrow_start_top_msg'], $form_display, $escrow->owner_address ) .'</p>';
+				}
+
+				// target part
+				if ( $target_received_coins )
+				{
+					$receive_datetime = $escrow->get_transactions( array ( 
+							'fields' => 'trans_datetime',
+							'user' => $escrow->target_user->ID,
+							'limit' => 1,
+					) );
+
+					// target sent the coins
+					$exchange_addresses .= '<p>'. sprintf( $plugin_settings['escrow_party_sent_msg'], $to_display, DCE_Utiles::wp_datetime_format( @$receive_datetime[0]->trans_datetime ) ) .'</p>';
+				}
+				else
+				{
+					// target didn't send the coins yet
+					$exchange_addresses .= '<p>'. sprintf( $plugin_settings['escrow_waiting_party_msg'], $to_display ) .'</p>';
+				}
+			}
+			else
+			{
+				// target part
+				if ( $target_received_coins )
+				{
+					// target sent the coins
+					$exchange_addresses .= '<p>'. $plugin_settings['escrow_progress_top_msg'] .'</p>';
+				}
+				else 
+				{
+					// target didn't send the coins yet
+					$exchange_addresses .= '<p>'. sprintf( $plugin_settings['escrow_start_top_msg'], $to_display, $escrow->target_address ) .'</p>';
+				}
+
+				// owner part
+				if ( $owner_received_coins )
+				{
+					$receive_datetime = $escrow->get_transactions( array ( 
+							'fields' => 'trans_datetime',
+							'user' => $escrow->user->ID,
+							'limit' => 1,
+					) );
+
+					// target sent the coins
+					$exchange_addresses .= '<p>'. sprintf( $plugin_settings['escrow_party_sent_msg'], $form_display, DCE_Utiles::wp_datetime_format( @$receive_datetime[0]->trans_datetime ) ) .'</p>';
+				}
+				else
+				{
+					// target didn't send the coins yet
+					$exchange_addresses .= '<p>'. sprintf( $plugin_settings['escrow_waiting_party_msg'], $form_display ) .'</p>';
+				}
+			}
+			break;
+		case 'completed':
+			$exchange_addresses .= '<p>'. __( 'Escrow Completed Successfully', 'dce' ) .'</p>';
+			break;
+		case 'failed':
+			$exchange_addresses .= '<p>'. __( 'Escrow Failed', 'dce' ) .'</p>';
+			break;
+	}
+
+	// coins received message
+	if ( !in_array( $status, array( 'completed', 'failed' ) ) )
+	{
+		// receive addresses
+		$exchange_addresses .= dce_divider( 'double' );
+
+		// form nonce
+		$coins_address_nonce = wp_nonce_field( 'dce_coins_address', 'nonce', false, false );
+
+		// receive address
+		$receive_address = $is_owner ? $escrow->owner_receive_address : $escrow->target_receive_address;
+		if ( '' == $receive_address || empty( $receive_address ) )
+		{
+			// set form
+			$exchange_addresses .= '<p>'. $plugin_settings['escrow_receive_msg'] .'</p>';
+			$exchange_addresses .= '<div class="receive-address"><form action="" method="post" class="ajax-form" data-callback="coins_address_callback">';
+			$exchange_addresses .= '<input type="text" class="input-text input-code" name="coin_address" value="'. $receive_address .'" />';
+			$exchange_addresses .= '<input type="submit" value="'. __( 'Save', 'dce' ) .'" class="button small green" />';
+			$exchange_addresses .= '<input type="hidden" name="action" value="save_coins_address" />';
+			$exchange_addresses .= '<input type="hidden" name="type" value="receive" />';
+			$exchange_addresses .= '<input type="hidden" name="escrow" value="'. $escrow->ID .'" />';
+			$exchange_addresses .= $coins_address_nonce .'</form></div>'; 
+		}
 		else
-			$exchange_addresses .= sprintf( $plugin_settings['escrow_progress_top_msg'], $form_display, $to_display );
-	}
-	else
-	{
-		// target user
-		if ( empty( $escrow->to_amount_received ) )
-			$exchange_addresses .= sprintf( $plugin_settings['escrow_start_top_msg'], $to_display, $escrow->target_address, $form_display );
+		{
+			// display address
+			$exchange_addresses .= '<p>'. __( 'Your Receive Address', 'dce' ) .': <code>'. $receive_address .'</code></p>';
+		}
+
+		// refund address
+		$refund_address = $is_owner ? $escrow->owner_refund_address : $escrow->target_refund_address;
+		if ( '' == $refund_address || empty( $refund_address ) )
+		{
+			// set form
+			$exchange_addresses .= '<p>'. $plugin_settings['escrow_refund_msg'] .'</p>';
+			$exchange_addresses .= '<div class="receive-address"><form action="" method="post" class="ajax-form" data-callback="coins_address_callback">';
+			$exchange_addresses .= '<input type="text" class="input-text input-code" name="coin_address" value="'. $refund_address .'" />';
+			$exchange_addresses .= '<input type="submit" value="'. __( 'Save', 'dce' ) .'" class="button small green" />';
+			$exchange_addresses .= '<input type="hidden" name="action" value="save_coins_address" />';
+			$exchange_addresses .= '<input type="hidden" name="type" value="refund" />';
+			$exchange_addresses .= '<input type="hidden" name="escrow" value="'. $escrow->ID .'" />';
+			$exchange_addresses .= $coins_address_nonce .'</form></div>'; 
+		}
 		else
-			$exchange_addresses .= sprintf( $plugin_settings['escrow_progress_top_msg'], $to_display, $form_display );
-	}
-
-	// receive addresses
-	$exchange_addresses .= dce_divider( 'double' );
-
-	// form nonce
-	$coins_address_nonce = wp_nonce_field( 'dce_coins_address', 'nonce', false, false );
-
-	// receive address
-	$receive_address = $is_owner ? $escrow->owner_receive_address : $escrow->target_receive_address;
-	if ( '' == $receive_address || empty( $receive_address ) )
-	{
-		// set form
-		$exchange_addresses .= '<p>'. $plugin_settings['escrow_receive_msg'] .'</p>';
-		$exchange_addresses .= '<div class="receive-address"><form action="" method="post" class="ajax-form" data-callback="coins_address_callback">';
-		$exchange_addresses .= '<input type="text" class="input-text input-code" name="coin_address" value="'. $receive_address .'" />';
-		$exchange_addresses .= '<input type="submit" value="'. __( 'Save', 'dce' ) .'" class="button small green" />';
-		$exchange_addresses .= '<input type="hidden" name="action" value="save_coins_address" />';
-		$exchange_addresses .= '<input type="hidden" name="type" value="receive" />';
-		$exchange_addresses .= '<input type="hidden" name="escrow" value="'. $escrow->ID .'" />';
-		$exchange_addresses .= $coins_address_nonce .'</form></div>'; 
-	}
-	else
-	{
-		// display address
-		$exchange_addresses .= '<p>'. __( 'Your Receive Address', 'dce' ) .': <code>'. $receive_address .'</code></p>';
-	}
-
-	// refund address
-	$refund_address = $is_owner ? $escrow->owner_refund_address : $escrow->target_refund_address;
-	if ( '' == $refund_address || empty( $refund_address ) )
-	{
-		// set form
-		$exchange_addresses .= '<p>'. $plugin_settings['escrow_refund_msg'] .'</p>';
-		$exchange_addresses .= '<div class="receive-address"><form action="" method="post" class="ajax-form" data-callback="coins_address_callback">';
-		$exchange_addresses .= '<input type="text" class="input-text input-code" name="coin_address" value="'. $refund_address .'" />';
-		$exchange_addresses .= '<input type="submit" value="'. __( 'Save', 'dce' ) .'" class="button small green" />';
-		$exchange_addresses .= '<input type="hidden" name="action" value="save_coins_address" />';
-		$exchange_addresses .= '<input type="hidden" name="type" value="refund" />';
-		$exchange_addresses .= '<input type="hidden" name="escrow" value="'. $escrow->ID .'" />';
-		$exchange_addresses .= $coins_address_nonce .'</form></div>'; 
-	}
-	else
-	{
-		// display address
-		$exchange_addresses .= '<p>'. __( 'Your Re-fund Address', 'dce' ) .': <code>'. $refund_address .'</code></p>';
+		{
+			// display address
+			$exchange_addresses .= '<p>'. __( 'Your Re-fund Address', 'dce' ) .': <code>'. $refund_address .'</code></p>';
+		}
 	}
 
 	// display box

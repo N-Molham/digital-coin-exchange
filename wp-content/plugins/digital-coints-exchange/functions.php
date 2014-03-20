@@ -37,6 +37,15 @@ class DCE_Utiles
 {
 	static $text_domain = 'dce';
 
+	public static function wp_datetime_format( $datetime, $str_format = '%s %s' )
+	{
+		$datetime = strtotime( $datetime );
+		if ( !$datetime )
+			return false;
+
+		return sprintf( $str_format, date( get_option( 'date_format' ), $datetime ), date( get_option( 'time_format' ), $datetime ) );
+	}
+
 	public static function pretty_json( $json ) 
 	{
 		$result      = '';
