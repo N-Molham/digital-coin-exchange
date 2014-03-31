@@ -1,5 +1,9 @@
 @CHARSET "UTF-8";
 
+.ucword {
+	text-transform: capitalize;
+}
+
 .disabled {
 	pointer-events: none;
 }
@@ -108,8 +112,39 @@ label[for=feedback] {
 	margin-bottom: 4.4em;
 }
 
+#register-form .form-input {
+	width: 60%;
+}
 
+#register-form input[type='password'] {
+	width: 100% !important;
+}
 
+#home-register {
+	padding: 10px;
+}
+
+#home-register .alert {
+	font-size: 12px;
+	background-image: none;
+}
+
+#home-register .msg {
+	padding: 0;
+}
+
+#home-register #register-form {
+	padding-right: 12px;
+}
+
+#home-register .form-input {
+	width: auto;
+}
+
+#home-register .form-input,
+#home-register .alert {
+	margin-bottom: 10px;
+}
 
 
 

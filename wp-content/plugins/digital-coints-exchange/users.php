@@ -427,7 +427,9 @@ class DCE_User extends WP_User
 			'first_name' => array (
 					'input' => 'text',
 					'label' => __( 'First Name', 'dce' ),
-					'data_type' => 'text',
+					'placeholder' => 'label',
+					'show_label' => false,
+					'data_type' => 'plain-text-aplha',
 					'required' => true,
 					'min_length' => 3,
 					'max_length' => 32,
@@ -436,7 +438,9 @@ class DCE_User extends WP_User
 			'last_name' => array (
 					'input' => 'text',
 					'label' => __( 'Last Name', 'dce' ),
-					'data_type' => 'text',
+					'placeholder' => 'label',
+					'show_label' => false,
+					'data_type' => 'plain-text-aplha',
 					'required' => false,
 					'min_length' => 3,
 					'max_length' => 32,
@@ -445,6 +449,8 @@ class DCE_User extends WP_User
 			'user_email' => array (
 					'input' => 'text',
 					'label' => __( 'E-mail', 'dce' ),
+					'placeholder' => 'label',
+					'show_label' => false,
 					'data_type' => 'email',
 					'required' => true,
 					'public' => true,
@@ -452,6 +458,8 @@ class DCE_User extends WP_User
 			'password' => array (
 					'input' => 'password',
 					'label' => __( 'Password', 'dce' ),
+					'placeholder' => 'label',
+					'show_label' => false,
 					'data_type' => 'password',
 					'required' => true,
 					'public' => false,
@@ -459,6 +467,8 @@ class DCE_User extends WP_User
 			'phone' => array (
 					'input' => 'text',
 					'label' => __( 'Phone number', 'dce' ),
+					'placeholder' => 'label',
+					'show_label' => false,
 					'data_type' => 'text',
 					'required' => false,
 					'max_length' => 32,
@@ -467,6 +477,8 @@ class DCE_User extends WP_User
 			'address' => array (
 					'input' => 'text',
 					'label' => __( 'Address', 'dce' ),
+					'placeholder' => 'label',
+					'show_label' => false,
 					'data_type' => 'text',
 					'required' => false,
 					'max_length' => 200,

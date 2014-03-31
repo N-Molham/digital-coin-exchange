@@ -288,7 +288,7 @@ class DCE_Utiles
 			}
 		}
 
-		if ( $value && $args['required'] && ( '' == $value || empty( $value ) ) )
+		if ( $value !== false && $args['required'] && ( '' == $value || empty( $value ) ) )
 			self::form_error( $field, sprintf( __( '%s required', self::$text_domain ), $args['label']) );
 
 		if ( '' != $value || !empty( $value ) )
@@ -356,12 +356,15 @@ class DCE_Utiles
 		);
 		$args = apply_filters( 'form_input_args', wp_parse_args( $args, $defaults ) );
 
-		// field label
 		if( $args['show_label'] )
 			$out .= '<label for="'. $field .'">'. $args['label'] .' :</label>';
 
 		if( $args['label_next'] )
 			$out .= ' <span class="description" style="vertical-align:middle;">'. $args['label_next'] .'</span>';
+
+		// placeholder same as label
+		if ( 'label' == $args['placeholder'] )
+			$args['placeholder'] = $args['label'];
 
 		// field description
 		$out .= '<p class="form-input form-input-'. $field .' '. $args['holder_class'] .'">';
