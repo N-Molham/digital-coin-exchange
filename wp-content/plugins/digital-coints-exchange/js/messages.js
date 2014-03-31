@@ -46,36 +46,5 @@
 			window.is_form_open = true;
 		} );
 
-		if( $().prettyPhoto ) {
-			var pp_args = {
-					animation_speed: 'fast',
-					overlay_gallery: true,
-					keyboard_shortcuts: false,
-					autoplay_slideshow: false,
-					opacity: 0.8,
-					show_title: false,
-					show_desc: false,
-					social_tools: ''
-			};
-			$( 'a[rel^=sendform]' ).prettyPhoto( pp_args );
-
-			var media_query = 'desk';
-			if ( Modernizr.mq( 'only screen and (max-width: 600px)' ) || Modernizr.mq( 'only screen and (max-height: 520px)' ) ) {
-				media_query = 'mobile';
-				$( 'a[rel=sendform]' ).unbind( 'click' );
-			}
-
-			// Disables prettyPhoto if screen small
-			$( window ).on( 'resize', function() {
-				if ( ( Modernizr.mq( 'only screen and (max-width: 600px)' ) || Modernizr.mq( 'only screen and (max-height: 520px)' ) ) && media_query == 'desk' ) {
-					$( 'a[rel=sendform]' ).unbind( 'click.prettyphoto' );
-					media_query = 'mobile';
-				} else if ( !Modernizr.mq( 'only screen and (max-width: 600px)' ) && !Modernizr.mq( 'only screen and (max-height: 520px)' ) && media_query == 'mobile' ) {
-					$( 'a[rel=sendform]' ).prettyPhoto( pp_args );
-					media_query = 'desk';
-				}
-			} );
-		}
-
 	});
 } )( window );
