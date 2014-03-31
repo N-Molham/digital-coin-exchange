@@ -177,9 +177,16 @@ function dce_user_register_form( $attrs )
 	// default attributes
 	$attrs = wp_parse_args( $attrs, array ( 
 			'edit_user' => 'no',
+			'short' => 'no',
+			'submit' => '',
+			'redirect_to' => '',
 	) );
 
+	// checks
 	$edit_user = 'yes' == $attrs['edit_user'];
+	$short_version = 'yes' == $attrs['short'];
+
+	// register fields data
 	$data_fields = DCE_User::data_fields();
 
 	// logged-in user
@@ -227,6 +234,9 @@ function dce_user_register_form( $attrs )
 	foreach ( $data_fields as $field_name => $field_args )
 	{
 		// form input layout
+		if ( $short_version && !$field_args['required'] )
+			continue;
+
 		$field_args['value'] = dce_get_value( $field_name, '', true );
 		$register_fields .= dce_form_input( $field_name, $field_args );
 	}
@@ -236,16 +246,36 @@ function dce_user_register_form( $attrs )
 
 	// redirect after save
 	if ( $edit_user )
+	{
+		// profile page
 		$redirect_to = dce_get_pages( 'profile' )->url;
+	}
+	elseif( !empty( $attrs['redirect_to'] ) )
+	{
+		// as the redirect_to attribute say
+		$redirect_to = $attrs['redirect_to'];
+	}
 	else
+	{
+		// otherwise to "ref" query string or escrow manage page
 		$redirect_to = isset( $_GET['ref'] ) ? $_GET['ref'] : dce_get_pages( 'escrow-manager' )->url;
+	}
 
 	// redirect field
 	$register_fields .= '<input type="hidden" name="redirect_to" value="'. $redirect_to .'">';
 
 	// submit
 	$register_fields .= '<p class="form-input"><input type="submit" name="register_user" value="';
-	$register_fields .= $edit_user ? __( 'Update', 'dce' ) : __( 'Register', 'dce' );
+	if ( $edit_user )
+	{
+		// update
+		$register_fields .= $edit_user;
+	}
+	else
+	{
+		// new
+		$register_fields .= '' == $attrs['submit'] || empty( $attrs['submit'] ) ? __( 'Register', 'dce' ) : $attrs['submit'];
+	}
 	$register_fields .= '" class="button small green" /></p>';
 
 	// filtered inputs
@@ -268,58 +298,45 @@ add_shortcode( 'dce-home-register-form', 'dce_user_home_register_form' );
  * 
  * @return string
  */
-function dce_user_home_register_form()
+function dce_user_home_register_form( $attrs )
 {
 	// whether registration is open or not
 	if ( '0' == get_option( 'users_can_register' ) )
 		return dce_alert_message( __( 'Registration is closed right now, try again later.', 'dce' ), 'error' );
 
+	// default attributes
+	$attrs = wp_parse_args( $attrs, array (
+			'submit' => '',
+	) );
+
+	$pages = dce_get_pages();
+	$escrow_wizard = esc_attr( add_query_arg( 'view', 'create_escrow', $pages['escrow-manager']['url'] ) );
+
 	// logged-in user
 	if ( is_user_logged_in() )
 	{
+		// logged-in user
 		$user = DCE_User::get_current_user();
-		$out = "<br><br><h1> Welcome ".$user->first_name."</h1>";
-		$out .= "<ul style='text-align: left;font-size: 3.2em;'>";
-		$out .="<li><a href='#'>Manage Profile</a></li>";
-		$out .="<li><a href='#'>Messages</a></li>";
-		$out .="<li><a href='#'>Offers</a></li>";
-		$out .="<li><a href='#'>New Escrow</a></li>";
-		$out .="<li><a href='#'>Search Offers</a></li></ul>";
+
+		// list
+		$out = '<h1>'. sprintf( __( 'Welcome, <span class="ucword">%s</span>', 'dce' ), $user->first_name ) .'</h1>';
+		$out .= '<ul style="text-align: left;font-size: 3.2em;">';
+		$out .= '<li><a href="'. esc_attr( $pages['profile']['url'] ) .'">'. __( 'Manage Profile', 'dce' ) .'</a></li>';
+		$out .= '<li><a href="'. esc_attr( $pages['messages']['url'] ) .'">'. __( 'Messages', 'dce' ) .'</a></li>';
+		$out .= '<li><a href="'. esc_attr( $pages['user-offers']['url'] ) .'">'. __( 'Offers', 'dce' ) .'</a></li>';
+		$out .= '<li><a href="'. esc_attr( $escrow_wizard ) .'">'. __( 'New Escrow', 'dce' ) .'</a></li>';
+		$out .= '<li><a href="'. esc_attr( $pages['offers']['url'] ) .'">'. __( 'Search Offers', 'dce' ) .'</a></li></ul>';
 		return $out ;
 	}
 
 
-	// before form start
+	// before form
 	$out = apply_filters( 'dce_before_home_register_form', '' );
 
- 	if ( DCE_Utiles::has_form_errors() )
-	{
-		//var_dump(DCE_Utiles::show_form_errors());exit();
-		DCE_Utiles::clear_values();
-		if(strpos( DCE_Utiles::show_form_errors(), 'username already exists') !== false)	
-			$out .= "<h4 style='color:red !important; margin-bottom:0'>This email already Exists!</h4>";
-		else
-			$out .= "<h4 style='color:red !important; margin-bottom:0'>Please enter all fields</h4>";
+	// register form
+ 	$out .= '<div id="home-register">'. do_shortcode( '[dce-register-form short="yes" submit="'. $attrs['submit'] .'" redirect_to="'. $escrow_wizard .'"]' ) .'</div>';
 
-	}
-
-	// where to redirect after register
-	$redirect_to = isset( $_GET['ref'] ) ? $_GET['ref'] : dce_get_pages( 'escrow-manager' )->url;
-
-	$out .= '<form method="post" action="" id="home_reg" >';
-	$out .= '<h2>Create Escrow - Free !</h2>';
-
-	$out .= '<p class="form-row form-row-first validate-required" id="name"><input type="text" class="input-text" name="first_name" d="billing_first_name" placeholder="Name" value=""></p>';
-
-	$out .='<p class="form-row form-row-first validate-required validate-email" id="email_field"><input type="text" class="input-text" name="email" id="email" placeholder="Email" value=""></p>';
-
-	$out .='<p class="form-row form-row-first validate-required validate-password" id="password_field"><input type="password" class="input-text" name="password" id="password" placeholder="Select a password" value=""></p>';
-	$out .='<p><a class="button small default" title="" href="Javascript:document.forms[0].submit()" id="home_reg_start" target="_self">Start Escrow</a></p>';
-	$out .= '<input type="hidden" name="redirect_to" value="'. $redirect_to .'">';
-	$out .= wp_nonce_field( 'dce_user_register', 'nonce', true, false );
-	$out .= '<input type="hidden" name="register_user" value="Register">';
-	$out .='</form>';
-	
+ 	// after form
 	$out .= apply_filters( 'dce_after_home_register_form', '' );
 
 	return apply_filters( 'dce_home_register_form', $out );
