@@ -226,7 +226,15 @@ function dce_user_register_form( $attrs )
  
 	// error messages
 	if ( DCE_Utiles::has_form_errors() )
-		$output .= DCE_Utiles::show_form_errors();
+	{
+		if ( $short_version && count( $_SESSION['form_errors'] ) > 1 )
+		{
+			$output .= dce_alert_message( __( 'Error, Please fill in all fields', 'dce' ), 'error' );
+			DCE_Utiles::clear_form_errors();
+		}
+		else
+			$output .= DCE_Utiles::show_form_errors();
+	}
 
 	// form start
 	$output .= '<form id="register-form" action="" method="post">';
