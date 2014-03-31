@@ -189,6 +189,15 @@ function dce_setup_init()
 	register_post_type( DCE_POST_TYPE_ESCROW, $args );
 }
 
+add_action( 'widgets_init', 'dce_widgets_init' );
+/**
+ * Widgets initialize
+*/
+function dce_widgets_init()
+{
+	register_widget( 'DCE_Widget_Recent_Offers' );
+}
+
 add_filter( 'query_vars', 'dce_query_vars_filter' );
 /**
  * Query Variables filter

@@ -50,6 +50,7 @@ function dce_avada_theme_settings_override()
 
 add_shortcode( 'dce-user-offers', 'dce_user_page_loader' );
 add_shortcode( 'dce-offers', 'dce_user_page_loader' );
+add_shortcode( 'dce-recent-offers', 'dce_user_page_loader' );
 add_shortcode( 'dce-contact-form', 'dce_user_page_loader' );
 add_shortcode( 'dce-user-dashboard', 'dce_user_page_loader' );
 add_shortcode( 'dce-escrow-manager', 'dce_user_page_loader' );
@@ -74,6 +75,7 @@ function dce_user_page_loader( $attrs, $content, $shortcode )
 
 	$public_tags = array ( 
 			'dce-offers', 
+			'dce-recent-offers', 
 			'dce-contact-form',
 			'dce-user-profile',
 			'dce-single-offer',

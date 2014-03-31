@@ -43,6 +43,7 @@ require DCE_PATH . 'classes/class-coin-rpc.php';
 require DCE_PATH . 'classes/class-base.php';
 require DCE_PATH . 'classes/class-offer.php';
 require DCE_PATH . 'classes/class-escrow.php';
+require DCE_PATH . 'classes/class-offers-widget.php';
 
 // ajax
 require DCE_PATH . 'ajax/ajax.php';
