@@ -89,5 +89,12 @@
 			}
 		};
 
+		$('#from_coin').on('change' , function(){
+			$('input#owner_refund_address + em').text('Your '+$('#from_coin').val()+' Refund Address');
+		});
+
+		$('#to_coin').on('change' , function(){
+			$('input#owner_receive_address + em').text('Your '+$('#to_coin').val()+' Receive Address');
+		});
 	});
 } )( window );

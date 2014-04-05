@@ -344,24 +344,28 @@ class DCE_Offer extends DCE_Component
 						'input' => 'text',
 						'data_type' => 'float',
 						'required' => true,
+						'desc' => 'The amount you are willing to send'
 				),
 				'from_coin' => array ( 
 						'label' => __( 'From Coin', 'dce' ), 
 						'input' => 'select', 
 						'required' => true,
 						'source' => $coin_types, 
+						'desc' => 'The type of coin you have'
 				),
 				'to_amount' => array ( 
 						'label' => __( 'To Amount', 'dce' ), 
 						'input' => 'text', 
 						'data_type' => 'float',
 						'required' => true,
+						'desc' => 'the amount you want to receive'
 				),
 				'to_coin' => array ( 
 						'label' => __( 'To Coin', 'dce' ), 
 						'input' => 'select', 
 						'required' => true,
 						'source' => $coin_types, 
+						'desc' => 'the type of coin you want to receive'
 				),
 				'comm_method' => array ( 
 						'label' => __( 'Commission Agreement', 'dce' ), 

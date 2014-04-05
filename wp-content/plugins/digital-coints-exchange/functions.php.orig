@@ -3,7 +3,7 @@
  * Utils functions
  */
 
-function dce_get_value(  $key, $query_var = '', $session = false, $encoded = false, $html = false, $allowed = null )
+function dce_get_value($key, $query_var = '', $session = false, $encoded = false, $html = false, $allowed = null )
 {
 	return DCE_Utiles::get_value( $key, $query_var, $session, $encoded, $html, $allowed );
 }

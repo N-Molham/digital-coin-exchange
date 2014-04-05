@@ -1,0 +1,586 @@
+<?php
+/**
+ * Escrow Class
+ *
+ * @package Digital Coins Exchanging Store
+ * @since 1.0
+ */
+
+add_action( 'dce_save_user_escrow', 'dce_new_escrow_mail_notification' );
+/**
+ * Notify escrow related users
+ * 
+ * @param DCE_Escrow $escrow
+ */
+function dce_new_escrow_mail_notification( $escrow )
+{
+	// set mail content type
+	add_filter( 'wp_mail_content_type', 'dce_set_mail_html_content_type' );
+
+	// sent to parties
+	wp_mail( array( $escrow->user->data->user_email, $escrow->target_email ), 
+			__( 'New Escrow Started', 'dce' ), 
+			sprintf( dce_admin_get_settings( 'new_escrow_notify_mail' ), add_query_arg( 'ref', 'mail', $escrow->url() ) ) );
+
+	// reset mail content type
+	remove_filter( 'wp_mail_content_type', 'dce_set_mail_html_content_type' );
+}
+
+/**
+ * Escrow Class
+ */
+class DCE_Escrow extends DCE_Offer
+{
+	/**
+	 * Post type
+	 *
+	 * @var string
+	 */
+	static $post_type = DCE_POST_TYPE_ESCROW;
+
+	/**
+	 * Targeted user to deal with
+	 * 
+	 * @var DCE_User
+	 */
+	protected $_target_user;
+
+	/**
+	 * Targeted user to deal with email address
+	 * 
+	 * @var string
+	 */
+	var $target_email;
+
+	/**
+	 * Escrow owner send address
+	 * 
+	 * @var string
+	 */
+	var $owner_address;
+
+	/**
+	 * Escrow target send address
+	 * 
+	 * @var string
+	 */
+	var $target_address;
+
+	/**
+	 * Escrow owner receive address
+	 * 
+	 * @var string
+	 */
+	var $owner_receive_address;
+
+	/**
+	 * Escrow target receive address
+	 * 
+	 * @var string
+	 */
+	var $target_receive_address;
+
+	/**
+	 * Escrow owner re-fund address
+	 * 
+	 * @var string
+	 */
+	var $owner_refund_address;
+
+	/**
+	 * Escrow target re-fund address
+	 * 
+	 * @var string
+	 */
+	var $target_refund_address;
+
+	/**
+	 * Constructor ( override )
+	 *
+	 * @param number|WP_Post|object $post_id
+	 */
+	public function __construct( $post_id )
+	{
+		parent::__construct( $post_id );
+
+		// check existence
+		if ( !$this->exists() )
+			return false;
+
+		// additional fields
+		$this->target_email = $this->post_object->target_email;
+
+		// exchange addresses
+		$this->owner_address = $this->post_object->owner_address;
+		$this->target_address = $this->post_object->target_address;
+		$this->owner_receive_address = $this->post_object->owner_receive_address;
+		$this->target_receive_address = $this->post_object->target_receive_address;
+		$this->owner_refund_address = $this->post_object->owner_refund_address;
+		$this->target_refund_address = $this->post_object->target_refund_address;
+	}
+
+	/**
+	 * Escrow Status
+	 *
+	 * @param boolean $label
+	 * @return string
+	 */
+	public function get_status( $label = false )
+	{
+		$status = array (
+				'publish' => __( 'Started', 'dce' ),
+				'pending' => __( 'Pending', 'dce' ),
+				'denied' => __( 'Denied', 'dce' ),
+				'failed' => __( 'Failed', 'dce' ),
+				'in_progress' => __( 'In Progress', 'dce' ),
+				'completed' => __( 'Completed', 'dce' ),
+		);
+
+		// marked as failed
+		if ( 'yes' == $this->is_failure )
+			return $label && isset( $status['failed'] ) ? $status['failed'] : 'failed';
+
+		if ( $label && isset( $status[$this->status] ) )
+			return $status[$this->status];
+		else
+			return 'publish' == $this->status ? 'started' : $this->status;
+	}
+
+	/**
+	 * Check if the given user email has the access to the escrow or not
+	 * 
+	 * @param string|DCE_User|WP_User $user_email
+	 * @return boolean
+	 */
+	public function check_user( $user_email )
+	{
+		// if is user instance
+		if ( is_object( $user_email ) && ( is_a( $user_email, 'DCE_User' ) || is_a( $user_email, 'WP_User' ) ) )
+			$user_email = $user_email->data->user_email;
+
+		return in_array( $user_email, array( $this->target_email, $this->user->user_email ) );
+	}
+
+	/**
+	 * Check if the given user email is the owner/creator of the escrow
+	 * 
+	 * @param string|DCE_User|WP_User $user_email
+	 * @return boolean
+	 */
+	public function is_user_owner( $user_email )
+	{
+		// if is user instance
+		if ( is_object( $user_email ) && ( is_a( $user_email, 'DCE_User' ) || is_a( $user_email, 'WP_User' ) ) )
+			$user_email = $user_email->data->user_email;
+
+		return strtolower( $user_email ) != strtolower( $this->target_email );
+	}
+
+	/**
+	 * Get escrow other party based on the given user
+	 * 
+	 * @param string|DCE_User|WP_User $user_email
+	 * @return DCE_User
+	 */
+	public function other_party( $user_email )
+	{
+		// is the owner
+		if ( $this->is_user_owner( $user_email ) )
+		{
+			// get target
+			return $this->target_user();
+		}
+		else
+		{
+			// get owner
+			return $this->owner_user();
+		}
+	}
+
+	/**
+	 * Set receive address for escrow users
+	 * 
+	 * @param string $address
+	 * @param boolean $for_owner
+	 */
+	public function set_receive_address( $address, $for_owner )
+	{
+		if ( $for_owner )
+		{
+			// set meta
+			update_post_meta( $this->ID, 'owner_receive_address', $address );
+			// set property
+			$this->owner_receive_address = $address;
+		}
+		else
+		{
+			// set meta
+			update_post_meta( $this->ID, 'target_receive_address', $address );
+			// set property
+			$this->target_receive_address = $address;
+		}
+	}
+
+	/**
+	 * Set re-fund address for escrow users
+	 * 
+	 * @param string $address
+	 * @param boolean $for_owner
+	 */
+	public function set_refund_address( $address, $for_owner )
+	{
+		if ( $for_owner )
+		{
+			// set meta
+			update_post_meta( $this->ID, 'owner_refund_address', $address );
+			// set property
+			$this->owner_refund_address = $address;
+		}
+		else
+		{
+			// set meta
+			update_post_meta( $this->ID, 'target_refund_address', $address );
+			// set property
+			$this->target_refund_address = $address;
+		}
+	}
+
+	/**
+	 * Save user's feedback about escrow's other party
+	 * 
+	 * @param DCE_User $by
+	 * @param int $about
+	 * @param int $rating
+	 * @param string $feedback
+	 */
+	public function set_feedback( $by, $about, $rating, $feedback )
+	{
+		// given feedback
+		$this->set_meta( $about .'_feedback', array ( 
+				'by' => $by->display_name(), 
+				'rating' => $rating, 
+				'feedback' => $feedback, 
+		) );
+
+		// mark user so no more feedbacks given
+		$this->set_meta( $by->ID .'_gave_feedback', 'yes' );
+	}
+
+	/**
+	 * Get escrow transactions
+	 * 
+	 * @param array $args
+	 */
+	public function get_transactions( $args = '' )
+	{
+		// query
+		$transactions = DCE_Transactions::query_transactions( wp_parse_args( $args, array ( 
+				'escrow' => $this->ID,
+		) ) );
+
+		return $transactions;
+	}
+
+	/**
+	 * Get target user
+	 *
+	 * @return DCE_User
+	 */
+	public function target_user()
+	{
+		return $this->target_user;
+	}
+
+	/**
+	 * Get Owner/Creator user
+	 *
+	 * @return DCE_User
+	 */
+	public function owner_user()
+	{
+		return $this->user;
+	}
+
+	/**
+	 * Feedback URL
+	 *
+	 * @return string
+	 */
+	public function feedback_url()
+	{
+		return home_url( 'feedback/'. $this->ID );
+	}
+
+	public function __get( $key )
+	{
+		if ( 'target_user' == $key )
+		{
+			if ( !$this->_target_user )
+				$this->_target_user = new DCE_User( get_user_by( 'email', $this->target_email ) );
+
+			// target user info
+			return $this->_target_user;
+		}
+
+		// parent class
+		return parent::__get( $key );
+	}
+
+	/**
+	 * Insert/Update user escrow
+	 *
+	 * @param int $user_id
+	 * @param int $from_amount
+	 * @param string $from_coin
+	 * @param int $to_amount
+	 * @param string $to_coin
+	 * @param array $escrow_args
+	 *
+	 * @return DCE_Escrow|WP_Error
+	 */
+	static public function save_escrow( $user_id, $from_amount, $from_coin, $to_amount, $to_coin, $escrow_args = '' )
+	{
+		$escrow_args = wp_parse_args( $escrow_args, array (
+				'target_email' => '',
+				'details' => '',
+				'comm_method' => '',
+				'id' => '',
+		) );
+
+		// post args
+		$post_args = array (
+				'ID' => is_numeric( $escrow_args['id'] ) ? $escrow_args['id'] : '',
+				'post_status' => 'publish',
+				'post_type' => self::$post_type,
+				'post_author' => $user_id,
+				'post_content' => $escrow_args['details'],
+		);
+
+		// from coin address
+		$from_address = DCE_Escrow::generate_address( $from_coin );
+		if ( is_wp_error( $from_address ) )
+			return $from_address;
+
+		// to coin address
+		$to_address = DCE_Escrow::generate_address( $to_coin );
+		if ( is_wp_error( $to_address ) )
+			return $to_address;
+
+		// save post
+		$escrow_id = wp_insert_post( $post_args, true );
+		if ( is_wp_error( $escrow_id ) )
+			return $escrow_id;
+
+		// save escrow data/meta
+		update_post_meta( $escrow_id, 'to_amount', $to_amount );
+		update_post_meta( $escrow_id, 'to_coin', $to_coin );
+		update_post_meta( $escrow_id, 'from_amount', $from_amount );
+		update_post_meta( $escrow_id, 'from_coin', $from_coin );
+		update_post_meta( $escrow_id, 'comm_method', $escrow_args['comm_method'] );
+		update_post_meta( $escrow_id, 'target_email', $escrow_args['target_email'] );
+		update_post_meta( $escrow_id, 'owner_receive_address', $escrow_args['owner_receive_address'] );
+		update_post_meta( $escrow_id, 'owner_refund_address', $escrow_args['owner_refund_address'] );
+
+		// receive addresses
+		update_post_meta( $escrow_id, 'owner_address', $from_address );
+		update_post_meta( $escrow_id, 'target_address', $to_address );
+
+		$escrow = new DCE_Escrow( $escrow_id );
+
+		// wp action
+		do_action( 'dce_save_user_escrow', $escrow );
+
+		return $escrow;
+	}
+
+	/**
+	 * Query users' escrows
+	 *
+	 * @param array $args
+	 * @return mixed
+	 */
+	public static function query_escrows( $args = '' )
+	{
+		global $wpdb;
+
+		// default args
+		$args = wp_parse_args( $args, array (
+				'ID' => '',
+				'post_type' => self::$post_type,
+				'author' => '',
+				'party_email' => '',
+				'nopaging' => true,
+				'post_status' => array( 'publish', 'pending', 'failed', 'completed', 'in_progress' ),
+		) );
+
+		// query escrow
+		$single = !empty( $args['ID'] );
+		if ( $single )
+		{
+			// single escrow
+			$escrows = array( get_post( $args['ID'] ) );
+		}
+		else
+		{
+			// all escrows
+			$escrows = get_posts( $args );
+
+			// other parties
+			$args['author'] = '';
+			$args['meta_query'] = array ( 
+					array( 'key' => 'target_email', 'value' => $args['party_email'] ),
+			);
+			$escrows = array_merge( $escrows, get_posts( $args ) );
+		}
+
+		// class wrap
+		$escrows = array_map( function ( $escow ) {
+			return new DCE_Escrow( $escow );
+		}, $escrows );
+
+		return apply_filters( 'dce_query_escrows', $single ? $escrows[0] : $escrows );
+	}
+
+	/**
+	 * Form data fields
+	 * 
+	 * @param array $coin_types
+	 * @return array
+	 */
+	public static function form_fields( &$coin_types = '' )
+	{
+		if ( empty( $coin_types ) )
+			$coin_types = dce_get_coin_types();
+
+		// original fields
+		$fields = parent::form_fields( $coin_types );
+
+		// change details label
+		$fields['details']['label'] = __( 'Terms & Agreements', 'dce' );
+
+		/**
+		 * New Fields
+		 */
+
+		// receive address
+		$fields['owner_receive_address'] = array ( 
+				'label' => __( 'Receive Address', 'dce' ), 
+				'input' => 'text',
+				'data_type' => 'text',
+				'required' => true,
+				'desc' => __( 'The address you will receive the converted coins on.', 'dce' ),
+				'validate_callback' => 'dce_verify_coins_address',
+				'validate_error_msg' => __( 'Invalid %s address', 'dce' ),
+		);
+
+		// re-fund address
+		$fields['owner_refund_address'] = array ( 
+				'label' => __( 'Re-fund Address', 'dce' ), 
+				'input' => 'text',
+				'data_type' => 'text',
+				'required' => true,
+				'desc' => __( 'The address to re-fund your sent coins in case of escrow failure.', 'dce' ),
+				'validate_callback' => 'dce_verify_coins_address',
+				'validate_error_msg' => __( 'Invalid %s address', 'dce' ),
+		);
+
+		// target user email
+		$fields['target_email'] = array ( 
+				'label' => __( 'Target User Email', 'dce' ), 
+				'input' => 'text',
+				'data_type' => 'email',
+				'required' => true,
+		);
+
+		return $fields;
+	}
+
+	/**
+	 * Generate receive address
+	 * 
+	 * @param string $coin_type
+	 * @return string|WP_Error
+	 */
+	public static function generate_address( $coin_type )
+	{
+		$coin = dce_get_coin_types( $coin_type );
+
+		// check coin
+		if ( !$coin )
+			return new WP_Error( 'coin-type', __( 'Unkown coin type', 'dce' ) );
+
+		// connect with RPC
+		return dce_coins_rpc_connections( $coin_type, $coin )->getnewaddress();
+	}
+
+	/**
+	 * Verify/Validate send/receive address
+	 * 
+	 * @param string $address
+	 * @return boolean
+	 */
+	public static function verify_address( $address )
+	{
+		// address length
+		$len = strlen( $address );
+
+		// regex format
+		return preg_match( '/^[1-9A-Za-z]+$/', $address ) && $len >= 34 && $len <= 102 ? true : false;
+	}
+}
+
+/**
+ * Wrapper for DCE_Escrow::verify_address
+ * 
+ * @param string $address
+ * @return boolean
+ */
+function dce_verify_coins_address( $address )
+{
+	return DCE_Escrow::verify_address( $address );
+}
+
+/**
+ * Get Coin RPC Client using with caching
+ * 
+ * @param string $coin_type
+ * @param array $coin_data
+ * @return DCE_RPC_Client
+ */
+function dce_coins_rpc_connections( $coin_type, $coin_data = null )
+{
+	// init cache
+	if ( !isset( $GLOBALS['rpc_clients'] ) || !is_array( $GLOBALS['rpc_clients'] ) )
+		$GLOBALS['rpc_clients'] = array();
+
+	// check in cache
+	/*if ( isset( $GLOBALS[$coin_type] ) )
+		return $GLOBALS[$coin_type];*/
+
+	// check url
+	if ( $coin_data )
+		$coin_data = ( object ) $coin_data;
+	else
+		$coin_data = dce_get_coin_types( $coin_type );
+
+	$coin_data = (object) $coin_data;
+
+	// create connection
+	$GLOBALS[$coin_type] = new DCE_Coin_RPC( $coin_data->rpc_user, $coin_data->rpc_pass, $coin_data->rpc_host, $coin_data->rpc_port, $coin_data->rpc_uri );
+//var_dump($coin_data->rpc_user);die();
+	return $GLOBALS[$coin_type];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
